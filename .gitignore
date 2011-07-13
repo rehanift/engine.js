@@ -1,0 +1,9 @@
+# Emacs backup files
+*~
+
+# Emacs lock files
+.#*
+\#*#
+
+# ctags file
+TAGS
