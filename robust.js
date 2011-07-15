@@ -8,6 +8,15 @@ var util = require('util'),
 var robust = function(options){
     var self = this;
 
+  process.on('exit', function(){
+    console.log("======================================================================");
+    console.log("POOL STATISTICS","\n");
+    [self.taskPool, self.processPool, self.timeoutPool].forEach(function(pool){
+      console.log(pool.getName(), " - Size: ", pool.getSize(), "\n");
+    });
+    console.log("======================================================================");
+  });
+
     self.taskPool = new robust.models.pool("tasks");
     self.processPool = new robust.models.pool("processes");
     self.timeoutPool = new robust.models.pool("timeouts");
@@ -249,6 +258,16 @@ robust.models.pool.prototype.remove = function(id){
     robust.util.info("Pool - " + self.name + ": Removed an item from a pool" + id);
     
     return true;
+};
+
+robust.models.pool.prototype.getSize = function(){
+  var self = this;
+  return self.items.length;
+};
+
+robust.models.pool.prototype.getName = function(){
+  var self = this;
+  return self.name;
 };
 
 
