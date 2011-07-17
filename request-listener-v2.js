@@ -12,7 +12,7 @@ var robust = require('./robust').robust;
 */
 
 var client_options = {
-    num_children: 1
+    num_children: 3
 };
 var client = new robust(client_options); // spin up child processes
 
@@ -29,18 +29,45 @@ var client = new robust(client_options); // spin up child processes
 //    }, 2000);
 //});
 
+//client.on("ready", function(){
+//    var task = client.createTask();
+//    var delay = Math.random() * 10000;
+//    task.run({
+//	context:"(function(locals){ return { wait: function(){setTimeout(function(){ return 'done';}, locals.delay);} } })",
+//	locals:{ delay:delay },
+//	code:"wait();"
+//    });    
+//    
+//    task.on("complete", function(data){
+//	console.log("task done");
+//    });
+//
+//    var task2 = client.createTask();
+//    var delay2 = Math.random() * 10000;
+//    task2.run({
+//	context:"(function(locals){ return { wait: function(){setTimeout(function(){ return 'done';}, locals.delay);} } })",
+//	locals:{ delay:delay2 },
+//	code:"wait();"
+//    });  
+//    task2.on("complete", function(data){
+//	console.log("task2 done");
+//    });  
+//});
+
+
 client.on("ready", function(){
     setInterval(function(){
 	var task = client.createTask();
-	var delay = Math.random() * 10000;
+	//var delay = Math.random() * 10000;
+	var delay = 10000;
 	task.run({
-	    context:"(function(locals){ return { wait: function(){setTimeout(function(){ return 'done';}, locals.delay);} } })",
+	    context:"(function(locals){ return { sleep: function() { var now = new Date().getTime(); while(new Date().getTime() < now + locals.delay) { /* sleep */ } return 'selpt for ' + locals.delay;} } })",
 	    locals:{ delay:delay },
-	    code:"wait();"
-	});
-
-	task.on("complete",function(data){
-	    //console.log(data);
+	    code:"sleep();"
+	});    
+	
+	task.on("complete", function(data){
+	    console.log("task done ", delay);
 	});
 
     }, 1000);
@@ -51,3 +78,5 @@ client.on("ready", function(){
 //task.on("complete", function(data){
 //    console.log(data);
 //});
+
+
