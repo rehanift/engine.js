@@ -8,14 +8,22 @@ var util = require('util'),
 var robust = function(options){
     var self = this;
 
-  process.on('exit', function(){
-    console.log("======================================================================");
-    console.log("POOL STATISTICS","\n");
-    [self.taskPool, self.processPool, self.timeoutPool].forEach(function(pool){
-      console.log(pool.getName(), " - Size: ", pool.getSize(), "\n");
+    process.on('SIGINT', function(){
+	console.log("\n");
+	console.log("======================================================================");
+	console.log("POOL STATISTICS");
+	[self.taskPool, self.processPool, self.timeoutPool].forEach(function(pool){
+	    console.log("\t",pool.getName(), " - Size: ", pool.getSize(), "\n");
+	});
+	console.log("======================================================================");
+	console.log("PROCESS STATISTICS");
+	Object.keys(self.processPool.items).forEach(function(key){
+	    console.log("\t",key," - Completed: ", self.processPool.get(key).getCompletedTasks(),"\n");
+	});
+	console.log("======================================================================","\n");
+
+	process.kill(process.pid, 'SIGTERM');
     });
-    console.log("======================================================================");
-  });
 
     self.taskPool = new robust.models.pool("tasks");
     self.processPool = new robust.models.pool("processes");
@@ -41,29 +49,6 @@ var robust = function(options){
 
     self.results_socket = context.createSocket("pull");
     self.code_socket = context.createSocket("push");
-    self.timeout_server = context.createSocket("rep");
-
-    self.timeout_server.on("message", function(data){
-    	data = JSON.parse(data);
-    	
-    	var process = self.processPool.get(data['process_id']);
-    
-    	var timeout_id = setTimeout(function(){
-    	    process.kill("Task ("+data['task_id']+") took too long to finish executing");
-	    self.processPool.remove(data['process_id']);
-	    self.processPool.add(new robust.models.process());
-    	}, 7000);
-    
-    	var timeout = new robust.models.timeout({
-    	    task_id: data['task_id'],
-    	    timeout_id: timeout_id
-    	});
-    
-    	self.timeoutPool.add(timeout);
-
-	self.timeout_server.send(robust.constants.HANDSHAKE);
-	return true;
-    });
 
     self.results_socket.on("message", function(data){
 	if (data == robust.constants.HANDSHAKE) {
@@ -75,18 +60,14 @@ var robust = function(options){
 	} else {
 	    // TODO: need safe JSON parsing
 	    data = JSON.parse(data);
+	    robust.util.info("Receiving results for task " + data['task_id']);
+	    console.log(data);
 	}
 	
 	var task = self.getTask(data["task_id"]);
+	var process = self.processPool.get(data["process_id"]);
+	process.addCompletedTask();
 	if (task) {
-	    var timeout = self.timeoutPool.get(task.id);
-	    if (timeout) {
-		timeout.clear();
-		self.timeoutPool.remove(task.id);
-	    } else {
-		robust.util.warn("Task ("+ task.id +") does not have associated timeout");
-		console.log("====================");
-	    }
 	    task.emit("complete", data);
 
 	    if (task.hasCallback()) {
@@ -111,12 +92,7 @@ var robust = function(options){
 	if (err) throw err; 
 	robust.util.info("results socket bound successfully");
     });
-    
-    self.timeout_server.bind("ipc://timeouts.ipc", function(err){
-    	if (err) throw err; 
-	robust.util.info("timeout socket bound successfully");
-    });
-    
+        
     var proc;
     
     for (var i = 0; i < options.num_children; i++) {
@@ -162,6 +138,7 @@ robust.models.task = function(instance){
     self.id = robust.util.makeUUID({prefix:"task"});
 
     self.run = function(config, callback){
+	robust.util.info("Running code for task " + self.id);
 	config['task_id'] = self.id;
 	config = JSON.stringify(config);
 	if (typeof callback === 'function') {
@@ -186,6 +163,17 @@ robust.models.process = function(){
     var self = this;
     self.id = robust.util.makeUUID({prefix:"process"});
     self.process = spawn('node', ["child_process-v2.js",self.id]);
+    self.task_completed = 0;
+};
+
+robust.models.process.prototype.addCompletedTask = function(){
+    var self = this;
+    self.task_completed++;
+};
+
+robust.models.process.prototype.getCompletedTasks = function(){
+    var self = this;
+    return self.task_completed;
 };
 
 robust.models.process.prototype.kill = function(because){
@@ -262,7 +250,7 @@ robust.models.pool.prototype.remove = function(id){
 
 robust.models.pool.prototype.getSize = function(){
   var self = this;
-  return self.items.length;
+  return Object.keys(self.items).length;
 };
 
 robust.models.pool.prototype.getName = function(){
@@ -279,11 +267,9 @@ robust.worker = function(options){
 
     self.code_receiver = context.createSocket("pull");
     self.results_sender = context.createSocket("push");
-    self.timeout_client = context.createSocket("req");
 
     self.code_receiver.connect("ipc://code.ipc");
     self.results_sender.connect("ipc://results.ipc");
-    self.timeout_client.connect("ipc://timeouts.ipc");
 
     self.code_receiver.on("message", function(data){
 	if (data == robust.constants.HANDSHAKE) {
@@ -296,32 +282,24 @@ robust.worker = function(options){
 	var context = config['context'];
 	var locals = config['locals'];
 	var task_id = config['task_id'];
-
-	self.timeout_client.send(JSON.stringify({
-	    task_id: task_id,
-	    process_id: self.process_id
-	}));
     
 	var sandbox = (eval(context))(locals);
 	
-	self.timeout_client.on("message", function(data){
-	    var results = robust.worker.execute(code, sandbox);
-	    
-	    var response = {
-    		task_id: task_id,
-		process_id: self.process_id,
-    		returned_data: results[0],
-    		context: results[1]
-	    };
-	    
-	    self.results_sender.send(JSON.stringify(response));
-	});
+	var results = robust.worker.execute(code, sandbox);
+	
+	var response = {
+    	    task_id: task_id,
+	    process_id: self.process_id,
+    	    returned_data: results[0],
+    	    context: results[1]
+	};
+	
+	self.results_sender.send(JSON.stringify(response));		
 	
 	return true;
     });
 
     self.results_sender.send(robust.constants.HANDSHAKE);
-    //self.timeout_sender.send(robust.constants.HANDSHAKE);
 };
 
 robust.worker.execute = function(code, context) {
