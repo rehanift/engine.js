@@ -12,21 +12,19 @@ var robust = require('./robust').robust;
 */
 
 var client_options = {
-    num_children: 3
+    num_children: 1
 };
 var client = new robust(client_options); // spin up child processes
 
 //client.on("ready", function(){
 //    console.log("Runner is ready");
-//    setInterval(function(){
-//	var task = client.createTask(); // create and return a task object. Tasks are EventEmitters.
-//	var options = {
-//	    context: "(function(locals){ return { add: function(a,b) { return a+b } }});",
-//	    locals: "",
-//	    code: "add(1,1)"
-//	};
-//	task.run(options, function(data){ console.log(data); });
-//    }, 2000);
+//    var task = client.createTask(); // create and return a task object. Tasks are EventEmitters.
+//    var options = {
+//	context: "(function(locals){ return { add: function(a,b) { return a+b } }});",
+//	locals: "",
+//	code: "add(1,1)"
+//    };
+//    task.run(options, function(data){ console.log(data); });
 //});
 
 //client.on("ready", function(){

@@ -2,12 +2,17 @@ var util = require('util'),
     EventEmitter = require('events').EventEmitter,
     node_uuid = require('node-uuid'),
     spawn = require('child_process').spawn,
-    vm = require("vm");    
+    vm = require("vm"),
+    context = require('zeromq');
+
+
+
 
 
 var robust = function(options){
     var self = this;
-
+    
+    /*
     process.on('SIGINT', function(){
 	console.log("\n");
 	console.log("======================================================================");
@@ -25,6 +30,7 @@ var robust = function(options){
 	process.kill(process.pid, 'SIGTERM');
     });
 
+     */
     self.taskPool = new robust.models.pool("tasks");
     self.processPool = new robust.models.pool("processes");
     self.timeoutPool = new robust.models.pool("timeouts");
@@ -65,8 +71,9 @@ var robust = function(options){
 	}
 	
 	var task = self.getTask(data["task_id"]);
-	var process = self.processPool.get(data["process_id"]);
-	process.addCompletedTask();
+	// TODO: We no longer know from which process the results came from
+	//var process = self.processPool.get(data["process_id"]);
+	//process.addCompletedTask();
 	if (task) {
 	    task.emit("complete", data);
 
@@ -96,7 +103,9 @@ var robust = function(options){
     var proc;
     
     for (var i = 0; i < options.num_children; i++) {
-	proc = new robust.models.process();
+	proc = new robust.models.process({
+	    file:"cylinder.js"
+	});
 	self.processPool.add(proc);
     }
     
@@ -159,11 +168,16 @@ robust.models.task.prototype.getCallback = function(){
     return self.callback;
 };
 
-robust.models.process = function(){
+/**
+ * Creates a new process
+ */
+robust.models.process = function(options){
     var self = this;
     self.id = robust.util.makeUUID({prefix:"process"});
-    self.process = spawn('node', ["child_process-v2.js",self.id]);
-    self.task_completed = 0;
+    if (typeof options.file == "undefined") {
+	throw "The name of a file is needed to spawn a new process";
+    }
+    self.process = spawn('node', [options.file].concat(options.arguments));
 };
 
 robust.models.process.prototype.addCompletedTask = function(){
@@ -258,7 +272,6 @@ robust.models.pool.prototype.getName = function(){
   return self.name;
 };
 
-
 robust.worker = function(options){
     var context = require('zeromq');
     var self = this;
@@ -317,3 +330,111 @@ robust.worker.execute = function(code, context) {
 };
 
 exports.robust = robust;
+
+////////////////////////////////////////////////////////////////////////////////
+
+var engine = function(){};
+
+engine.cylinder = function(options){
+    var context = require('zeromq');
+    var self = this;
+
+    self.id = robust.util.makeUUID({prefix:"cylinder"});
+
+    self.code_receiver = context.createSocket("pull");
+    self.results_sender = context.createSocket("push");
+    self.code_requester = context.createSocket("req");
+
+    self.code_receiver.connect("ipc://code.ipc");
+    self.results_sender.connect("ipc://results.ipc");
+    self.code_requester.connect("ipc://"+self.id+".ipc");
+
+    // create a new service
+    var process = new robust.models.process({
+	file:"piston.js",
+	arguments:[self.id]
+    });
+
+    self.code_receiver.on("message", function(data){
+	console.log(data.toString());
+	if (data == robust.constants.HANDSHAKE) {
+	    self.results_sender.send(robust.constants.READY);
+	    return true;
+	}
+
+	self.code_requester.send(data);
+    });
+
+    self.code_requester.on("message", function(data){
+	self.results_sender.send(data);
+    });
+    
+    self.results_sender.send(robust.constants.HANDSHAKE);
+};
+
+
+engine.cylinder.fire = function(code, context) {
+    var returned_data;
+    return (function(code) {
+	try {
+	    returned_data = vm.runInNewContext(this.toString(), context);
+	}
+	catch (e) {
+	    returned_data =  e.name + ': ' + e.message;
+	}
+	    
+	return [returned_data, context];
+    }).call(code);
+};
+
+
+engine.piston = function(options){
+    var context = require('zeromq');
+    var self = this;
+
+    self.id = robust.util.makeUUID({prefix: "piston"});
+    self.cylinder_id = options.cylinder_id;
+
+    console.log(self.id);
+    console.log(self.cylinder_id);
+
+    var listening_addr = "ipc://"+self.cylinder_id+".ipc";
+
+    self.code_responder = context.createSocket('rep');
+
+    self.code_responder.on('message', function(data) {
+	var config = JSON.parse(data);
+	var code = config['code'];
+	var context = config['context'];
+	var locals = config['locals'];
+	var task_id = config['task_id'];
+    
+	var sandbox = (eval(context))(locals);
+	
+	var results = engine.cylinder.fire(code, sandbox);
+	
+	var response = {
+    	    task_id: task_id,
+	    process_id: self.process_id,
+    	    returned_data: results[0],
+    	    context: results[1]
+	};
+	
+	self.code_responder.send(JSON.stringify(response));		
+	
+	return true;
+    });
+
+    self.code_responder.bind(listening_addr, function(err) {
+	if(err)
+	    console.log(err);
+	else
+	    console.log("Listening on",listening_addr,"...");
+    });
+
+    process.on('SIGINT', function() {
+	self.code_responder.close();
+    });
+};
+
+exports.engine = engine;
