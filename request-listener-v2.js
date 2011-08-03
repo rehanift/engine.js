@@ -12,7 +12,7 @@ var robust = require('./robust').robust;
 */
 
 var client_options = {
-    num_children: 1
+    num_children: 0
 };
 var client = new robust(client_options); // spin up child processes
 

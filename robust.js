@@ -61,6 +61,7 @@ var robust = function(options){
 	    // do nothing
 	    return true;
 	} else if (data == robust.constants.READY) {
+	    console.log("Ready handshake");
 	    self.emit("ready");
 	    return true;
 	} else {
@@ -287,7 +288,7 @@ robust.worker = function(options){
     self.code_receiver.on("message", function(data){
 	if (data == robust.constants.HANDSHAKE) {
 	    self.results_sender.send(robust.constants.READY);
-	    return true;
+	    return true;	    
 	}
 	
 	var config = JSON.parse(data);
@@ -393,12 +394,8 @@ engine.piston = function(options){
     var self = this;
 
     self.id = robust.util.makeUUID({prefix: "piston"});
-    self.cylinder_id = options.cylinder_id;
 
-    console.log(self.id);
-    console.log(self.cylinder_id);
-
-    var listening_addr = "ipc://"+self.cylinder_id+".ipc";
+    var listening_addr = options.endpoint;
 
     self.code_responder = context.createSocket('rep');
 
@@ -408,10 +405,20 @@ engine.piston = function(options){
 	var context = config['context'];
 	var locals = config['locals'];
 	var task_id = config['task_id'];
-    
+	
 	var sandbox = (eval(context))(locals);
 	
-	var results = engine.cylinder.fire(code, sandbox);
+	var returned_data;
+	var results = (function(code) {
+	    try {
+		returned_data = vm.runInNewContext(this.toString(), sandbox);
+	    }
+	    catch (e) {
+		returned_data =  e.name + ': ' + e.message;
+	    }
+	    
+	    return [returned_data, context];
+	}).call(code);
 	
 	var response = {
     	    task_id: task_id,
@@ -435,6 +442,10 @@ engine.piston = function(options){
     process.on('SIGINT', function() {
 	self.code_responder.close();
     });
+
+    self.getSockets = function(){
+	return [self.code_responder];
+    };
 };
 
 exports.engine = engine;
