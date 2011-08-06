@@ -374,64 +374,85 @@ engine.cylinder = function(options){
 };
 
 engine.piston = function(options){
-    var context = require('zeromq');
     var self = this;
 
     self.id = robust.util.makeUUID({prefix: "piston"});
+    
+    process.on('SIGINT', function() {
+        self.code_responder.close();
+    });
 
+    self.server = new engine.piston.server();
+};
+
+engine.piston.fire = function(data){
+    var config = JSON.parse(data);
+    var code = config['code'];
+    var context = config['context'];
+    var locals = config['locals'];
+    
+    var sandbox = (eval(context))(locals);
+    
+    var returned_data;
+    var results = (function(code) {
+	try {
+	    returned_data = vm.runInNewContext(this.toString(), sandbox);
+	}
+	catch (e) {
+	    returned_data =  e.name + ': ' + e.message;
+	}
+	
+	return [returned_data, context];
+    }).call(code);
+    
+    return {
+    	returned_data: results[0],
+    	context: results[1]
+    };
+};
+
+engine.piston.server = function(){
+    var self = this;
+    self.started = false;
+    self.running = function(){
+	return self.started;
+    };
+
+    var context = require('zeromq');
     self.code_responder = context.createSocket('rep');
 
     self.code_responder.on('message', function(data) {
-        var response = self.fire(data);
+        var response = engine.piston.fire(data);
 	self.code_responder.send(JSON.stringify(response));		
 	
 	return true;
     });
 
-
-    self.listen = function(listening_addr){
-        self.code_responder.bind(listening_addr, function(err) {
-            if(err)
-	        console.log(err);
-            else
-	        console.log("Listening on",listening_addr,"...");
-        });
+    self.start = function(endpoint, callback){
+	self.code_responder.bind(endpoint, function(err) {
+            if(err) {
+		console.log(err);
+            } else {
+		self.started = true;
+		if (typeof callback != "undefined") {
+		    callback.call();
+		}
+	    }
+	});  
     };
 
-    process.on('SIGINT', function() {
-        self.code_responder.close();
-    });
+    self.stop = function(callback){
+	self.code_responder.close();
+	self.started = false;
+	if (typeof callback != "undefined") {
+	    callback.call();
+	}
+    };
 
     self.getSockets = function(){
         return [self.code_responder];
-    };
+    };    
 
-    self.fire = function(data){
-	var config = JSON.parse(data);
-	var code = config['code'];
-	var context = config['context'];
-	var locals = config['locals'];
-	
-	var sandbox = (eval(context))(locals);
-	
-	var returned_data;
-	var results = (function(code) {
-	    try {
-		returned_data = vm.runInNewContext(this.toString(), sandbox);
-	    }
-	    catch (e) {
-		returned_data =  e.name + ': ' + e.message;
-	    }
-	    
-	    return [returned_data, context];
-	}).call(code);
-	
-	return {
-    	    returned_data: results[0],
-    	    context: results[1]
-	};
-
-    };
 };
 
 exports.engine = engine;
