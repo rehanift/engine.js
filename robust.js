@@ -373,38 +373,44 @@ engine.cylinder = function(options){
     self.results_sender.send(robust.constants.HANDSHAKE);
 };
 
-
-engine.cylinder.fire = function(code, context) {
-    var returned_data;
-    return (function(code) {
-	try {
-	    returned_data = vm.runInNewContext(this.toString(), context);
-	}
-	catch (e) {
-	    returned_data =  e.name + ': ' + e.message;
-	}
-	    
-	return [returned_data, context];
-    }).call(code);
-};
-
-
 engine.piston = function(options){
     var context = require('zeromq');
     var self = this;
 
     self.id = robust.util.makeUUID({prefix: "piston"});
 
-    var listening_addr = options.endpoint;
-
     self.code_responder = context.createSocket('rep');
 
     self.code_responder.on('message', function(data) {
+        var response = self.fire(data);
+	self.code_responder.send(JSON.stringify(response));		
+	
+	return true;
+    });
+
+
+    self.listen = function(listening_addr){
+        self.code_responder.bind(listening_addr, function(err) {
+            if(err)
+	        console.log(err);
+            else
+	        console.log("Listening on",listening_addr,"...");
+        });
+    };
+
+    process.on('SIGINT', function() {
+        self.code_responder.close();
+    });
+
+    self.getSockets = function(){
+        return [self.code_responder];
+    };
+
+    self.fire = function(data){
 	var config = JSON.parse(data);
 	var code = config['code'];
 	var context = config['context'];
 	var locals = config['locals'];
-	var task_id = config['task_id'];
 	
 	var sandbox = (eval(context))(locals);
 	
@@ -420,31 +426,11 @@ engine.piston = function(options){
 	    return [returned_data, context];
 	}).call(code);
 	
-	var response = {
-    	    task_id: task_id,
-	    process_id: self.process_id,
+	return {
     	    returned_data: results[0],
     	    context: results[1]
 	};
-	
-	self.code_responder.send(JSON.stringify(response));		
-	
-	return true;
-    });
 
-    self.code_responder.bind(listening_addr, function(err) {
-	if(err)
-	    console.log(err);
-	else
-	    console.log("Listening on",listening_addr,"...");
-    });
-
-    process.on('SIGINT', function() {
-	self.code_responder.close();
-    });
-
-    self.getSockets = function(){
-	return [self.code_responder];
     };
 };
 
