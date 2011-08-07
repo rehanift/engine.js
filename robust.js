@@ -196,7 +196,6 @@ robust.models.process.prototype.kill = function(because){
     var message = "Process ("+self.id+") is being killed";
     if (because) message += " because:" + because;
     self.process.kill('SIGKILL');
-    robust.util.info(message);
 };
 
 robust.models.timeout = function(config){
@@ -340,37 +339,81 @@ engine.cylinder = function(options){
     var context = require('zeromq');
     var self = this;
 
+    // Theres probably a better way to do this
+    var defaults = {
+	intake: {
+	    endpoint: "ipc://code.ipc",
+	    callback: function(data){
+		console.log("You should not see me!");
+	    }
+	}
+    };
+    
+    var intake_endpoint = defaults.intake.endpoint;
+    var intake_callback = defaults.intake.callback;
+
+    if(typeof options != "undefined"){
+	if (typeof options.intake != "undefined") {
+	    if (typeof options.intake.endpoint != "undefined") {
+		intake_endpoint = options.intake.endpoint;
+	    }
+
+	    if (typeof options.intake.callback != "undefined") {
+		intake_callback = options.intake.callback;
+	    }
+	}
+    }
+
+
     self.id = robust.util.makeUUID({prefix:"cylinder"});
 
     self.code_receiver = context.createSocket("pull");
     self.results_sender = context.createSocket("push");
     self.code_requester = context.createSocket("req");
-
-    self.code_receiver.connect("ipc://code.ipc");
+    
+    self.code_receiver.connect(intake_endpoint);
     self.results_sender.connect("ipc://results.ipc");
     self.code_requester.connect("ipc://"+self.id+".ipc");
 
     // create a new service
-    var process = new robust.models.process({
+    self.pistonProcess = new robust.models.process({
 	file:"piston.js",
 	arguments:[self.id]
     });
 
+    //setTimeout(function(){
+    //	self.pistonProcess.kill();
+    //	self.pistonProcess = new robust.models.process({
+    //	    file:"piston.js",
+    //	    arguments:[self.id]
+    //	});
+    //}, options.timeout);
+
     self.code_receiver.on("message", function(data){
-	console.log(data.toString());
-	if (data == robust.constants.HANDSHAKE) {
-	    self.results_sender.send(robust.constants.READY);
-	    return true;
-	}
+	intake_callback(data);
 
-	self.code_requester.send(data);
-    });
-
-    self.code_requester.on("message", function(data){
-	self.results_sender.send(data);
+    	if (data == robust.constants.HANDSHAKE) {
+    	    self.results_sender.send(robust.constants.READY);
+    	    return true;
+    	}
+    
+    	//self.code_requester.send(data);
     });
     
-    self.results_sender.send(robust.constants.HANDSHAKE);
+    self.code_requester.on("message", function(data){
+    	self.results_sender.send(data);
+    });
+    
+    /* This is causing the spec to block. I suspect that its hanging on the missing endpoint */
+    //self.results_sender.send(robust.constants.HANDSHAKE);
+
+    self.close = function(){
+    	self.pistonProcess.kill();
+    	self.code_receiver.close();
+    	self.results_sender.close();
+    	self.code_requester.close();
+	
+    };
 };
 
 engine.piston = function(options){
