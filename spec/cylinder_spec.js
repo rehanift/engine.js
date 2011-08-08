@@ -53,57 +53,147 @@ describe("Cylinder", function(){
     });
 
     it("kills and restarts it's Piston process if it runs longer than a specified amount of time", function(){
-	pending();
-	var myCylinder = new engine.cylinder();
+	var myCylinder;
 	var callback = jasmine.createSpy();
+	var originalPid;
 
-	getPistonProcesses(callback);
+	var context = require('zeromq');
+	var mockPiston = context.createSocket("rep");
 
-	waitsFor(function(){
-	    return callback.callCount > 0;
+	mockPiston.bind("ipc://spec.ipc", function(err){
+	    if (err) throw err;
+	    myCylinder = new engine.cylinder({
+		compression:{
+		    endpoint: "ipc://spec.ipc",
+		    timeout: 1000
+		}
+	    });
+
+	    originalPid = myCylinder.pistonProcess.process.pid;
+
+	    myCylinder.ignite("foo");
 	});
 
+	mockPiston.on("message", function(data){
+	    var now = new Date().getTime(); 
+	    while(new Date().getTime() < now + 5000) { /* sleep */ }
+	    mockPiston.send(data);
+	});
+
+	waits(5000);
+
 	runs(function(){
-	    expect(callback.mostRecentCall.args[0].toString()).toContain(myCylinder.id);
+	    var restartedPid = myCylinder.pistonProcess.process.pid;
+	    expect(restartedPid).not.toEqual(originalPid);
+	    expect(restartedPid).toBeTruthy();
 	    myCylinder.close();
-	});	
+	    mockPiston.close();
+	});
     });
 
     describe("intake socket", function(){
 	it("accepts messages from a zeromq pull socket", function(){
-	    var context = require("zeromq");
-	    var codePush = context.createSocket("push");
 	    var callback = jasmine.createSpy();
-
 	    var myCylinder;
 
-	    codePush.bind("ipc://spec.ipc", function(err){
+	    var context = require("zeromq");
+	    var codePush = context.createSocket("push");
+	    var pistonSocket = context.createSocket("rep");
+
+	    pistonSocket.bind("ipc://piston.ipc", function(err){
 		if(err) throw err;
-		myCylinder = new engine.cylinder({
-		    intake: {
-			endpoint: "ipc://spec.ipc",
-			callback: callback
-		    }
+		
+		codePush.bind("ipc://spec.ipc", function(err){
+		    if(err) throw err;
+		    myCylinder = new engine.cylinder({
+			intake: {
+			    endpoint: "ipc://spec.ipc",
+			    callback: callback
+			},
+			compression: {
+			    endpoint: "ipc://piston.ipc"
+			}
+		    });
+
+		    codePush.send("foo");
 		});
-
-		codePush.send("foo");
+	
 	    });
-
+	    	    
 	    waitsFor(function(){
 		return callback.callCount > 0;
 	    });
 
 	    runs(function(){
 		expect(callback.callCount).toBe(1);
-		myCylinder.close();
 		codePush.close();
+		pistonSocket.close();
+		myCylinder.close();
 	    });
 	});
     });
     
-    describe("compress socket",function(){
+    describe("compression socket",function(){
 	it("sends zeromq requests to an endpoint", function(){
-	    pending();
+	    var myCylinder;
+	    var callback = jasmine.createSpy();
+	    var context = require('zeromq');
+	    var mockPiston = context.createSocket("rep");
+	    mockPiston.bind("ipc://spec.ipc", function(err){
+		if (err) throw err;
+		myCylinder = new engine.cylinder({
+		    compression:{
+			endpoint: "ipc://spec.ipc"
+		    }
+		});
+
+		myCylinder.ignite("foo");
+	    });
+
+	    mockPiston.on("message", callback);
+
+	    waitsFor(function(){
+		return callback.callCount > 0;
+	    });
+	    
+	    runs(function(){
+		expect(callback.mostRecentCall.args[0].toString()).toEqual("foo");
+		myCylinder.close();
+		mockPiston.close();
+	    });
+	});
+
+	it("receives zeromq responses from an endpoint", function(){
+	    var myCylinder;
+	    var callback = jasmine.createSpy();
+	    var context = require('zeromq');
+	    var mockPiston = context.createSocket("rep");
+	    mockPiston.bind("ipc://spec.ipc", function(err){
+		if (err) throw err;
+		myCylinder = new engine.cylinder({
+		    compression:{
+			endpoint: "ipc://spec.ipc",
+			callback: callback
+		    }
+		});
+
+		myCylinder.ignite("foo");
+	    });
+
+	    // Catch the request and send it back
+	    mockPiston.on("message", function(data){
+		mockPiston.send(data);
+	    });
+
+	    waitsFor(function(){
+		return callback.callCount > 0;
+	    });
+	    
+	    runs(function(){
+		expect(callback.mostRecentCall.args[0].toString()).toEqual("foo");
+		myCylinder.close();
+		mockPiston.close();
+	    });
 	});
     });
 

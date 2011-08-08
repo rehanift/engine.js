@@ -194,7 +194,9 @@ robust.models.process.prototype.getCompletedTasks = function(){
 robust.models.process.prototype.kill = function(because){
     var self = this;
     var message = "Process ("+self.id+") is being killed";
-    if (because) message += " because:" + because;
+    if (because) {
+	console.log(because);
+    }
     self.process.kill('SIGKILL');
 };
 
@@ -346,11 +348,21 @@ engine.cylinder = function(options){
 	    callback: function(data){
 		console.log("You should not see me!");
 	    }
+	},
+	compression: {
+	    endpoint: "ipc://compression.ipc",
+	    callback: function(data){
+		console.log("Compression callback");
+	    },
+	    timeout: 10000
 	}
     };
     
     var intake_endpoint = defaults.intake.endpoint;
     var intake_callback = defaults.intake.callback;
+    var compression_endpoint = defaults.compression.endpoint;
+    var compression_callback = defaults.compression.callback;
+    var compression_timeout = defaults.compression.timeout;
 
     if(typeof options != "undefined"){
 	if (typeof options.intake != "undefined") {
@@ -362,18 +374,30 @@ engine.cylinder = function(options){
 		intake_callback = options.intake.callback;
 	    }
 	}
-    }
+	if (typeof options.compression != "undefined") {
+	    if (typeof options.compression.endpoint != "undefined") {
+		compression_endpoint = options.compression.endpoint;
+	    }
 
+	    if (typeof options.compression.callback != "undefined") {
+		compression_callback = options.compression.callback;
+	    }
+
+	    if (typeof options.compression.timeout != "undefined") {
+		compression_timeout = options.compression.timeout;
+	    }
+	}
+    }
 
     self.id = robust.util.makeUUID({prefix:"cylinder"});
 
-    self.code_receiver = context.createSocket("pull");
+    self.intake = context.createSocket("pull");
     self.results_sender = context.createSocket("push");
-    self.code_requester = context.createSocket("req");
+    self.compression = context.createSocket("req");
     
-    self.code_receiver.connect(intake_endpoint);
+    self.intake.connect(intake_endpoint);
     self.results_sender.connect("ipc://results.ipc");
-    self.code_requester.connect("ipc://"+self.id+".ipc");
+    self.compression.connect(compression_endpoint);
 
     // create a new service
     self.pistonProcess = new robust.models.process({
@@ -381,27 +405,35 @@ engine.cylinder = function(options){
 	arguments:[self.id]
     });
 
-    //setTimeout(function(){
-    //	self.pistonProcess.kill();
-    //	self.pistonProcess = new robust.models.process({
-    //	    file:"piston.js",
-    //	    arguments:[self.id]
-    //	});
-    //}, options.timeout);
+    self.pistonTimeout = null;
 
-    self.code_receiver.on("message", function(data){
+    self.intake.on("message", function(data){
 	intake_callback(data);
 
     	if (data == robust.constants.HANDSHAKE) {
     	    self.results_sender.send(robust.constants.READY);
     	    return true;
     	}
-    
-    	//self.code_requester.send(data);
+	
+	self.ignite(data);
     });
+
+    self.ignite = function(data){
+    	self.compression.send(data);
+	self.pistonTimeout = setTimeout(function(){
+	    self.pistonProcess.kill();
+	    self.pistonProcess = new robust.models.process({
+		file:"piston.js",
+		arguments:[self.id]
+	    });
+	    clearTimeout(self.pistonTimeout);
+	}, compression_timeout);
+    };
     
-    self.code_requester.on("message", function(data){
-    	self.results_sender.send(data);
+    self.compression.on("message", function(data){
+	clearTimeout(self.pistonTimeout);
+	compression_callback(data);
+    	// self.results_sender.send(data);
     });
     
     /* This is causing the spec to block. I suspect that its hanging on the missing endpoint */
@@ -409,9 +441,9 @@ engine.cylinder = function(options){
 
     self.close = function(){
     	self.pistonProcess.kill();
-    	self.code_receiver.close();
+    	self.intake.close();
     	self.results_sender.close();
-    	self.code_requester.close();
+    	self.compression.close();
 	
     };
 };
