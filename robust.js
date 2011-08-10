@@ -535,25 +535,44 @@ engine.client = function(options){
     var context = require("zeromq");
 
     var defaults = {
-        cylinder_block: "ipc://cylinder_block.ipc"
+        cylinder_block: "ipc://cylinder_block.ipc",
+        crankshaft: "ipc://crankshaft.ipc"
     };
 
     var cylinder_block_endpoint = defaults.cylinder_block;
+    var crankshaft_endpoint = defaults.crankshaft;
 
     if (typeof(options) != "undefined") {
         if (typeof(options.cylinder_block) != "undefined") {
             cylinder_block_endpoint = options.cylinder_block;
         }
+
+        if (typeof(options.crankshaft) != "undefined") {
+            crankshaft_endpoint = options.crankshaft;
+        }
     }
     
     self.id = robust.util.makeUUID({prefix:"client"});
+
     self.cylinder_block = context.createSocket("push");
     self.cylinder_block.bind(cylinder_block_endpoint, function(err){
         if (err) {
             throw err;
         }
 
-        self.emit("ready");
+        self.emit("cylinder block ready");
+    });
+
+    self.crankshaft = context.createSocket("pull");
+    self.crankshaft.bind(crankshaft_endpoint, function(err){
+        if (err) {
+            throw err;
+        }
+
+        self.emit("crankshaft ready");
+    });
+    self.crankshaft.on("message", function(data){
+        self.emit("crankshaft results", data);
     });
 };
 util.inherits(engine.client, EventEmitter);
@@ -572,6 +591,7 @@ engine.client.prototype.run = function(data){
 engine.client.prototype.close = function(){
     var self = this;
     self.cylinder_block.close();
+    self.crankshaft.close();
 };
 
 engine.task = function(client_instance){
