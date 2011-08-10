@@ -530,4 +530,53 @@ engine.piston.server = function(){
 
 };
 
+engine.client = function(options){
+    var self = this;
+    var context = require("zeromq");
+
+    var defaults = {
+        cylinder_block: "ipc://cylinder_block.ipc"
+    };
+
+    var cylinder_block_endpoint = defaults.cylinder_block;
+
+    if (typeof(options) != "undefined") {
+        if (typeof(options.cylinder_block) != "undefined") {
+            cylinder_block_endpoint = options.cylinder_block;
+        }
+    }
+    
+    self.id = robust.util.makeUUID({prefix:"client"});
+    self.cylinder_block = context.createSocket("push");
+    self.cylinder_block.bind(cylinder_block_endpoint, function(err){
+        if (err) {
+            throw err;
+        }
+
+        self.emit("ready");
+    });
+};
+util.inherits(engine.client, EventEmitter);
+
+engine.client.prototype.createTask = function(){
+    var self = this;
+    var task = new engine.task(self);
+    return task;
+};
+
+engine.client.prototype.run = function(data){
+    var self = this;
+    self.cylinder_block.send(data);
+};
+
+engine.client.prototype.close = function(){
+    var self = this;
+    self.cylinder_block.close();
+};
+
+engine.task = function(client_instance){
+    var self = this;
+    self.client = client_instance;
+};
+
 exports.engine = engine;
