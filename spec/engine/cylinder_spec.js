@@ -1,4 +1,4 @@
-var engine = require("../robust.js").engine,
+var engine = require("../../engine").engine,
     spawn = require("child_process").spawn;
 
 var getPistonProcesses = function(callback){
