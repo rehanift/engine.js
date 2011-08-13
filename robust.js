@@ -5,7 +5,7 @@ var util = require('util'),
     vm = require("vm"),
     context = require('zeromq');
 
-var Checklist = require("./lib/checklist.js").Checklist;
+var Checklist = require("./lib/mixins/checklist.js").Checklist;
 
 
 

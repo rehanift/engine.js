@@ -1,4 +1,4 @@
-var Checklist = require("../lib/checklist.js").Checklist;
+var Checklist = require("../../../lib/mixins/checklist.js").Checklist;
 
 var Model = function(){};
 Checklist.call(Model.prototype);
