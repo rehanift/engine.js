@@ -1,6 +1,5 @@
 var util = require('util'),
     EventEmitter = require('events').EventEmitter,
-    node_uuid = require('node-uuid'),
     spawn = require('child_process').spawn,
     vm = require("vm"),
     context = require('zeromq');
@@ -634,24 +633,5 @@ engine.client.prototype.close = function(){
     self.crankshaft.close();
 };
 
-engine.task = function(client_instance){
-    var self = this;
-    self.client = client_instance;
-    
-    self.id = robust.util.makeUUID({prefix:"task"});
-};
-
-engine.task.prototype.run = function(){
-    var self = this;
-    self.client.run(self);
-};
-
-engine.task.prototype.getCallback = function(){
-    return this.callback;
-};
-
-engine.task.prototype.setCallback = function(callback){
-    this.callback = callback;
-};
 
 exports.engine = engine;

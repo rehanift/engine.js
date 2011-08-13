@@ -1,8 +1,7 @@
 var util = require('util'),
-    events = require('events'),
-    Outlet = require('../lib/Outlet.js').Outlet;
+    events = require('events');
 
-var engine = require('../robust').engine;
+var engine = require('../../engine').engine;
 
 var SIMPLE_PAYLOAD = {
     context: "(function(locals){ return { add: function(a,b) { return a+b } }});",

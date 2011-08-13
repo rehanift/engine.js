@@ -1,4 +1,4 @@
-var engine = require("../robust").engine;
+var engine = require("../../engine").engine;
 
 describe("Task", function(){
     it("has a unique ID", function(){

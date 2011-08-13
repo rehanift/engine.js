@@ -1,4 +1,4 @@
-var engine = require("../robust").engine;
+var engine = require("../../engine").engine;
 
 var mock = {};
 mock.crankshaft = function(endpoint){
@@ -46,7 +46,7 @@ describe("Client", function(){
         });        
     });
     
-    describe("event:'crankshaft results'", function(){        
+    xdescribe("event:'crankshaft results'", function(){        
         it("throws an error when no running task is found", function(){ pending(); });
 
         it("receives task results", function(){            
