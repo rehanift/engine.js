@@ -1,5 +1,26 @@
+var engine = require("../robust").engine;
+
 describe("Task", function(){
-    it("has a unique ID", function(){ pending(); });
+    it("has a unique ID", function(){
+        var client = new engine.client();
+        var task1 = client.createTask();
+        var task2 = client.createTask();
+        var callback = jasmine.createSpy();
+
+        client.on("ready", callback);
+
+        waitsFor(function(){
+            return callback.callCount > 0;
+        });
+
+        runs(function(){
+            expect(task1).toBeTruthy();
+            expect(task1.id).toBeTruthy();
+            expect(task1.id).not.toEqual(task2.id);
+            client.close();
+        });
+        
+    });
 
     describe("#setContext", function(){
         it("sets the context for a task", function(){ pending(); });

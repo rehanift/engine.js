@@ -5,7 +5,7 @@ var util = require('util'),
     vm = require("vm"),
     context = require('zeromq');
 
-
+var Checklist = require("./lib/checklist.js").Checklist;
 
 
 
@@ -532,6 +532,8 @@ engine.piston.server = function(){
 
 engine.client = function(options){
     var self = this;
+    self.id = robust.util.makeUUID({prefix:"client"});
+
     var context = require("zeromq");
 
     var defaults = {
@@ -539,6 +541,11 @@ engine.client = function(options){
         crankshaft: "ipc://crankshaft.ipc"
     };
 
+    self.setRequirements([
+        "crankshaft",
+        "cylinder block"
+    ]);
+    
     var cylinder_block_endpoint = defaults.cylinder_block;
     var crankshaft_endpoint = defaults.crankshaft;
 
@@ -552,8 +559,6 @@ engine.client = function(options){
         }
     }
     
-    self.id = robust.util.makeUUID({prefix:"client"});
-
     self.cylinder_block = context.createSocket("push");
     self.cylinder_block.bind(cylinder_block_endpoint, function(err){
         if (err) {
@@ -561,6 +566,7 @@ engine.client = function(options){
         }
 
         self.emit("cylinder block ready");
+        self.checkoff("cylinder block", self.handleCheckoff);
     });
 
     self.crankshaft = context.createSocket("pull");
@@ -570,12 +576,31 @@ engine.client = function(options){
         }
 
         self.emit("crankshaft ready");
+        self.checkoff("crankshaft", self.handleCheckoff);
     });
+
     self.crankshaft.on("message", function(data){
+        var parsed_data = JSON.parse(data);
+        var task = self.getRunningTask(parsed_data.running_task_id);
+
+        //if (task && task.getCallback()) {
+        //    task.getCallback().call(null, data);
+        //}
+
         self.emit("crankshaft results", data);
     });
+
+    self.handleCheckoff = function(remaining_reqs){
+        if (remaining_reqs.length == 0) {
+            self.emit("ready");
+        }
+    };
+
+    self.running_tasks = {};
 };
 util.inherits(engine.client, EventEmitter);
+Checklist.call(engine.client.prototype);
+
 
 engine.client.prototype.createTask = function(){
     var self = this;
@@ -583,9 +608,24 @@ engine.client.prototype.createTask = function(){
     return task;
 };
 
-engine.client.prototype.run = function(data){
+engine.client.prototype.run = function(task){
     var self = this;
-    self.cylinder_block.send(data);
+    
+    var running_task_id = robust.util.makeUUID({prefix:"running-task"});
+    self.running_tasks[running_task_id] = task;
+
+    var data = {
+        running_task_id: running_task_id 
+    };
+
+    self.cylinder_block.send(JSON.stringify(data));
+};
+
+engine.client.prototype.getRunningTask = function(id) {
+    var self = this;
+
+    var task = self.running_tasks[id];
+    return task;
 };
 
 engine.client.prototype.close = function(){
@@ -597,6 +637,21 @@ engine.client.prototype.close = function(){
 engine.task = function(client_instance){
     var self = this;
     self.client = client_instance;
+    
+    self.id = robust.util.makeUUID({prefix:"task"});
+};
+
+engine.task.prototype.run = function(){
+    var self = this;
+    self.client.run(self);
+};
+
+engine.task.prototype.getCallback = function(){
+    return this.callback;
+};
+
+engine.task.prototype.setCallback = function(callback){
+    this.callback = callback;
 };
 
 exports.engine = engine;
