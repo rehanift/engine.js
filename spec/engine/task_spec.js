@@ -1,4 +1,5 @@
 var engine = require("../../engine").engine;
+var mock = require("../spec_helper").mock;
 
 describe("Task", function(){
     it("has a unique ID", function(){
@@ -7,7 +8,7 @@ describe("Task", function(){
         var task2 = client.createTask();
         var callback = jasmine.createSpy();
 
-        client.on("ready", callback);
+        client.on("client sockets ready", callback);
 
         waitsFor(function(){
             return callback.callCount > 0;

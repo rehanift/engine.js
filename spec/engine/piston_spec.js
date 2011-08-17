@@ -87,18 +87,18 @@ describe("Piston", function(){
 	// This is the happy case
 	it("evaluates user-code against a given context", function(){    
 	    var response = engine.piston.fire(JSON.stringify(SIMPLE_PAYLOAD));
-	    expect(response['returned_data']).toEqual(2);
+	    expect(response['last_exp_eval']).toEqual(2);
 	});
 
 	// These are the unhappy-cases
 	it("throws a SyntaxError when the user-code has syntatically bad code", function(){
 	    var response = engine.piston.fire(JSON.stringify(BAD_SYNTAX_PAYLOAD));
-	    expect(response['returned_data']).toContain("SyntaxError");
+	    expect(response['last_exp_eval']).toContain("SyntaxError");
 	});
 
 	it("throws a ReferenceError when the user-code calls a function that is not defined in the Context", function(){
 	    var response = engine.piston.fire(JSON.stringify(BAD_CONTEXT_PAYLOAD));
-	    expect(response['returned_data']).toContain("ReferenceError");
+	    expect(response['last_exp_eval']).toContain("ReferenceError");
 	});
     });
     
