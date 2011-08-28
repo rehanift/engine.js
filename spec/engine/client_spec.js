@@ -1,7 +1,59 @@
 var engine = require("../../engine").engine;
 var mock = require("../spec_helper").mock;
+var util = require("util"), events = require("events");
 
 describe("Client", function(){
+    it("has an ID",function(){
+	var client = mock.createClient();
+	expect(client.id).toBeTruthy();
+    });
+
+    describe("#close", function(){
+	it("closes the intake manifold socket",function(){
+	    var client = mock.createClient();
+	    spyOn(client.sending_socket,'close');
+	    client.close();
+	    
+	    expect(client.sending_socket.close).toHaveBeenCalled();
+	});
+    });
+
+    describe("#run", function(){
+	it("sends a task to the intake manifold",function(){
+	    var client = mock.createClient();
+	    spyOn(client.sending_socket, "send");
+	    var task = mock.createTask("2",client);	    
+	    client.run(task);
+
+	    expect(client.sending_socket.send).toHaveBeenCalled();
+	});
+
+	it("tracks the running instance of a task",function(){
+	    spyOn(engine.util,'makeUUID').andReturn("3");
+	    var client = mock.createClient();
+	    var task = mock.createTask("2",client);
+	    client.run(task);
+
+	    expect(Object.keys(client.running_tasks)).toContain("3");
+	    expect(client.running_tasks["3"].id).toBe("2");
+	});
+
+    });
+
+    describe("#createTask", function(){
+	it("creates a new engine.task object",function(){
+	    var client = mock.createClient();
+	    var task = client.createTask();
+	    expect(task instanceof engine.task).toBeTruthy();
+	});
+
+	it("created engine.task object holds reference to originating client",function(){
+	    var client = mock.createClient();
+	    var task = client.createTask();
+	    expect(task.client).toBe(client);
+	});
+    });
+/*
     it("has a unique ID", function(){
         var client1 = new engine.client({
           cylinder_block: "ipc://cb1.ipc",
@@ -29,7 +81,9 @@ describe("Client", function(){
             client2.close();
         });        
     });
-
+*/
+    
+/*
     describe("event:'ready'", function(){
 	it("fires when a client's cylinders and crankshaft are connected", function(){
 	    var callback = jasmine.createSpy();
@@ -382,7 +436,8 @@ describe("Client", function(){
             });
         });
     });
-
+*/
+/*
     describe("#close", function(){
         it("closes all zeromq sockets", function(){
             var callback = jasmine.createSpy();
@@ -400,5 +455,5 @@ describe("Client", function(){
             });
         });
     });
-
+*/
 });
