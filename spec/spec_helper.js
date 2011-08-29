@@ -42,6 +42,7 @@ var mockSocket = function(){};
 util.inherits(mockSocket, events.EventEmitter);
 mockSocket.prototype.close = function(){};
 mockSocket.prototype.send = function(){};
+mockSocket.prototype.connect = function(){};
 mockSocket.prototype.bind = function(endpoint, callback){
     setTimeout(callback, 500);
 };
@@ -66,6 +67,32 @@ mock.createIntake = function(){
     });
 
     return intake;
+};
+
+var child_process = function(){};
+child_process.prototype.kill = function(){};
+mock.process = child_process;
+
+mock.createCylinder = function(){
+    var listening_socket = new mock.socket();
+    var piston_process = engine.process.create({
+	id:"1",
+	child_process_creator: function(){
+	    return new mock.process();
+	}
+    }); 
+    var cylinder = engine.cylinder.create({
+	id: "1",
+	listening_socket: listening_socket,
+	sending_socket: new mock.socket(),
+	piston_process: piston_process,
+	execution_watcher: engine.cylinder.executionWatcher.create({
+	    listening_socket: listening_socket,
+	    threshold: 1000,
+	    piston_process: piston_process
+	})
+    });
+    return cylinder;
 };
 
 exports.mock = mock;
