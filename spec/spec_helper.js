@@ -95,4 +95,12 @@ mock.createCylinder = function(){
     return cylinder;
 };
 
+var mock_sandbox_generator = function(){};
+mock_sandbox_generator.prototype.generate = function(){};
+mock.sandbox_generator = mock_sandbox_generator;
+
+var mock_execution_strategy = function(){};
+mock_execution_strategy.prototype.execute = function(){};
+mock.execution_strategy = mock_execution_strategy;
+
 exports.mock = mock;
