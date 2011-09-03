@@ -52,9 +52,11 @@ mockSocket.prototype.fakeSend = function(message){
 
 mock.socket = mockSocket;
 
-mock.createTask = function(id, client){
-    return new engine.task(id, client);
-};
+var mock_task = function(){};
+mock_task.prototype.getContext = function(){};
+mock_task.prototype.getLocals = function(){};
+mock_task.prototype.getCode = function(){};
+mock.task = mock_task;
 
 var child_process = function(){};
 child_process.prototype.kill = function(){};
