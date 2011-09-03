@@ -56,19 +56,6 @@ mock.createTask = function(id, client){
     return new engine.task(id, client);
 };
 
-mock.createIntake = function(){
-    var listening_socket = new mock.socket();    
-    var sending_socket = new mock.socket();    
-    var intake = new engine.intake(listening_socket, sending_socket);    
-
-    intake.initialize_sockets({
-	listening_endpoit: "foo",
-	sending_endpoint: "bar"
-    });
-
-    return intake;
-};
-
 var child_process = function(){};
 child_process.prototype.kill = function(){};
 mock.process = child_process;
