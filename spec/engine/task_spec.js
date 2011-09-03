@@ -1,7 +1,7 @@
 var engine = require("../../engine").engine;
 var mock = require("../spec_helper").mock;
 
-describe("Task", function(){
+xdescribe("Task", function(){
     it("has a unique ID", function(){
         var client = new engine.client();
         var task1 = client.createTask();
