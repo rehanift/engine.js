@@ -58,29 +58,8 @@ mock.createTask = function(id, client){
 
 var child_process = function(){};
 child_process.prototype.kill = function(){};
+child_process.prototype.restart = function(){};
 mock.process = child_process;
-
-mock.createCylinder = function(){
-    var listening_socket = new mock.socket();
-    var piston_process = engine.process.create({
-	id:"1",
-	child_process_creator: function(){
-	    return new mock.process();
-	}
-    }); 
-    var cylinder = engine.cylinder.create({
-	id: "1",
-	listening_socket: listening_socket,
-	sending_socket: new mock.socket(),
-	piston_process: piston_process,
-	execution_watcher: engine.cylinder.executionWatcher.create({
-	    listening_socket: listening_socket,
-	    threshold: 1000,
-	    piston_process: piston_process
-	})
-    });
-    return cylinder;
-};
 
 var mock_sandbox_generator = function(){};
 mock_sandbox_generator.prototype.generate = function(){};
@@ -89,5 +68,10 @@ mock.sandbox_generator = mock_sandbox_generator;
 var mock_execution_strategy = function(){};
 mock_execution_strategy.prototype.execute = function(){};
 mock.execution_strategy = mock_execution_strategy;
+
+var mock_execution_watcher = function(){};
+mock_execution_watcher.prototype.start = function(){};
+mock_execution_watcher.prototype.clear = function(){};
+mock.execution_watcher = mock_execution_watcher;
 
 exports.mock = mock;
