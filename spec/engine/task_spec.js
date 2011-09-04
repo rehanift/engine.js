@@ -5,8 +5,7 @@ describe("Task", function(){
     var task = engine.task.make({
         id: 2,
         client: new mock.client(),
-        subscriber_socket: new mock.socket(),
-        callback: function(){}
+        subscriber_socket: new mock.socket()
     });
 
     it("#run runs through the task's client", function(){
@@ -15,16 +14,16 @@ describe("Task", function(){
         expect(task.client.run).toHaveBeenCalled();
     });
 
-    it("correctly parses received messages", function(){
-        spyOn(task,'call_callback');
-        task.subscriber_socket.fakeSend('task-123 {"foo":"hello world"}');
-        expect(task.call_callback).toHaveBeenCalledWith('{"foo":"hello world"}');
+    it("emits an 'output' event when console messages are received", function(){
+        spyOn(task,'emit');
+        task.subscriber_socket.fakeSend('task-123 {"task_id":"task-123", "console":"hello world"}');
+        expect(task.emit).toHaveBeenCalledWith('output', 'hello world');
     });
 
-    it("calls its callback when results are received", function(){
-        spyOn(task,'call_callback');
-        task.subscriber_socket.fakeSend("{}");
-        expect(task.call_callback).toHaveBeenCalled();
+    it("emits an 'eval' event when evaluation messages are received", function(){
+        spyOn(task,'emit');
+        task.subscriber_socket.fakeSend('task-123 {"task_id":"task-123", "last_eval":"hello world"}');
+        expect(task.emit).toHaveBeenCalledWith('eval','hello world');
     });
 
 });
