@@ -69,7 +69,9 @@ var mock_execution_strategy = function(){};
 mock_execution_strategy.prototype.execute = function(){};
 mock.execution_strategy = mock_execution_strategy;
 
-var mock_execution_watcher = function(){};
+var mock_execution_watcher = function(){
+    this.piston_process = new mock.process();
+};
 mock_execution_watcher.prototype.start = function(){};
 mock_execution_watcher.prototype.clear = function(){};
 mock.execution_watcher = mock_execution_watcher;

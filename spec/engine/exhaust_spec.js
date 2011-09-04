@@ -19,5 +19,13 @@ describe("Exhaust", function(){
         exhaust.listening_socket.fakeSend(payload);
         expect(exhaust.publishing_socket.send).toHaveBeenCalledWith("foo " + payload);
     });
+
+    it("#close closes all sockets", function(){
+        spyOn(exhaust.listening_socket,'close');
+        spyOn(exhaust.publishing_socket,'close');
+        exhaust.close();
+        expect(exhaust.listening_socket.close).toHaveBeenCalled();
+        expect(exhaust.publishing_socket.close).toHaveBeenCalled();
+    });
     
 });

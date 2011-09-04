@@ -66,5 +66,12 @@ describe("Intake", function(){
 	    expect(callback.callCount).toBe(1);
 	});
     });
-    
+  
+    it("#close closes all sockets", function(){
+        spyOn(intake.listening_socket,'close');
+        spyOn(intake.sending_socket,'close');
+        intake.close();
+        expect(intake.listening_socket.close).toHaveBeenCalled();
+        expect(intake.sending_socket.close).toHaveBeenCalled();
+    });
 });

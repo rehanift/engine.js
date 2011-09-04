@@ -42,4 +42,16 @@ describe("Cylinder", function(){
             expect(cylinder.exhaust_socket.send).toHaveBeenCalled();
 	});
     });
+
+    it("#close closes all sockets", function(){
+        spyOn(cylinder.listening_socket,'close');
+        spyOn(cylinder.sending_socket,'close');
+        spyOn(cylinder.exhaust_socket,'close');
+        spyOn(cylinder.execution_watcher.piston_process,'kill');
+        cylinder.close();
+        expect(cylinder.listening_socket.close).toHaveBeenCalled();
+        expect(cylinder.sending_socket.close).toHaveBeenCalled();
+        expect(cylinder.exhaust_socket.close).toHaveBeenCalled();
+        expect(cylinder.execution_watcher.piston_process.kill).toHaveBeenCalled();
+    });
 });

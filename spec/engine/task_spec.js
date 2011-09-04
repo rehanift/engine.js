@@ -26,4 +26,10 @@ describe("Task", function(){
         expect(task.emit).toHaveBeenCalledWith('eval','hello world');
     });
 
+    it("#done closes all sockets", function(){
+        spyOn(task.subscriber_socket,'close');
+        task.done();
+        expect(task.subscriber_socket.close).toHaveBeenCalled();
+    });
+
 });
