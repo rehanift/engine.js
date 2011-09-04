@@ -6,6 +6,7 @@ describe("Cylinder", function(){
 	id: "1",
 	listening_socket: new mock.socket(),
 	sending_socket: new mock.socket(),
+        exhaust_socket: new mock.socket(),
 	piston_process: new mock.process(),
 	execution_watcher: new mock.execution_watcher()
     });    
@@ -36,7 +37,9 @@ describe("Cylinder", function(){
 	});
 
 	it("are forwarded to the exhaust publisher",function(){
-	    pending();
+            spyOn(cylinder.exhaust_socket,'send');
+	    cylinder.sending_socket.fakeSend({foo:"bar"});
+            expect(cylinder.exhaust_socket.send).toHaveBeenCalled();
 	});
     });
 });
