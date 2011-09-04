@@ -30,13 +30,11 @@ mock.intake_manifold = function(endpoint, callback){
     return mock;
 };
 
-mock.createClient = function(){
-    var sending_socket = new mock.socket();
-    var id = "1";
-    var listening_endpoint = "ipc://crankshaft.ipc";
-    
-    return new engine.client(id, sending_socket, listening_endpoint);
-};
+
+var mock_client = function(){};
+mock_client.prototype.run = function(){};
+mock.client = mock_client;
+
 
 var mockSocket = function(){};
 util.inherits(mockSocket, events.EventEmitter);

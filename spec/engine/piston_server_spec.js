@@ -17,19 +17,20 @@ describe("pistonServer", function(){
 
     it("accepts requests", function(){
         spyOn(server,'accept_request');
-        server.socket.fakeSend({foo:"bar"});       
+        server.socket.fakeSend('{foo:"bar"}');       
         expect(server.accept_request).toHaveBeenCalled();
     });
 
     it("processes requests through the piston", function(){
-        spyOn(server.piston, 'process_request');
-        server.socket.fakeSend({foo:"bar"});       
+        spyOn(server.piston, 'process_request').andReturn({foo:"baz"});        
+        server.accept_request('{foo:"bar"}');       
         expect(server.piston.process_request).toHaveBeenCalled();
     });
 
     it("sends responses", function(){
+        spyOn(server.piston, 'process_request').andReturn({foo:"baz"});        
         spyOn(server.socket,'send');
-        server.socket.fakeSend({foo:"bar"});
+        server.socket.fakeSend('{foo:"bar"}');
         expect(socket.send).toHaveBeenCalled();
     });
 

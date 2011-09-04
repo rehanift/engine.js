@@ -6,7 +6,10 @@ describe("Client", function(){
     var client = engine.client.make({
         id: "1",
         sending_socket: new mock.socket(),
-        listening_endpoint: "foo"
+        listening_endpoint: "foo",
+        task_creation_strategy: function(){
+            return new mock.task();
+        }
     });
     
     it("#close closes the intake manifold socket",function(){
@@ -23,14 +26,10 @@ describe("Client", function(){
     });
 
     describe("#createTask", function(){
-	it("creates a new engine.task object",function(){
-	    var task = client.createTask();
-	    expect(task instanceof engine.task).toBeTruthy();
-	});
-
-	it("created engine.task object holds reference to originating client",function(){
-	    var task = client.createTask();
-	    expect(task.client).toBe(client);
-	});
+        it("uses the client's task creator strategy", function(){
+            spyOn(client,'createTaskFromStrategy');
+            var task = client.createTask();
+            expect(client.createTaskFromStrategy).toHaveBeenCalled();
+        });
     });
 });
