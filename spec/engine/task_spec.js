@@ -15,6 +15,12 @@ describe("Task", function(){
         expect(task.client.run).toHaveBeenCalled();
     });
 
+    it("correctly parses received messages", function(){
+        spyOn(task,'call_callback');
+        task.subscriber_socket.fakeSend('task-123 {"foo":"hello world"}');
+        expect(task.call_callback).toHaveBeenCalledWith('{"foo":"hello world"}');
+    });
+
     it("calls its callback when results are received", function(){
         spyOn(task,'call_callback');
         task.subscriber_socket.fakeSend("{}");
