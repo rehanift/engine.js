@@ -34,4 +34,9 @@ describe("pistonServer", function(){
         expect(socket.send).toHaveBeenCalled();
     });
 
+    it("#close closes all sockets", function(){
+        spyOn(server.socket,'close');
+        server.close();
+        expect(server.socket.close).toHaveBeenCalled();
+    });
 });

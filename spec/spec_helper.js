@@ -76,4 +76,10 @@ mock_execution_watcher.prototype.start = function(){};
 mock_execution_watcher.prototype.clear = function(){};
 mock.execution_watcher = mock_execution_watcher;
 
+var mock_piston_server = function(){};
+mock_piston_server.prototype.accept_request = function(){};
+mock_piston_server.prototype.send_response = function(){};
+mock_piston_server.prototype.close = function(){};
+mock.piston_server = mock_piston_server;
+
 exports.mock = mock;

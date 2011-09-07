@@ -8,3 +8,7 @@ var cylinder_id = process.argv[2];
 var piston = engine.piston.create({
   listening_endpoint: "ipc://"+cylinder_id+".ipc"
 });
+
+process.on('SIGTERM', function(){
+    piston.close();
+});
