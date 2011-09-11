@@ -15,7 +15,14 @@
    border-radius: 4px;
 }
 
-#code_editor, #context_editor {
+.navigation .topbar h3 {
+   font-family: 'Sorts Mill Goudy', serif;
+   color: #ccc;
+   text-shadow: #000 -1px -1px 0;
+   font-weight: normal;
+}
+
+#editor {
    position: relative;
    width: 450px;
    height: 300px;
@@ -36,4 +43,10 @@
 .application .controls {
    text-align: right;
    margin: 10px 30px;
+}
+
+.application h3 {
+   font-family: 'Sorts Mill Goudy', serif;
+   text-shadow: #fff 1px 1px 0;
+   font-weight: normal;
 }
