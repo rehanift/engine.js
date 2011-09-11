@@ -17,6 +17,15 @@ describe("execution watcher", function(){
         });
     });
 
+    it("emits a 'kill' event", function(){
+        spyOn(watcher,'emit');
+        watcher.start();
+        waits(2000);
+        runs(function(){
+            expect(watcher.emit).toHaveBeenCalledWith("kill");
+        });
+    });
+
     it("restarts a killed process",function(){
         spyOn(process,'restart');
         watcher.start();
