@@ -2,22 +2,11 @@ var engine = require("../../engine").engine,
     mock = require("../spec_helper").mock;
 
 describe("execution watcher", function(){
-    var process = new mock.process();
     var watcher = engine.cylinder.executionWatcher.make({
-        threshold: 1000,
-        piston_process: process
+        threshold: 1000
     });
-
-    it("kills a process when it runs for too long",function(){
-        spyOn(process,'kill');
-        watcher.start();
-        waits(2000);
-        runs(function(){
-            expect(process.kill).toHaveBeenCalled();
-        });
-    });
-
-    it("emits a 'kill' event", function(){
+    
+    it("emits a 'kill' event when the threshold has expired", function(){
         spyOn(watcher,'emit');
         watcher.start();
         waits(2000);
@@ -26,13 +15,11 @@ describe("execution watcher", function(){
         });
     });
 
-    it("restarts a killed process",function(){
-        spyOn(process,'restart');
-        watcher.start();
-        waits(2000);
-        runs(function(){
-            expect(process.restart).toHaveBeenCalled();
-        });
+    it("throws an error when calling start on an already started watcher", function(){
+        expect(function(){
+            watcher.start();
+            watcher.start();
+        }).toThrow("This watcher has already been started");
     });
 });
 

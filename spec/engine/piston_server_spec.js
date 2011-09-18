@@ -6,37 +6,32 @@ mock_piston.prototype.process_request = function(){};
 mock.piston = mock_piston;
 
 describe("pistonServer", function(){
-
-    var socket = new mock.socket(),
-        piston = new mock.piston();
     
     var server = engine.piston.server.make({
-        socket: socket,
-        piston: piston
+        socket: new mock.socket(),
+        watcher_socket: new mock.socket(),
+        piston: new mock.piston(),
+        result_socket: new mock.socket()
     });
-
-    it("accepts requests", function(){
-        spyOn(server,'accept_request');
-        server.socket.fakeSend('{foo:"bar"}');       
-        expect(server.accept_request).toHaveBeenCalled();
-    });
-
-    it("processes requests through the piston", function(){
-        spyOn(server.piston, 'process_request').andReturn({foo:"baz"});        
-        server.accept_request('{foo:"bar"}');       
+    
+    it("calls the piston to begin task execution", function(){
+        spyOn(server.piston, 'process_request').andReturn(mock.TASK_RESULTS);        
+        server.socket.fakeSend(mock.TASK_PAYLOAD);
         expect(server.piston.process_request).toHaveBeenCalled();
     });
 
-    it("sends responses", function(){
-        spyOn(server.piston, 'process_request').andReturn({foo:"baz"});        
-        spyOn(server.socket,'send');
-        server.socket.fakeSend('{foo:"bar"}');
-        expect(socket.send).toHaveBeenCalled();
+    it("sends responses to the cylinder when the watcher has stopped", function(){
+        spyOn(server.piston, 'process_request').andReturn(mock.TASK_RESULTS);        
+        spyOn(server.result_socket,'send');
+        server.socket.fakeSend(mock.TASK_PAYLOAD);
+        expect(server.result_socket.send).toHaveBeenCalled();
     });
 
     it("#close closes all sockets", function(){
         spyOn(server.socket,'close');
+        spyOn(server.result_socket,'close');
         server.close();
         expect(server.socket.close).toHaveBeenCalled();
+        expect(server.result_socket.close).toHaveBeenCalled();
     });
 });

@@ -6,7 +6,9 @@ describe("piston", function(){
         execution_strategy: new mock.execution_strategy(),
         console_socket: new mock.socket(),
         sandbox_generator: new mock.sandbox_generator(),
-        server_socket: new mock.socket()
+        server_socket: new mock.socket(),
+        result_socket: new mock.socket(),
+        watcher_socket: new mock.socket()
     });
 
     describe("#process_request", function(){

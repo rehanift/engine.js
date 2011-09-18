@@ -3,6 +3,20 @@ var util = require("util"),
     engine = require("../engine").engine;
 
 var mock = {};
+
+mock.TASK_PAYLOAD = JSON.stringify({
+    task_id: "1",
+    context: "",
+    code: "",
+    locals: {}
+});
+
+mock.TASK_RESULTS = JSON.stringify({
+    task_id: "1",
+    last_eval: ""
+});
+
+
 mock.crankshaft = function(endpoint){
     var context = require("zeromq");
     var mockCrankshaft = context.createSocket("push");
@@ -56,10 +70,25 @@ mock_task.prototype.getLocals = function(){};
 mock_task.prototype.getCode = function(){};
 mock.task = mock_task;
 
-var child_process = function(){};
+var stdout = function(){};
+util.inherits(stdout, events.EventEmitter);
+var stderr = function(){};
+util.inherits(stderr, events.EventEmitter);
+
+var child_process = function(){
+    this.stdout = stdout;
+    this.stderr = stderr;
+};
+util.inherits(child_process, events.EventEmitter);
+
 child_process.prototype.kill = function(){};
-child_process.prototype.restart = function(){};
 mock.process = child_process;
+
+var spawner = function(){};
+spawner.prototype.spawn = function(){
+    return new mock.process();
+};
+mock.process_spawner = spawner;
 
 var mock_sandbox_generator = function(){};
 mock_sandbox_generator.prototype.generate = function(){};
@@ -72,6 +101,7 @@ mock.execution_strategy = mock_execution_strategy;
 var mock_execution_watcher = function(){
     this.piston_process = new mock.process();
 };
+util.inherits(mock_execution_watcher, events.EventEmitter);
 mock_execution_watcher.prototype.start = function(){};
 mock_execution_watcher.prototype.clear = function(){};
 mock.execution_watcher = mock_execution_watcher;
