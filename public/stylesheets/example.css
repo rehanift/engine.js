@@ -24,7 +24,6 @@
 
 #editor {
    position: relative;
-   width: 450px;
    height: 300px;
 }
 
@@ -49,4 +48,9 @@
    font-family: 'Sorts Mill Goudy', serif;
    text-shadow: #fff 1px 1px 0;
    font-weight: normal;
+}
+
+.application code {
+  background-color: transparent;
+  line-height: 17px;
 }

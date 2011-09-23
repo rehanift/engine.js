@@ -4,12 +4,15 @@
     
     <link rel="stylesheet" href="./stylesheets/bootstrap-1.2.0.min.css">
     <link rel="stylesheet" href="./stylesheets/example.css">
+    <link rel="stylesheet" href="./stylesheets/prettify.css">
     <link href='http://fonts.googleapis.com/css?family=Sorts+Mill+Goudy' rel='stylesheet' type='text/css'>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="./javascripts/ace/src/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="./javascripts/ace/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
     <script src="./javascripts/ace/src/theme-idle_fingers.js" type="text/javascript" charset="utf-8"></script>    
+    <script src="./javascripts/prettify.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./javascripts/js_beautifier.js" type="text/javascript" charset="utf-8"></script>
     <script src="./javascripts/example.js" type="text/javascript" charset="utf-8"></script>
     <script src="./javascripts/socket.io/socket.io.js" type="text/javascript" charset="utf-8"></script>
 
@@ -30,10 +33,9 @@
       
       <section class="application">
         <div class="row">
-          <div class="span8 columns">
+          <div class="span16 columns">
             <ul class="pills">
-              <li class="getting-started active"><a href="#">Getting Started</a></li>
-              <li class="code"><a href="#">Code</a></li>
+              <li class="active code"><a href="#">Code</a></li>
               <li class="context"><a href="#">Context</a></li>
             </ul>
 
@@ -43,12 +45,13 @@
               <button id="run" class="btn primary">Run</button>
             </div>
           </div>
-          <div class="span8 columns"> 
+        </div>
+        <div class="row">
+          <div class="span16 columns">            
             <h3>Console</h3>
-            <div class="console"><pre id="console"></pre></div>
-
-            <h3>Eval</h3>
-            <div class="eval"><pre id="eval"></pre></div>
+            <ul id="console">
+              
+            </ul>
           </div>
         </div>
       </section>            

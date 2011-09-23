@@ -45,18 +45,21 @@ $(document).ready(function(){
 var socket;
 $(document).ready(function(){
   socket = io.connect('http://localhost:3000');
+
   socket.on('console', function(data){
-    $("#console").text(data);
+    $("#console").append("<li class='output'><pre class='prettyprint'><code class='language-js'>"+js_beautify(data)+"</code></pre></li>");
+    prettyPrint();
   });
 
   socket.on('eval', function(data){
-    $("#eval").text(data);
+    $("#console").append("<li class='eval'>"+data+"</li>");
   });
 
 });
 
 $(document).ready(function(){
   $("#run").click(function(){
+    $("#console").html('');
     socket.emit('run', {
       code: window.ace_sessions['code'].getValue(),
       context: window.ace_sessions['context'].getValue()      
