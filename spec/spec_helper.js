@@ -112,4 +112,10 @@ mock_piston_server.prototype.send_response = function(){};
 mock_piston_server.prototype.close = function(){};
 mock.piston_server = mock_piston_server;
 
+var mock_logging_client = function(){};
+mock_logging_client.prototype.log = function(){};
+mock.logging_client = mock_logging_client;
+
+mock.log_message = function(){};
+
 exports.mock = mock;

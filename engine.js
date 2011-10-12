@@ -10,5 +10,6 @@ engine.piston = require("./lib/engine/piston").piston;
 engine.util = require("./lib/engine/util");
 engine.intake = require("./lib/engine/intake").intake;
 engine.exhaust = require("./lib/engine/exhaust").exhaust;
+engine.logging_gateway = require("./lib/engine/logger/logging_gateway").logging_gateway;
 
 exports.engine = engine;
