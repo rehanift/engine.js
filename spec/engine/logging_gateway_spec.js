@@ -30,4 +30,20 @@ describe("Logging Gateway", function(){
 	expect(mock_logger_1.log).toHaveBeenCalledWith(mock_log_message);
 	expect(mock_logger_2.log).toHaveBeenCalledWith(mock_log_message);
     });
+
+    it("log({}) is a shorter version of log_message(message)", function(){
+	var mock_logger = new mock.logging_client();
+	var logger_spy = spyOn(mock_logger,'log');
+
+	logging_gateway.add_logger(mock_logger);
+
+	logging_gateway.log({
+	    task_id:"123",
+	    component:"test",
+	    action:"is being tested"
+	});
+
+	expect(mock_logger.log).toHaveBeenCalled();
+	expect(logger_spy.mostRecentCall.args[0] instanceof engine.log_message).toBeTruthy();
+    });
 });

@@ -3,6 +3,7 @@ var engine = require("../../engine").engine,
 
 describe("Cylinder", function(){    
     var cylinder;
+
     beforeEach(function(){
         cylinder = engine.cylinder.make({
 	    id: "1",
@@ -11,7 +12,8 @@ describe("Cylinder", function(){
 	    results_socket: new mock.socket(),
             exhaust_socket: new mock.socket(),
 	    execution_watcher: new mock.execution_watcher(),
-            process_spawner: new mock.process_spawner()
+            process_spawner: new mock.process_spawner(),
+	    logging_gateway: new mock.logging_gateway()
         });    
     });
 

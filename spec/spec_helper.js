@@ -112,10 +112,23 @@ mock_piston_server.prototype.send_response = function(){};
 mock_piston_server.prototype.close = function(){};
 mock.piston_server = mock_piston_server;
 
+var mock_logging_gateway = function(){};
+mock_logging_gateway.prototype.log_message = function(){};
+mock_logging_gateway.prototype.log = function(){};
+mock.logging_gateway = mock_logging_gateway;
+
 var mock_logging_client = function(){};
 mock_logging_client.prototype.log = function(){};
 mock.logging_client = mock_logging_client;
 
 mock.log_message = function(){};
+
+var mock_log_formatter = function(){};
+mock_log_formatter.prototype.format = function(){};
+mock.log_formatter = mock_log_formatter;
+
+var mock_log_writer = function(){};
+mock_log_writer.prototype.write = function(){};
+mock.log_writer = mock_log_writer;
 
 exports.mock = mock;

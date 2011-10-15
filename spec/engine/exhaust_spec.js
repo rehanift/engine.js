@@ -4,7 +4,8 @@ var mock = require("../spec_helper").mock;
 describe("Exhaust", function(){    
     var exhaust = engine.exhaust.make({
         listening_socket: new mock.socket(),
-        publishing_socket: new mock.socket()
+        publishing_socket: new mock.socket(),
+	logging_gateway: new mock.logging_gateway()
     });
 
     it("publishes received messages", function(){

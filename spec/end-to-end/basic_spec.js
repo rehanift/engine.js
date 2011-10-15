@@ -1,12 +1,12 @@
 var engine = require("../../engine").engine;
+var client, task, intake, exhaust, cylinder, cylinder2, logging_gateway;
+
+intake = engine.intake.create();
+exhaust = engine.exhaust.create();
+cylinder = engine.cylinder.create();
+client = engine.client.create();
 
 describe("basic operations", function(){
-    var client, task, intake, exhaust, cylinder, cylinder2;
-    
-    intake = engine.intake.create();
-    exhaust = engine.exhaust.create();
-    cylinder = engine.cylinder.create();
-    client = engine.client.create();
 
     it("evaluates user code", function(){
         var callback = jasmine.createSpy();

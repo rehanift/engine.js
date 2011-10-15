@@ -1,13 +1,12 @@
 var engine = require("../../engine").engine;
+var client, task, intake, exhaust, cylinder;
+    
+intake = engine.intake.create();
+exhaust = engine.exhaust.create();
+cylinder = engine.cylinder.create();
+client = engine.client.create();
 
 describe("error scenarios", function(){
-    var client, task, intake, exhaust, cylinder;
-    
-    intake = engine.intake.create();
-    exhaust = engine.exhaust.create();
-    cylinder = engine.cylinder.create();
-    client = engine.client.create();
-
     it("throws a TimeoutError", function(){
         var callback = jasmine.createSpy();
         task = client.createTask();
