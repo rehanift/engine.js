@@ -1,9 +1,17 @@
 var engine = require("./engine").engine;
-var client, task, intake, exhaust, cylinder;
+var client, task, intake, exhaust, cylinder, logging_gateway, stdout_client, logging_opts;
 
-intake = engine.intake.create();
-exhaust = engine.exhaust.create();
-cylinder = engine.cylinder.create();
+logging_gateway = engine.logging_gateway.create();
+stdout_client = engine.logging_stdout_client.create();
+logging_gateway.add_logger(stdout_client);
+
+logging_opts = {
+    logging_gateway: logging_gateway
+};
+
+intake = engine.intake.create(logging_opts);
+exhaust = engine.exhaust.create(logging_opts);
+cylinder = engine.cylinder.create(logging_opts);
 client = engine.client.create();
 
 var express = require("express");
