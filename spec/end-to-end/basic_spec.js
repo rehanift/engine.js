@@ -3,7 +3,9 @@ var client, task, intake, exhaust, cylinder, cylinder2, logging_gateway;
 
 intake = engine.intake.create();
 exhaust = engine.exhaust.create();
-cylinder = engine.cylinder.create();
+cylinder = engine.cylinder.create({
+    threshold: 1000
+});
 client = engine.client.create();
 
 describe("basic operations", function(){
@@ -117,7 +119,7 @@ describe("basic operations", function(){
       
         // we need to make sure this cylinder closes completely before the next test starts, otherwise
         //   it will consume a task and never process it
-        waits(5000);
+        waits(100);
         
     });
 
@@ -155,7 +157,7 @@ describe("basic operations", function(){
       
         // we need to make sure this cylinder closes completely before the next test starts, otherwise
         //   it will consume a task and never process it
-        waits(5000);
+        waits(100);
         
     });
 
@@ -198,7 +200,7 @@ describe("basic operations", function(){
         intake.close();
         client.close();        
 
-        waits(5000);
+        waits(100);
     });
 
 });

@@ -3,7 +3,9 @@ var client, task, intake, exhaust, cylinder;
     
 intake = engine.intake.create();
 exhaust = engine.exhaust.create();
-cylinder = engine.cylinder.create();
+cylinder = engine.cylinder.create({
+    threshold: 1000
+});
 client = engine.client.create();
 
 describe("error scenarios", function(){
@@ -75,7 +77,7 @@ describe("error scenarios", function(){
         intake.close();
         client.close();        
 
-        waits(5000);
+        waits(1000);
     });
 
 });

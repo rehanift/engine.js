@@ -30,7 +30,7 @@ describe("configurations", function(){
             intake.close();
             client.close();        
 
-            waits(500);
+            waits(100);
 	});
 	
 	it("evaluates user code", function(){
