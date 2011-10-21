@@ -1,0 +1,84 @@
+#+TITLE: Engine.js
+
+* What is Engine.js?
+  Engine.js is a framework for enabling end-users to write their own
+  javascript code against a (securely) provided context. Its a method
+  of providing javascript sandboxing within your own applications.
+
+  Engine.js aims to be both secure and scalable.
+
+  Engine.js currently uses Node.js for script evaluation. It has
+  client libraries in Node.js (bundled), Ruby, and PHP.
+
+* Dependencies
+   - Linux or OSX
+   - Node.js
+   - NPM
+   - ZeroMQ
+     - OS X
+       #+begin_src sh
+         brew install zeromq
+       #+end_src
+     - Linux
+       - See documentation
+
+* Quick Start
+  - Install the library
+  #+begin_src sh
+    npm install engine.js
+  #+end_src
+  
+  - Start the server
+  #+begin_src sh
+    node script/server
+  #+end_src
+
+  - Write your code
+  #+begin_src javascript
+    var engine = require("engine");
+    client = engine.client.create();
+    
+    task = client.createTask();
+    task.setContext("(function(locals){ return { add: function(a,b){ return a+b } } })");
+    task.setLocals({});
+    task.setCode('add(1,2)');        
+    
+    task.on('eval', function(data){
+        console.log('your code was evaluated as:', data);
+    });
+    
+    task.run();
+    
+  #+end_src
+  
+  - Profit!
+
+* Framework overview
+** Components
+*** Client 
+    The client is responsible for producing Tasks and
+    sending them off to the server for evaulation.
+    
+**** Task
+     The Task is the central unit of work in the entire system. A Task holds:
+       1) Context: The global scope that user-code is run against
+       2) Code: The user-code to run against the context
+       3) Runtime variable bindings: Variable mappings to render within the context
+
+*** Server
+**** Intake
+     The Intake is responsible for accepting Tasks from many clients
+     and fairly distributing to all available Cylinders. 
+
+**** Cylinder
+     The Cylinders are responsible for accepting Tasks from the
+     Intake, sending them to their Piston, and sending Task evaulation
+     results to the Exhaust. Every Cylinder has its own Piston.
+
+***** Piston
+      The Piston is where the task is actually evaluated. All Pistons
+      run in their own process.
+
+**** Exhaust
+     The Exhaust accepts Task results from all Cylinders and then
+     forwards them back to the originating Client.
