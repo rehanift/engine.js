@@ -1,0 +1,24 @@
+{
+  "author": "Rehan Iftikhar <rehan.iftikhar@gmail.com>",
+  "name": "engine.js",
+  "description": "A scriptable task engine",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "ssh://anarrayofbytes.com/~/repos/robust.js.git"
+  },
+  "main": "engine",
+  "scripts": {
+    "test": "make test"
+  },
+  "engines": {
+    "node": "~0.4.12"
+  },
+  "dependencies": {
+      "zmq" : "1.0.x",
+      "node-uuid" : "1.1.0"
+  },
+  "devDependencies": {
+      "jessie" : "0.3.x"
+  }
+}
