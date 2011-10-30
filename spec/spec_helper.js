@@ -17,34 +17,6 @@ mock.TASK_RESULTS = JSON.stringify({
 });
 
 
-mock.crankshaft = function(endpoint){
-    var context = require("zeromq");
-    var mockCrankshaft = context.createSocket("push");
-    mockCrankshaft.connect(endpoint);
-
-    return mockCrankshaft;
-};
-
-mock.cylinder_block = function(endpoint){
-    var context = require("zeromq");
-    var mockCylinderBlock = context.createSocket("pull");
-    mockCylinderBlock.connect(endpoint);
-
-    return mockCylinderBlock;
-};
-
-mock.intake_manifold = function(endpoint, callback){
-    var context = require("zeromq");
-    var mock = context.createSocket("pull");
-    mock.bind(endpoint, function(err){
-	if (err) throw err;
-	if (typeof callback != "undefined") callback();
-    });
-
-    return mock;
-};
-
-
 var mock_client = function(){};
 mock_client.prototype.run = function(){};
 mock.client = mock_client;
