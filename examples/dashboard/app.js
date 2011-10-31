@@ -1,4 +1,4 @@
-var engine = require("./engine").engine;
+var engine = require("engine.js").engine;
 var client, task, intake, exhaust, cylinder, logging_gateway, stdout_client, logging_opts;
 
 logging_gateway = engine.logging_gateway.create();
