@@ -12,13 +12,13 @@
     "test": "make test"
   },
   "engines": {
-    "node": "~0.4.12"
+    "node": "*"
   },
   "dependencies": {
       "zmq" : "1.0.x",
       "node-uuid" : "1.1.0"
   },
   "devDependencies": {
-      "jessie" : "0.3.x"
+      "jasmine-node" : "*"
   }
 }
