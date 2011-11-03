@@ -7,13 +7,26 @@ NODE_VERSION ?= v0.4.12
 GOTO_BUILD_DIR = cd $(BUILD_DIR); source ~/.nvm/nvm.sh; nvm use $(NODE_VERSION); 
 all: test
 
-test: unit-test end-to-end-test
+test: unit-test # end-to-end-test <-- for now this can only run against a deploy. we might need a separate test-piston script?
+
+build: deploy verify-deploy
+
+deps:
+	npm install node-uuid
+	npm install zmq
 
 unit-test:
 	jasmine-node spec/engine/
 	jasmine-node spec/mixins/
 
-end-to-end-test: deploy
+#end-to-end-test: 
+#	jasmine-node spec/end-to-end/basic_spec.js
+#	jasmine-node spec/end-to-end/errors_spec.js
+#	jasmine-node spec/end-to-end/configuration_spec.js
+
+verify-deploy:
+	$(GOTO_BUILD_DIR) jasmine-node node_modules/engine.js/spec/engine/
+	$(GOTO_BUILD_DIR) jasmine-node node_modules/engine.js/spec/mixins/
 	$(GOTO_BUILD_DIR) jasmine-node node_modules/engine.js/spec/end-to-end/basic_spec.js
 	$(GOTO_BUILD_DIR) jasmine-node node_modules/engine.js/spec/end-to-end/errors_spec.js
 	$(GOTO_BUILD_DIR) jasmine-node node_modules/engine.js/spec/end-to-end/configuration_spec.js
