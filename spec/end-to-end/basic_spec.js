@@ -4,7 +4,8 @@ var client, client2, task, intake, exhaust, cylinder, cylinder2, logging_gateway
 intake = engine.intake.create();
 exhaust = engine.exhaust.create();
 cylinder = engine.cylinder.create({
-    threshold: 1000
+    threshold: 1000,
+    piston_script: "./script/piston.js"
 });
 client = engine.client.create();
 
@@ -81,7 +82,9 @@ describe("basic operations", function(){
     });
 
     it("evaluates two tasks across two cylinders", function(){
-        cylinder2 = engine.cylinder.create();
+        cylinder2 = engine.cylinder.create({
+	    piston_script: "./script/piston.js"
+	});
 
         var callback1 = jasmine.createSpy();
         var callback2 = jasmine.createSpy();
@@ -124,7 +127,9 @@ describe("basic operations", function(){
     });
 
     it("task tasks, two cylinders, both pushlishing to console", function(){
-        cylinder2 = engine.cylinder.create();
+        cylinder2 = engine.cylinder.create({
+	    piston_script: "./script/piston.js"
+	});
 
         var callback1 = jasmine.createSpy();
         var callback2 = jasmine.createSpy();

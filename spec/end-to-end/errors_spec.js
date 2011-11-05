@@ -4,7 +4,8 @@ var client, task, intake, exhaust, cylinder;
 intake = engine.intake.create();
 exhaust = engine.exhaust.create();
 cylinder = engine.cylinder.create({
-    threshold: 1000
+    threshold: 1000,
+    piston_script: "./script/piston.js"
 });
 client = engine.client.create();
 
