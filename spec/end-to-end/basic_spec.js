@@ -1,5 +1,5 @@
 var engine = require("../../engine").engine;
-var client, task, intake, exhaust, cylinder, cylinder2, logging_gateway;
+var client, client2, task, intake, exhaust, cylinder, cylinder2, logging_gateway;
 
 intake = engine.intake.create();
 exhaust = engine.exhaust.create();
@@ -191,6 +191,44 @@ describe("basic operations", function(){
         });
         
     });
+
+    it("evaluates two tasks from two clients", function(){
+	client2 = engine.client.create();
+
+	var callback = jasmine.createSpy();
+        task = client.createTask();
+        task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
+        task.setLocals({});
+        task.setCode("add(1,0)");        
+        task.on('eval', callback);
+        task.run();
+        
+        waitsFor(function(){
+            return callback.callCount > 0;
+        });
+
+        var callback2 = jasmine.createSpy();
+        var task2 = client2.createTask();
+        task2.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
+        task2.setLocals({});
+        task2.setCode("add(2,2)");        
+        task2.on('eval', callback2);
+        task2.run();
+        
+        waitsFor(function(){
+            return callback.callCount > 0 && callback2.callCount;
+        });
+
+        runs(function(){
+            expect(callback.mostRecentCall.args[0]).toBe(1);
+            expect(callback2.mostRecentCall.args[0]).toBe(4);
+            task.done();
+            task2.done();
+	    client2.close();
+        });
+        
+    });
+
 
 
     // This test must always run last
