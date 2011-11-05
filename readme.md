@@ -14,6 +14,8 @@ Engine.js aims to be both secure and scalable.
 Engine.js currently uses Node.js for script evaluation. It has
 client libraries in Node.js (bundled), Ruby (planned), and PHP (planned).
 
+See the [wiki](https://github.com/rehanift/engine.js/wiki) for more information.
+
 ### Dependencies
    - Linux or OS X
    - Node.js (v0.4 ONLY)
@@ -27,21 +29,23 @@ client libraries in Node.js (bundled), Ruby (planned), and PHP (planned).
   
   - Start the server: `node script/server`
 
-  - Write your code
+  - Write your code    
+
+	```javascript
+    var engine = require("engine.js");
+	client = engine.client.create();
 	    
-		var engine = require("engine.js");
-	    client = engine.client.create();
-	    
-	    task = client.createTask();
-	    task.setContext("(function(locals){ return { add: function(a,b){ return a+b } } })");
-	    task.setLocals({});
-	    task.setCode('add(1,2)');        
-          
-	    task.on('eval', function(data){
-	      console.log('your code was evaluated as:', data);
-	    });
-          
-        task.run();
+	task = client.createTask();
+	task.setContext("(function(locals){ return { add: function(a,b){ return a+b } } })");
+	task.setLocals({});
+	task.setCode('add(1,2)');        
+      
+	task.on('eval', function(data){
+	  console.log('your code was evaluated as:', data); //#=> 3	  
+	});
+      
+    task.run();
+	```
       
   - Profit!
 
