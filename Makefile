@@ -33,7 +33,7 @@ verify-deploy:
 
 deploy:
 	$(MKDIR) $(BUILD_DIR)
-	$(GOTO_BUILD_DIR) npm install --dev ../../robust.js
+	$(GOTO_BUILD_DIR) npm install --dev ../../engine.js
 
 clean:
 	rm -r $(BUILD_BASEDIR)
