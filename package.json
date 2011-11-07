@@ -5,7 +5,7 @@
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "ssh://anarrayofbytes.com/~/repos/robust.js.git"
+    "url": "git://github.com/rehanift/engine.js.git"
   },
   "main": "engine",
   "scripts": {
@@ -19,6 +19,7 @@
       "node-uuid" : "1.1.0"
   },
   "devDependencies": {
-      "jasmine-node" : "*"
+      "jasmine-node" : "*",
+      "underscore" : "*"
   }
 }
