@@ -69,6 +69,14 @@ describe("Client", function(){
 	    expect(mock_task.emit).toHaveBeenCalledWith("eval","foo bar");
 	});
 
+	it("unsubscribes the listening socket when a task has been evaluated", function(){
+	    var mock_task = new mock.task();	    
+	    spyOn(client,'find_task_by_id').andReturn(mock_task);
+	    spyOn(client.listening_socket,'unsubscribe');
+	    client.listening_socket.fakeSend(mock_task.id+' {"task_id":"'+mock_task.id+'", "last_eval":"foo bar"}');
+	    expect(client.listening_socket.unsubscribe).toHaveBeenCalledWith(mock_task.id);
+	});
+
     });
 
 });
