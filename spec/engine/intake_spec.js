@@ -8,7 +8,8 @@ describe("Intake", function(){
     beforeEach(function(){
         intake = engine.intake.make({
             listening_socket: new mock.socket(),
-            sending_socket: new mock.socket()
+            sending_socket: new mock.socket(),
+	    logging_gateway: new mock.logging_gateway()
         });
     });        
         
@@ -36,7 +37,7 @@ describe("Intake", function(){
 	});
         
 	runs(function(){
-	    intake.listening_socket.fakeSend({foo:"bar"});
+	    intake.listening_socket.fakeSend(JSON.stringify({foo:"bar"}));
 	    expect(intake.sending_socket.send).toHaveBeenCalled();		
 	});
     });

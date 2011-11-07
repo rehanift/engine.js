@@ -3,13 +3,13 @@ var engine = require("../../engine").engine,
 
 describe("execution watcher", function(){
     var watcher = engine.cylinder.executionWatcher.make({
-        threshold: 1000
+        threshold: 100
     });
     
     it("emits a 'kill' event when the threshold has expired", function(){
         spyOn(watcher,'emit');
         watcher.start();
-        waits(2000);
+        waits(500);
         runs(function(){
             expect(watcher.emit).toHaveBeenCalledWith("kill");
         });

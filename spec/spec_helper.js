@@ -17,34 +17,6 @@ mock.TASK_RESULTS = JSON.stringify({
 });
 
 
-mock.crankshaft = function(endpoint){
-    var context = require("zeromq");
-    var mockCrankshaft = context.createSocket("push");
-    mockCrankshaft.connect(endpoint);
-
-    return mockCrankshaft;
-};
-
-mock.cylinder_block = function(endpoint){
-    var context = require("zeromq");
-    var mockCylinderBlock = context.createSocket("pull");
-    mockCylinderBlock.connect(endpoint);
-
-    return mockCylinderBlock;
-};
-
-mock.intake_manifold = function(endpoint, callback){
-    var context = require("zeromq");
-    var mock = context.createSocket("pull");
-    mock.bind(endpoint, function(err){
-	if (err) throw err;
-	if (typeof callback != "undefined") callback();
-    });
-
-    return mock;
-};
-
-
 var mock_client = function(){};
 mock_client.prototype.run = function(){};
 mock.client = mock_client;
@@ -55,6 +27,8 @@ util.inherits(mockSocket, events.EventEmitter);
 mockSocket.prototype.close = function(){};
 mockSocket.prototype.send = function(){};
 mockSocket.prototype.connect = function(){};
+mockSocket.prototype.subscribe = function(){};
+mockSocket.prototype.unsubscribe = function(){};
 mockSocket.prototype.bind = function(endpoint, callback){
     setTimeout(callback, 500);
 };
@@ -64,10 +38,14 @@ mockSocket.prototype.fakeSend = function(message){
 
 mock.socket = mockSocket;
 
-var mock_task = function(){};
+var mock_task = function(){
+    this.id = Math.floor(Math.random() * 100);
+};
 mock_task.prototype.getContext = function(){};
 mock_task.prototype.getLocals = function(){};
 mock_task.prototype.getCode = function(){};
+mock_task.prototype.on = function(){};
+mock_task.prototype.emit = function(){};
 mock.task = mock_task;
 
 var stdout = function(){};
@@ -111,5 +89,24 @@ mock_piston_server.prototype.accept_request = function(){};
 mock_piston_server.prototype.send_response = function(){};
 mock_piston_server.prototype.close = function(){};
 mock.piston_server = mock_piston_server;
+
+var mock_logging_gateway = function(){};
+mock_logging_gateway.prototype.log_message = function(){};
+mock_logging_gateway.prototype.log = function(){};
+mock.logging_gateway = mock_logging_gateway;
+
+var mock_logging_client = function(){};
+mock_logging_client.prototype.log = function(){};
+mock.logging_client = mock_logging_client;
+
+mock.log_message = function(){};
+
+var mock_log_formatter = function(){};
+mock_log_formatter.prototype.format = function(){};
+mock.log_formatter = mock_log_formatter;
+
+var mock_log_writer = function(){};
+mock_log_writer.prototype.write = function(){};
+mock.log_writer = mock_log_writer;
 
 exports.mock = mock;

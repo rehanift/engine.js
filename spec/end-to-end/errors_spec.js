@@ -1,13 +1,15 @@
 var engine = require("../../engine").engine;
+var client, task, intake, exhaust, cylinder;
+    
+intake = engine.intake.create();
+exhaust = engine.exhaust.create();
+cylinder = engine.cylinder.create({
+    threshold: 1000,
+    piston_script: "./script/piston.js"
+});
+client = engine.client.create();
 
 describe("error scenarios", function(){
-    var client, task, intake, exhaust, cylinder;
-    
-    intake = engine.intake.create();
-    exhaust = engine.exhaust.create();
-    cylinder = engine.cylinder.create();
-    client = engine.client.create();
-
     it("throws a TimeoutError", function(){
         var callback = jasmine.createSpy();
         task = client.createTask();
@@ -23,7 +25,6 @@ describe("error scenarios", function(){
 
         runs(function(){
             expect(callback.mostRecentCall.args[0]).toContain("TimeoutError");
-            task.done();
         });
         
     });
@@ -43,7 +44,6 @@ describe("error scenarios", function(){
 
         runs(function(){
             expect(callback.mostRecentCall.args[0]).toContain("SyntaxError");
-            task.done();
         });
         
     });
@@ -63,7 +63,6 @@ describe("error scenarios", function(){
 
         runs(function(){
             expect(callback.mostRecentCall.args[0]).toContain("ReferenceError");
-            task.done();
         });
         
     });
@@ -76,7 +75,7 @@ describe("error scenarios", function(){
         intake.close();
         client.close();        
 
-        waits(5000);
+        waits(1000);
     });
 
 });

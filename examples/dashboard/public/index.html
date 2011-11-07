@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <title>engine.js - console</title>
+    
+    <link rel="stylesheet" href="./stylesheets/bootstrap-1.2.0.min.css">
+    <link rel="stylesheet" href="./stylesheets/example.css">
+    <link rel="stylesheet" href="./stylesheets/prettify.css">
+    <link href='http://fonts.googleapis.com/css?family=Sorts+Mill+Goudy' rel='stylesheet' type='text/css'>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./javascripts/ace/src/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./javascripts/ace/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./javascripts/ace/src/theme-idle_fingers.js" type="text/javascript" charset="utf-8"></script>    
+    <script src="./javascripts/prettify.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./javascripts/js_beautifier.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./javascripts/example.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./javascripts/socket.io.js" type="text/javascript" charset="utf-8"></script>
+
+  </head>
+  <body>
+    <div class="container">
+      <section class="navigation">
+        <div class="topbar-wrapper">
+          <div class="topbar">
+            <div class="topbar-inner">
+              <div class="container">
+                <h3>engine.js</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="application">
+        <div class="row">
+          <div class="span16 columns">
+            <ul class="pills">
+              <li class="active code"><a href="#">Code</a></li>
+              <li class="context"><a href="#">Context</a></li>
+            </ul>
+
+            <div id="editor"></div>
+            
+            <div class="controls">
+              <button id="run" class="btn primary">Run</button>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="span16 columns">            
+            <h3>Console</h3>
+            <ul id="console">
+              
+            </ul>
+          </div>
+        </div>
+      </section>            
+    </div>
+  </body>
+</html>
