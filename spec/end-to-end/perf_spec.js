@@ -178,12 +178,17 @@ describe("Parameterized system test", function(){
     });
 
     it("runs 10 clients, 50 tasks, and 10 cylinders", function(){
-	run_parameterized_system_test('tcp',10,45,10);
-	run_parameterized_system_test('ipc',10,45,10);
+	run_parameterized_system_test('tcp',10,50,10);
+	run_parameterized_system_test('ipc',10,50,10);
     });
 
     it("runs 50 clients, 5 tasks, and 10 cylinders", function(){
 	run_parameterized_system_test('tcp',50,5,10);
 	run_parameterized_system_test('ipc',50,5,10);
+    });
+
+    it("runs 50 clients, 50 tasks, and 50 cylinders", function(){
+	run_parameterized_system_test('tcp',50,50,10);
+	run_parameterized_system_test('ipc',50,50,10);
     });
 });
