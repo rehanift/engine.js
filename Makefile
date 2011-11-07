@@ -36,5 +36,5 @@ deploy:
 	$(GOTO_BUILD_DIR) npm install --dev ../../engine.js
 
 clean:
-	rm -r $(BUILD_BASEDIR)
-	rm *.ipc
+	rm -rf $(BUILD_BASEDIR)
+	rm -f *.ipc
