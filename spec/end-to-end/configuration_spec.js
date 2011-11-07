@@ -49,7 +49,6 @@ describe("configurations", function(){
 
             runs(function(){
 		expect(callback.mostRecentCall.args[0]).toBe(1);
-		task.done();
             });
             
 	});
@@ -69,7 +68,6 @@ describe("configurations", function(){
 
             runs(function(){
 		expect(callback.mostRecentCall.args[0]).toBe("'foo'");
-		task.done();
             });        
 	});
 

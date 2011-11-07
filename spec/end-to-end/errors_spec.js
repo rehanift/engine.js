@@ -25,7 +25,6 @@ describe("error scenarios", function(){
 
         runs(function(){
             expect(callback.mostRecentCall.args[0]).toContain("TimeoutError");
-            task.done();
         });
         
     });
@@ -45,7 +44,6 @@ describe("error scenarios", function(){
 
         runs(function(){
             expect(callback.mostRecentCall.args[0]).toContain("SyntaxError");
-            task.done();
         });
         
     });
@@ -65,7 +63,6 @@ describe("error scenarios", function(){
 
         runs(function(){
             expect(callback.mostRecentCall.args[0]).toContain("ReferenceError");
-            task.done();
         });
         
     });

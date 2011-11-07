@@ -26,7 +26,6 @@ describe("basic operations", function(){
 
         runs(function(){
             expect(callback.mostRecentCall.args[0]).toBe(1);
-            task.done();
         });
         
     });
@@ -46,7 +45,6 @@ describe("basic operations", function(){
 
         runs(function(){
             expect(callback.mostRecentCall.args[0]).toBe("'foo'");
-            task.done();
         });        
     });
 
@@ -74,9 +72,7 @@ describe("basic operations", function(){
 
         runs(function(){
             expect(callback1.mostRecentCall.args[0]).toBe(2);
-            task.done();
             expect(callback2.mostRecentCall.args[0]).toBe(7);
-            task2.done();
         });
         
     });
@@ -115,8 +111,6 @@ describe("basic operations", function(){
             expect(cylinder2.sending_socket.send).toHaveBeenCalled();
             expect(callback1.mostRecentCall.args[0]).toBe(2);
             expect(callback2.mostRecentCall.args[0]).toBe(7);
-            task.done();
-            task2.done();
             cylinder2.close();
         });
       
@@ -155,8 +149,6 @@ describe("basic operations", function(){
         runs(function(){
             expect(callback1.mostRecentCall.args[0]).toBe('2');
             expect(callback2.mostRecentCall.args[0]).toBe('7');
-            task.done();
-            task2.done();
             cylinder2.close();
         });
       
@@ -190,9 +182,7 @@ describe("basic operations", function(){
 
         runs(function(){
             expect(callback1.mostRecentCall.args[0]).toContain("TimeoutError");
-            task.done();
             expect(callback2.mostRecentCall.args[0]).toBe(9);
-            task2.done();
         });
         
     });
@@ -227,8 +217,7 @@ describe("basic operations", function(){
         runs(function(){
             expect(callback.mostRecentCall.args[0]).toBe(1);
             expect(callback2.mostRecentCall.args[0]).toBe(4);
-            task.done();
-            task2.done();
+            
 	    client2.close();
         });
         

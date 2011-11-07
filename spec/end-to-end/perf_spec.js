@@ -145,7 +145,6 @@ var run_parameterized_system_test = function(scheme, num_clients, tasks_per_clie
     runs(function(){
 	_.each(tasks, function(data, task_id){
 	    expect(data['callback'].mostRecentCall.args[0]).toBe(data['expected_result']);
-	    data['task'].done();
 	});
     });    
 
