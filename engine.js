@@ -1,6 +1,5 @@
 var engine = function(){};
 
-engine.constants = require("./lib/engine/constants").constants;
 engine.task = require("./lib/engine/task").task;
 engine.client = require("./lib/engine/client").client;
 engine.process = require("./lib/engine/process").process;
