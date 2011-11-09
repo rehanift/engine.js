@@ -1,6 +1,5 @@
 var engine = function(){};
 
-engine.task = require("./lib/engine/task").task;
 engine.client = require("./lib/engine/client").client;
 engine.cylinder = require("./lib/engine/cylinder").cylinder;
 engine.piston = require("./lib/engine/piston").piston;
