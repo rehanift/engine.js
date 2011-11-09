@@ -1,9 +1,9 @@
-var engine = require("../../engine").engine,
-    mock = require("../spec_helper").mock;
+var process_spawner = require("../../../lib/engine/cylinder/process_spawner").process_spawner,
+    mock = require("../../spec_helper").mock;
 
 describe("Process Spawner", function(){
     var strategy = jasmine.createSpy();
-    var spawner = engine.process_spawner.make({
+    var spawner = process_spawner.make({
         strategy: strategy
     });
 
