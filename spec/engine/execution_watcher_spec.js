@@ -2,7 +2,7 @@ var engine = require("../../engine").engine,
     mock = require("../spec_helper").mock;
 
 describe("execution watcher", function(){
-    var watcher = engine.cylinder.executionWatcher.make({
+    var watcher = engine.cylinder.execution_watcher.make({
         threshold: 100
     });
     
