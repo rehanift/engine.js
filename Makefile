@@ -17,7 +17,6 @@ deps:
 
 unit-test:
 	jasmine-node spec/engine/
-	jasmine-node spec/mixins/
 
 end-to-end-test: 
 	jasmine-node spec/end-to-end/basic_spec.js
