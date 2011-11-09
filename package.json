@@ -15,7 +15,7 @@
     "node": "*"
   },
   "dependencies": {
-      "zmq" : "1.0.x",
+      "zmq" : "1.0.2",
       "node-uuid" : "1.1.0"
   },
   "devDependencies": {
