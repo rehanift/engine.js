@@ -25,7 +25,6 @@ end-to-end-test:
 
 verify-deploy:
 	$(GOTO_BUILD_DIR) jasmine-node node_modules/engine.js/spec/engine/
-	$(GOTO_BUILD_DIR) jasmine-node node_modules/engine.js/spec/mixins/
 	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/basic_spec.js
 	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/errors_spec.js
 	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/configuration_spec.js

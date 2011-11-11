@@ -1,8 +1,8 @@
-var engine = require("../../../engine").engine;
+var node_vm = require("../../../../lib/engine/piston/execution_strategies/node_vm").node_vm;
 
 describe("node_vm", function(){
     describe("#execute", function(){
-        var strategy = engine.piston.execution_strategies.node_vm.make();
+        var strategy = node_vm.make();
         var sandbox = {
             add: function(a,b){ return a+b;}
         };
