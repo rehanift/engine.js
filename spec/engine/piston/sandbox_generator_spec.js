@@ -1,10 +1,10 @@
-var engine = require("../../engine").engine;
-var mock = require("../spec_helper").mock;
+var sandbox_generator = require("../../../lib/engine/piston/sandbox_generator").sandbox_generator;
+var mock = require("../../spec_helper").mock;
 
-describe("sandboxGenerator", function(){
+describe("sandbox_generator", function(){
     describe("#generate",function(){
         it("returns a sandbox from a given context", function(){
-            var sg = engine.piston.sandboxGenerator.make();
+            var sg = sandbox_generator.make();
             var console_socket = new mock.socket();
             var sandbox = sg.generate(console_socket,
                                       "(function(locals){ return {foo:function(){}} });",
@@ -15,7 +15,7 @@ describe("sandboxGenerator", function(){
 
         it("returns a sandbox from a given context with bound local variables", function(){
             var console_socket = new mock.socket();
-            var sg = engine.piston.sandboxGenerator.make();
+            var sg = sandbox_generator.make();
             var sandbox = sg.generate(console_socket,
                                       "(function(locals){ return {foo:function(){ return locals.hello }} });",
                                       {hello:"world"});
@@ -29,7 +29,7 @@ describe("sandboxGenerator", function(){
             var console_socket = new mock.socket();
             spyOn(console_socket,'send');
 
-            var sg = engine.piston.sandboxGenerator.make();
+            var sg = sandbox_generator.make();
             var sandbox = sg.generate(console_socket,
                                       "(function(locals){ return {foo:function(bar){ console.log(bar); }} });",
                                       "");

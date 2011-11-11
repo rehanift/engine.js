@@ -1,13 +1,13 @@
-var engine = require("../../engine").engine;
-var mock = require("../spec_helper").mock;
+var piston_server = require("../../../lib/engine/piston/piston_server").piston_server;
+var mock = require("../../spec_helper").mock;
 
 var mock_piston = function(){};
 mock_piston.prototype.process_request = function(){};
 mock.piston = mock_piston;
 
-describe("pistonServer", function(){
+describe("piston_server", function(){
     
-    var server = engine.piston.server.make({
+    var server = piston_server.make({
         socket: new mock.socket(),
         watcher_socket: new mock.socket(),
         piston: new mock.piston(),
