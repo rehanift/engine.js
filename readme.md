@@ -27,12 +27,12 @@ See the [wiki](https://github.com/rehanift/engine.js/wiki) for more information.
 ### Quick Start
   - Install the library: `npm install engine.js`
   
-  - Start the server: `node script/server`
+  - Start the server: `node script/server.js`
 
   - Write your code    
 
 	```javascript
-    var engine = require("engine.js");
+    var engine = require("engine.js").engine;
 	client = engine.client.create();
 	    
 	task = client.createTask();
