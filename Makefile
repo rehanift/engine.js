@@ -17,7 +17,6 @@ deps:
 
 unit-test:
 	jasmine-node spec/engine/
-	jasmine-node spec/mixins/
 
 end-to-end-test: 
 	jasmine-node spec/end-to-end/basic_spec.js
@@ -26,13 +25,13 @@ end-to-end-test:
 
 verify-deploy:
 	$(GOTO_BUILD_DIR) jasmine-node node_modules/engine.js/spec/engine/
-	$(GOTO_BUILD_DIR) jasmine-node node_modules/engine.js/spec/mixins/
 	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/basic_spec.js
 	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/errors_spec.js
 	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/configuration_spec.js
 
 deploy:
 	$(MKDIR) $(BUILD_DIR)
+	$(MKDIR) $(BUILD_DIR)/node_modules
 	$(GOTO_BUILD_DIR) npm install --dev ../../engine.js
 
 clean:

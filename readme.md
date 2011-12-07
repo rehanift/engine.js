@@ -4,17 +4,26 @@ The scriptable task engine
 
 What is Engine.js?
 ------------------
-Engine.js is a framework for enabling users of your applications to
-write their own javascript code against a (securely) provided set of
-functions or "context". Engine.js is a method of providing javascript
-sandboxing within your own applications.
 
-Engine.js aims to be both secure and scalable.
+Engine.js is a framework for extending web applications to allow users
+to write their own server-side javascript code to interact with the
+application. Engine.js lets users create their own functionality
+within the application.
 
-Engine.js currently uses Node.js for script evaluation. It has
-client libraries in Node.js (bundled), Ruby (planned), and PHP (planned).
+When you integrate Engine.js with your web application you must
+explicitly determine what set of functions users can call from their
+custom scripts. Implicitly, all Javascript
+[built-in objects](http://es5.github.com/#x4.2) are available (though
+you can explicitly re-define their definitions if you choose to).
 
-See the [wiki](https://github.com/rehanift/engine.js/wiki) for more information.
+Engine.js currently uses Node.js for script evaluation. It has a
+client library for Node.js (bundled). Ruby and PHP client libraries
+are planned.
+
+See the
+[Overview](https://github.com/rehanift/engine.js/wiki/Overview) and
+[Documentation](https://github.com/rehanift/engine.js/wiki/Documentation)
+pages for more information.
 
 ### Dependencies
    - Linux or OS X
@@ -27,23 +36,23 @@ See the [wiki](https://github.com/rehanift/engine.js/wiki) for more information.
 ### Quick Start
   - Install the library: `npm install engine.js`
   
-  - Start the server: `node script/server`
+  - Start the server: `node script/server.js`
 
   - Write your code    
 
 	```javascript
-    var engine = require("engine.js");
-	client = engine.client.create();
-	    
-	task = client.createTask();
-	task.setContext("(function(locals){ return { add: function(a,b){ return a+b } } })");
-	task.setLocals({});
-	task.setCode('add(1,2)');        
+    var engine = require("engine.js").engine;
+    var client = engine.client.create();
+        
+    var task = client.createTask();
+    task.setContext("(function(locals){ return { add: function(a,b){ return a+b } } })");
+    task.setLocals({});
+    task.setCode('add(1,2)');        
       
-	task.on('eval', function(data){
-	  console.log('your code was evaluated as:', data); //#=> 3	  
-	});
-      
+    task.on('eval', function(data){
+      console.log('your code was evaluated as:', data); //#=> 3   
+    });
+
     task.run();
 	```
       

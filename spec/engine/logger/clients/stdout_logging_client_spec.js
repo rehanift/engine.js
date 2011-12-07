@@ -1,4 +1,4 @@
-var engine = require("../../engine").engine;
+var engine = require("../../../../engine").engine;
 
 describe("Logging", function(){
     var logging_gateway,

@@ -1,5 +1,5 @@
-var engine = require("../../engine").engine;
-var mock = require("../spec_helper").mock;
+var engine = require("../../../engine").engine;
+var mock = require("../../spec_helper").mock;
 
 describe("Log Message", function(){
     var log_message,
