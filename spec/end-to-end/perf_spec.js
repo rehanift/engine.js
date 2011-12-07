@@ -27,16 +27,16 @@ var create_tcp_exhaust = function(listening_port, publishing_port){
 
 var create_ipc_intake = function(identifier){
     return engine.intake.create({
-	listening_endpoint: "ipc://intake-listener-"+identifier+".ipc",
-	sending_endpoint: "ipc://cylinder-listener-"+identifier+".ipc",
+	listening_endpoint: "ipc:///tmp/intake-listener-"+identifier+".ipc",
+	sending_endpoint: "ipc:///tmp/cylinder-listener-"+identifier+".ipc",
 	logging_gateway: logging_gateway
     });
 };
 
 var create_ipc_exhaust = function(identifier){
     return engine.exhaust.create({
-	listening_endpoint: "ipc://exhaust-listener-"+identifier+".ipc",
-	publishing_endpoint: "ipc://exhaust-publisher-"+identifier+".ipc",
+	listening_endpoint: "ipc:///tmp/exhaust-listener-"+identifier+".ipc",
+	publishing_endpoint: "ipc:///tmp/exhaust-publisher-"+identifier+".ipc",
 	logging_gateway: logging_gateway
     });
 };
@@ -56,8 +56,8 @@ var create_ipc_clients = function(num, identifier){
     var clients = {};
     for(var i=1; i<=num; i++){
 	clients[num_to_s(i)] = engine.client.create({
-	    sending_endpoint: "ipc://intake-listener-"+identifier+".ipc",
-	    listening_endpoint: "ipc://exhaust-publisher-"+identifier+".ipc"
+	    sending_endpoint: "ipc:///tmp/intake-listener-"+identifier+".ipc",
+	    listening_endpoint: "ipc:///tmp/exhaust-publisher-"+identifier+".ipc"
 	});	
     }
     return clients;
@@ -80,8 +80,8 @@ var create_ipc_cylinders = function(num, identifier){
     var cylinders = {};
     for(var i=1; i<=num; i++){
 	cylinders[num_to_s(i)] = engine.cylinder.create({
-	    listening_endpoint: "ipc://cylinder-listener-"+identifier+".ipc",
-	    exhaust_endpoint: "ipc://exhaust-listener-"+identifier+".ipc",
+	    listening_endpoint: "ipc:///tmp/cylinder-listener-"+identifier+".ipc",
+	    exhaust_endpoint: "ipc:///tmp/exhaust-listener-"+identifier+".ipc",
 	    piston_script: "./script/piston.js",
 	    logging_gateway: logging_gateway
 	});	

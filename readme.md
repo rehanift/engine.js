@@ -41,10 +41,10 @@ pages for more information.
   - Write your code    
 
 	```javascript
-    var engine = require("engine.js").engine;
-	client = engine.client.create();
+        var engine = require("engine.js").engine;
+        var client = engine.client.create();
 	    
-	task = client.createTask();
+	var task = client.createTask();
 	task.setContext("(function(locals){ return { add: function(a,b){ return a+b } } })");
 	task.setLocals({});
 	task.setCode('add(1,2)');        
@@ -52,8 +52,8 @@ pages for more information.
 	task.on('eval', function(data){
 	  console.log('your code was evaluated as:', data); //#=> 3	  
 	});
-      
-    task.run();
+
+        task.run();
 	```
       
   - Profit!

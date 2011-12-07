@@ -7,7 +7,7 @@ var console_endpoint = process.argv[3];
 
 // This is a service that responds to requests
 var piston = engine.piston.create({
-    listening_endpoint: "ipc://"+cylinder_id+".ipc",
+    listening_endpoint: "ipc:///tmp/"+cylinder_id+".ipc",
     cylinder_id: cylinder_id,
     console_endpoint: console_endpoint
 });
