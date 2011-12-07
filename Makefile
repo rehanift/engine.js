@@ -31,6 +31,7 @@ verify-deploy:
 
 deploy:
 	$(MKDIR) $(BUILD_DIR)
+	$(MKDIR) $(BUILD_DIR)/node_modules
 	$(GOTO_BUILD_DIR) npm install --dev ../../engine.js
 
 clean:
