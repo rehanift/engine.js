@@ -4,17 +4,26 @@ The scriptable task engine
 
 What is Engine.js?
 ------------------
-Engine.js is a framework for enabling users of your applications to
-write their own javascript code against a (securely) provided set of
-functions or "context". Engine.js is a method of providing javascript
-sandboxing within your own applications.
 
-Engine.js aims to be both secure and scalable.
+Engine.js is a framework for extending web applications to allow users
+to write their own server-side javascript code to interact with the
+application. Engine.js lets users create their own functionality
+within the application.
 
-Engine.js currently uses Node.js for script evaluation. It has
-client libraries in Node.js (bundled), Ruby (planned), and PHP (planned).
+When you integrate Engine.js with your web application you must
+explicitly determine what set of functions users can call from their
+custom scripts. Implicitly, all Javascript
+[built-in objects](http://es5.github.com/#x4.2) are available (though
+you can explicitly re-define their definitions if you choose to).
 
-See the [wiki](https://github.com/rehanift/engine.js/wiki) for more information.
+Engine.js currently uses Node.js for script evaluation. It has a
+client library for Node.js (bundled). Ruby and PHP client libraries
+are planned.
+
+See the
+[Overview](https://github.com/rehanift/engine.js/wiki/Overview) and
+[Documentation](https://github.com/rehanift/engine.js/wiki/Documentation)
+pages for more information.
 
 ### Dependencies
    - Linux or OS X
