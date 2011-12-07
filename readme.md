@@ -41,19 +41,19 @@ pages for more information.
   - Write your code    
 
 	```javascript
-        var engine = require("engine.js").engine;
-        var client = engine.client.create();
-	    
-	var task = client.createTask();
-	task.setContext("(function(locals){ return { add: function(a,b){ return a+b } } })");
-	task.setLocals({});
-	task.setCode('add(1,2)');        
+    var engine = require("engine.js").engine;
+    var client = engine.client.create();
+        
+    var task = client.createTask();
+    task.setContext("(function(locals){ return { add: function(a,b){ return a+b } } })");
+    task.setLocals({});
+    task.setCode('add(1,2)');        
       
-	task.on('eval', function(data){
-	  console.log('your code was evaluated as:', data); //#=> 3	  
-	});
+    task.on('eval', function(data){
+      console.log('your code was evaluated as:', data); //#=> 3   
+    });
 
-        task.run();
+    task.run();
 	```
       
   - Profit!
