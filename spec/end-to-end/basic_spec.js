@@ -48,6 +48,28 @@ describe("basic operations", function(){
         });        
     });
 
+    it("evaluates user-code and outputs console messages", function(){
+        var output_callback = jasmine.createSpy();
+        var eval_callback = jasmine.createSpy();
+        task = client.createTask();
+        task.setContext("(function(locals){ return { setTimeout: setTimeout, add: function(a,b){ return a+b; } } })");
+        task.setLocals({});
+        task.setCode("setTimeout(function(){ console.log('foo'); }, 100); 'foo'");        
+        task.on('output', output_callback);
+        task.on('eval', eval_callback);
+        task.run();
+        
+        waitsFor(function(){
+            return eval_callback.callCount > 0 && output_callback.callCount > 0;
+        });
+
+        runs(function(){
+            expect(output_callback.mostRecentCall.args[0]).toBe("'foo'");
+            expect(eval_callback.mostRecentCall.args[0]).toBe("foo");
+        });
+
+    });
+
     it("evaluates two tasks", function(){
         var callback1 = jasmine.createSpy();
         var callback2 = jasmine.createSpy();
@@ -230,7 +252,7 @@ describe("basic operations", function(){
         exhaust.close();
         cylinder.close();
         intake.close();
-        client.close();        
+        client.close();
 
         waits(100);
     });

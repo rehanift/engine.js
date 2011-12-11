@@ -69,7 +69,8 @@ describe("Client", function(){
 	    expect(mock_task.emit).toHaveBeenCalledWith("eval","foo bar");
 	});
 
-	it("unsubscribes the listening socket when a task has been evaluated", function(){
+	// pending until we abstract out the sockets
+	xit("unsubscribes the listening socket when a task has been evaluated", function(){
 	    var mock_task = new mock.task();	    
 	    spyOn(client,'find_task_by_id').andReturn(mock_task);
 	    spyOn(client.listening_socket,'unsubscribe');
