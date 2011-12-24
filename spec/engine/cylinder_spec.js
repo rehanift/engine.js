@@ -13,10 +13,52 @@ describe("Cylinder", function(){
             exhaust_socket: new mock.socket(),
 	    execution_watcher: new mock.execution_watcher(),
             process_spawner: new mock.process_spawner(),
-	    logging_gateway: new mock.logging_gateway()
-        });    
+	    logging_gateway: new mock.logging_gateway(),
+	    context_validator: new mock.context_validator()
+        });
     });
 
+    describe("context validation", function(){
+	var task_with_bad_context = {
+	    task_id: "1",
+	    context: "foo",
+	    code: "",
+	    locals: {}
+	};
+
+	it("validates the recieved task's context", function(){
+	    spyOn(cylinder.context_validator,'validate');
+	    cylinder.listening_socket.fakeSend(JSON.stringify(task_with_bad_context));
+	    expect(cylinder.context_validator.validate).toHaveBeenCalledWith(task_with_bad_context.context);
+	});
+
+	it("when the context is valid task execution continues", function(){
+	    var task = JSON.stringify(task_with_bad_context);
+	    spyOn(cylinder.context_validator,'validate').andReturn(true);
+	    spyOn(cylinder,'send_next_task_or_queue');
+	    cylinder.listening_socket.fakeSend(task);
+	    expect(cylinder.send_next_task_or_queue).toHaveBeenCalledWith(task);
+	});
+
+	it("when the context is NOT valid task execution is halted", function(){
+	    var task = JSON.stringify(task_with_bad_context);
+	    spyOn(cylinder.context_validator,'validate').andReturn(false);
+	    spyOn(cylinder.exhaust_socket,'send');
+	    spyOn(cylinder,'send_next_task_or_queue');
+	    cylinder.listening_socket.fakeSend(task);
+	    expect(cylinder.send_next_task_or_queue).not.toHaveBeenCalledWith(task);
+	});
+
+	it("when the context is NOT valid an error message is returned", function(){
+	    var task = JSON.stringify(task_with_bad_context);
+	    spyOn(cylinder.context_validator,'validate').andReturn(false);
+	    spyOn(cylinder.exhaust_socket,'send');
+	    spyOn(cylinder,'send_next_task_or_queue');
+	    cylinder.listening_socket.fakeSend(task);
+	    expect(cylinder.exhaust_socket.send).toHaveBeenCalled();
+	});
+    });
+    
     it("when a cylinder receives a task it sends it to the piston", function(){
         spyOn(cylinder.sending_socket,'send');
         cylinder.listening_socket.fakeSend(mock.TASK_PAYLOAD);
