@@ -114,4 +114,12 @@ var mock_context_validator = function(){};
 mock_context_validator.prototype.validate = function(){};
 mock.context_validator = mock_context_validator;
 
+var mock_client_task_receiver = function(){};
+mock_client_task_receiver.prototype.on = function(){};
+mock.client_task_receiver = mock_client_task_receiver;
+
+var mock_cylinder_task_sender = function(){};
+mock_cylinder_task_sender.prototype.send_task = function(){};
+mock.cylinder_task_sender = mock_cylinder_task_sender;
+
 exports.mock = mock;
