@@ -29,7 +29,7 @@ describe("error scenarios", function(){
         
     });
 
-    it("throws a SyntaxError", function(){
+    it("catches syntax errors with task's code", function(){
         var callback = jasmine.createSpy();
         task = client.createTask();
         task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
@@ -65,6 +65,68 @@ describe("error scenarios", function(){
             expect(callback.mostRecentCall.args[0]).toContain("ReferenceError");
         });
         
+    });
+
+    describe("Context Validation", function(){
+	it("catches syntax errors in task's context", function(){
+            var callback = jasmine.createSpy();
+            task = client.createTask();
+            task.setContext("foo;");
+            task.setLocals({});
+            task.setCode("subtract(1,1)");        
+            task.on('eval', callback);
+            task.run();
+            
+            waitsFor(function(){
+		return callback.callCount > 0;
+            });
+
+            runs(function(){
+		expect(callback.mostRecentCall.args[0]).toContain("SandboxError");
+            });
+            
+	});
+
+	it("catches task context's that are not functions", function(){
+            var callback = jasmine.createSpy();
+            task = client.createTask();
+            task.setContext("({'foo':'bar'})");
+            task.setLocals({});
+            task.setCode("subtract(1,1)");        
+            task.on('eval', callback);
+            task.run();
+            
+            waitsFor(function(){
+		return callback.callCount > 0;
+            });
+
+            runs(function(){
+		expect(callback.mostRecentCall.args[0]).toContain("SandboxError");
+            });
+            
+	});
+
+
+	it("catches task context's that do not return object literals", function(){
+            var callback = jasmine.createSpy();
+            task = client.createTask();
+            task.setContext("(function(){ return 1; })");
+            task.setLocals({});
+            task.setCode("subtract(1,1)");        
+            task.on('eval', callback);
+            task.run();
+            
+            waitsFor(function(){
+		return callback.callCount > 0;
+            });
+
+            runs(function(){
+		expect(callback.mostRecentCall.args[0]).toContain("SandboxError");
+            });
+            
+	});
+
+
     });
 
 

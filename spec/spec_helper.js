@@ -11,6 +11,7 @@ mock.TASK_PAYLOAD = JSON.stringify({
     locals: {}
 });
 
+
 mock.TASK_RESULTS = JSON.stringify({
     task_id: "1",
     last_eval: ""
@@ -108,5 +109,9 @@ mock.log_formatter = mock_log_formatter;
 var mock_log_writer = function(){};
 mock_log_writer.prototype.write = function(){};
 mock.log_writer = mock_log_writer;
+
+var mock_context_validator = function(){};
+mock_context_validator.prototype.validate = function(){};
+mock.context_validator = mock_context_validator;
 
 exports.mock = mock;
