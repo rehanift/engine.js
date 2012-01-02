@@ -18,7 +18,7 @@ describe("basic operations", function(){
         task.setLocals({});
         task.setCode("add(1,0)");        
         task.on('eval', callback);
-        task.run();
+        client.run(task);
         
         waitsFor(function(){
             return callback.callCount > 0;
@@ -37,7 +37,7 @@ describe("basic operations", function(){
         task.setLocals({});
         task.setCode("console.log('foo')");        
         task.on('output', callback);
-        task.run();
+        client.run(task);
         
         waitsFor(function(){
             return callback.callCount > 0;
@@ -56,14 +56,14 @@ describe("basic operations", function(){
         task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task.setLocals({});
         task.setCode("add(1,1)");        
-        task.run();
+        client.run(task);
         task.on('eval', callback1);
 
         var task2 = client.createTask();
         task2.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task2.setLocals({});
         task2.setCode("add(3,4)");        
-        task2.run();
+        client.run(task2);
         task2.on('eval', callback2);
         
         waitsFor(function(){
@@ -92,14 +92,14 @@ describe("basic operations", function(){
         task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task.setLocals({});
         task.setCode("add(1,1)");        
-        task.run();
+        client.run(task);
         task.on('eval', callback1);
 
         var task2 = client.createTask();
         task2.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task2.setLocals({});
         task2.setCode("add(3,4)");        
-        task2.run();
+        client.run(task2);
         task2.on('eval', callback2);
         
         waitsFor(function(){
@@ -132,14 +132,14 @@ describe("basic operations", function(){
         task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task.setLocals({});
         task.setCode("console.log(add(1,1))");        
-        task.run();
+        client.run(task);
         task.on('output', callback1);
 
         var task2 = client.createTask();
         task2.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task2.setLocals({});
         task2.setCode("console.log(add(3,4))");        
-        task2.run();
+        client.run(task2);
         task2.on('output', callback2);
         
         waitsFor(function(){
@@ -166,14 +166,14 @@ describe("basic operations", function(){
         task.setContext("(function(locals){ return { sleep: function() { var now = new Date().getTime(); while(new Date().getTime() < now + 100000) { /* sleep */ } } } })");
         task.setLocals({});
         task.setCode("sleep()");        
-        task.run();
+        client.run(task);
         task.on('eval', callback1);
 
         var task2 = client.createTask();
         task2.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task2.setLocals({});
         task2.setCode("add(4,5)");        
-        task2.run();
+        client.run(task2);
         task2.on('eval', callback2);
         
         waitsFor(function(){
@@ -196,7 +196,7 @@ describe("basic operations", function(){
         task.setLocals({});
         task.setCode("add(1,0)");        
         task.on('eval', callback);
-        task.run();
+        client.run(task);
         
         waitsFor(function(){
             return callback.callCount > 0;
@@ -208,7 +208,7 @@ describe("basic operations", function(){
         task2.setLocals({});
         task2.setCode("add(2,2)");        
         task2.on('eval', callback2);
-        task2.run();
+        client.run(task2);
         
         waitsFor(function(){
             return callback.callCount > 0 && callback2.callCount;

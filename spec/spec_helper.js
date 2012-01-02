@@ -18,9 +18,13 @@ mock.TASK_RESULTS = JSON.stringify({
 });
 
 
-var mock_client = function(){};
-mock_client.prototype.run = function(){};
-mock.client = mock_client;
+//var mock_client = function(){};
+//mock_client.prototype.run = function(){};
+//mock.client = mock_client;
+(function(){
+    var klass = function(){};
+    mock.client = klass;
+})();
 
 
 var mockSocket = function(){};
@@ -39,14 +43,14 @@ mockSocket.prototype.fakeSend = function(message){
 
 mock.socket = mockSocket;
 
-var mock_task = function(){
-    this.id = Math.floor(Math.random() * 100);
-};
+var mock_task = function(){};
+mock_task.prototype.getId = function(){};
 mock_task.prototype.getContext = function(){};
 mock_task.prototype.getLocals = function(){};
 mock_task.prototype.getCode = function(){};
 mock_task.prototype.on = function(){};
 mock_task.prototype.emit = function(){};
+mock_task.make = function(){};
 mock.task = mock_task;
 
 var stdout = function(){};
@@ -115,11 +119,65 @@ mock_context_validator.prototype.validate = function(){};
 mock.context_validator = mock_context_validator;
 
 var mock_client_task_receiver = function(){};
-mock_client_task_receiver.prototype.on = function(){};
+util.inherits(mock_client_task_receiver, events.EventEmitter);
+mock_client_task_receiver.prototype.close = function(){};
 mock.client_task_receiver = mock_client_task_receiver;
 
 var mock_cylinder_task_sender = function(){};
 mock_cylinder_task_sender.prototype.send_task = function(){};
+mock_cylinder_task_sender.prototype.close = function(){};
 mock.cylinder_task_sender = mock_cylinder_task_sender;
+
+(function(){
+    var klass = function(){};
+    klass.prototype.generate = function(){};
+    
+    mock.task_identity_generator = klass;
+})();
+
+(function(){
+    var klass = function(){};
+    klass.prototype.translate = function(){};
+    
+    mock.task_translator = klass;
+})();
+
+(function(){
+    var klass = function(){};
+    klass.prototype.serialize = function(){};
+    
+    mock.task_serializer = klass;
+})();
+
+(function(){
+    var klass = function(){};
+    util.inherits(klass, events.EventEmitter);
+
+    klass.prototype.close = function(){};
+
+    mock.client_connection = klass;
+})();
+
+(function(){
+    var klass = function(){};
+
+    klass.prototype.send = function(){};
+    klass.prototype.close = function(){};
+
+    mock.cylinder_connection = klass;
+})();
+
+
+(function(){
+    var klass = function(){};
+    util.inherits(klass, events.EventEmitter);
+    
+    klass.prototype.close = function(){};
+    klass.prototype.send = function(){};
+
+    mock.zmq_socket = klass;
+})();
+
+
 
 exports.mock = mock;

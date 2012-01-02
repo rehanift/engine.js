@@ -41,7 +41,7 @@ describe("configurations", function(){
             task.setLocals({});
             task.setCode("add(1,0)");        
             task.on('eval', callback);
-            task.run();
+            client.run(task);
             
             waitsFor(function(){
 		return callback.callCount > 0;
@@ -60,7 +60,7 @@ describe("configurations", function(){
             task.setLocals({});
             task.setCode("console.log('foo')");        
             task.on('output', callback);
-            task.run();
+            client.run(task);
             
             waitsFor(function(){
 		return callback.callCount > 0;

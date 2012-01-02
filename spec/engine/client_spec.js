@@ -5,16 +5,15 @@ var util = require("util"), events = require("events");
 describe("Client", function(){
     var client;
     beforeEach(function(){
+	this.task_klass = mock.task;
+	this.task_identity_generator = new mock.task_identity_generator();
 	client = engine.client.make({
-	    id:"1",
 	    sending_socket: new mock.socket(),
 	    listening_socket: new mock.socket(),
-	    task_creation_strategy: function(){
-		return new mock.task()
-	    }
+	    task_klass: this.task_klass,
+	    task_identity_generator: this.task_identity_generator
 	});
     });
-
     
     it("#close closes the intake manifold socket",function(){
 	spyOn(client.sending_socket,'close');
@@ -30,17 +29,26 @@ describe("Client", function(){
     });
 
     describe("#createTask", function(){
-        it("uses the client's task creator strategy", function(){
-	    var mock_task = new mock.task();
-            spyOn(client,'createTaskFromStrategy').andReturn(mock_task);
-            var task = client.createTask();
-            expect(client.createTaskFromStrategy).toHaveBeenCalled();
-        });
+	it("generates a new identity for the new task",function(){
+	    spyOn(this.task_identity_generator,'generate');
+	    client.createTask();
+	    expect(this.task_identity_generator.generate).toHaveBeenCalled();
+	});
 
+	it("creates a new task", function(){
+	    var id = Math.floor(Math.random() * 100);
+	    spyOn(this.task_identity_generator,'generate').andReturn(id);
+	    spyOn(this.task_klass,'make');
+	    client.createTask();
+	    expect(this.task_klass.make).toHaveBeenCalledWith({id: id});
+	});
+	
         it("subscribes to the newly created task's id on the listening socket", function(){
+	    var id = Math.floor(Math.random() * 100);
+	    spyOn(this.task_identity_generator,'generate').andReturn(id);
 	    spyOn(client.listening_socket,'subscribe');
-	    var task = client.createTask();
-	    expect(client.listening_socket.subscribe).toHaveBeenCalledWith(task.id);
+	    client.createTask();
+	    expect(client.listening_socket.subscribe).toHaveBeenCalledWith(id);
         });
     });
 

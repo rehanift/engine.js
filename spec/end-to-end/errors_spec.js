@@ -17,7 +17,7 @@ describe("error scenarios", function(){
         task.setLocals({});
         task.setCode("sleep();");        
         task.on('eval', callback);
-        task.run();
+        client.run(task);
         
         waitsFor(function(){
             return callback.callCount > 0;
@@ -36,7 +36,7 @@ describe("error scenarios", function(){
         task.setLocals({});
         task.setCode("add(1,2");        
         task.on('eval', callback);
-        task.run();
+        client.run(task);
         
         waitsFor(function(){
             return callback.callCount > 0;
@@ -55,7 +55,7 @@ describe("error scenarios", function(){
         task.setLocals({});
         task.setCode("subtract(1,1)");        
         task.on('eval', callback);
-        task.run();
+        client.run(task);
         
         waitsFor(function(){
             return callback.callCount > 0;
@@ -75,7 +75,7 @@ describe("error scenarios", function(){
             task.setLocals({});
             task.setCode("subtract(1,1)");        
             task.on('eval', callback);
-            task.run();
+            client.run(task);
             
             waitsFor(function(){
 		return callback.callCount > 0;
@@ -94,7 +94,7 @@ describe("error scenarios", function(){
             task.setLocals({});
             task.setCode("subtract(1,1)");        
             task.on('eval', callback);
-            task.run();
+            client.run(task);
             
             waitsFor(function(){
 		return callback.callCount > 0;
@@ -114,7 +114,7 @@ describe("error scenarios", function(){
             task.setLocals({});
             task.setCode("subtract(1,1)");        
             task.on('eval', callback);
-            task.run();
+            client.run(task);
             
             waitsFor(function(){
 		return callback.callCount > 0;
