@@ -22,12 +22,14 @@ end-to-end-test:
 	jasmine-node spec/end-to-end/basic_spec.js
 	jasmine-node spec/end-to-end/errors_spec.js
 	jasmine-node spec/end-to-end/configuration_spec.js
+	jasmine-node spec/end-to-end/security_spec.js
 
 verify-deploy:
 	$(GOTO_BUILD_DIR) jasmine-node node_modules/engine.js/spec/engine/
 	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/basic_spec.js
 	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/errors_spec.js
 	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/configuration_spec.js
+	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/security_spec.js
 
 deploy:
 	$(MKDIR) $(BUILD_DIR)
