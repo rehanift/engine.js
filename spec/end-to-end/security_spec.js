@@ -51,6 +51,65 @@ describe("Sandbox Security", function(){
 	});
     });
 
+    describe("Function caller attack", function(){
+	it("throws a TypeError when trying to walk the 'caller chain' from a locally defined & invoked function out of the sandbox", function(){
+	    var callback = jasmine.createSpy();
+            task = client.createTask();
+            task.setContext("(function(locals){ return {  } })");
+            task.setLocals({});
+            task.setCode("(function foo() { console.log( foo.caller.caller.toString());})()");
+            task.on('eval', callback);
+            task.run();
+            
+            waitsFor(function(){
+		return callback.callCount > 0;
+            });
+
+            runs(function(){
+		expect(callback.mostRecentCall.args[0]).toContain("TypeError");
+            });
+	});
+
+	it("throws a TypeError when trying to walk the 'argument caller chain' from a locally defined & invoked function out of the sandbox", function(){
+	    var callback = jasmine.createSpy();
+            task = client.createTask();
+            task.setContext("(function(locals){ return {  } })");
+            task.setLocals({});
+            task.setCode("(function foo() {return [].slice.call(foo.caller.arguments);})()");
+            task.on('eval', callback);
+            task.run();
+            
+            waitsFor(function(){
+		return callback.callCount > 0;
+            });
+
+            runs(function(){
+		expect(callback.mostRecentCall.args[0]).toContain("TypeError");
+            });
+	});
+    });
+
+    xdescribe("Type Coercion attach", function(){
+	it("function declarations cannot leave the sandbox", function(){
+	    var callback = jasmine.createSpy();
+            task = client.createTask();
+            task.setContext("(function(locals){ return {  } })");
+            task.setLocals({});
+            task.setCode("(function foo() {return {toJSON:function x(){console.log(x.caller.caller.name)}}})()");
+            //task.on('eval', callback);
+            task.on('eval', function(data){ console.log(data); });
+            task.run();
+            
+            waitsFor(function(){
+		return callback.callCount > 0;
+            });
+
+            runs(function(){
+		expect(callback.mostRecentCall.args[0]).toContain("TypeError");
+            });
+	});
+    });
+
     // This test must always run last
     it("closes all components",function(){
         exhaust.close();

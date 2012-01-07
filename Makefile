@@ -3,7 +3,7 @@ BUILD_ID := build-$(shell date +'%s')
 BUILD_BASEDIR=../engine.js-builds
 BUILD_DIR = $(BUILD_BASEDIR)/$(BUILD_ID)
 MKDIR = mkdir -p
-NODE_VERSION ?= v0.4.12
+NODE_VERSION ?= v0.6.6
 GOTO_BUILD_DIR = cd $(BUILD_DIR); source ~/.nvm/nvm.sh; nvm use $(NODE_VERSION); 
 all: test
 
