@@ -27,7 +27,7 @@ pages for more information.
 
 ### Dependencies
    - Linux or OS X
-   - Node.js (v0.4 ONLY)
+   - Node.js (tested with v0.6.7)
    - NPM
    - ZeroMQ (2.1)
      - OS X: `brew install zeromq`
