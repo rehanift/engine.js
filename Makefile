@@ -11,6 +11,8 @@ test: unit-test end-to-end-test
 
 build: deploy verify-deploy
 
+perf: deploy run-perf
+
 deps:
 	npm install node-uuid
 	npm install zmq
@@ -39,3 +41,6 @@ deploy:
 clean:
 	rm -rf $(BUILD_BASEDIR)
 	rm -f *.ipc
+
+run-perf: 
+	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/perf_spec.js
