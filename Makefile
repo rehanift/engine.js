@@ -5,11 +5,14 @@ BUILD_DIR = $(BUILD_BASEDIR)/$(BUILD_ID)
 MKDIR = mkdir -p
 NODE_VERSION ?= v0.6.7
 GOTO_BUILD_DIR = cd $(BUILD_DIR); source ~/.nvm/nvm.sh; nvm use $(NODE_VERSION); 
+GOTO_MODULE_DIR = cd node_modules/engine.js;
+RUN_LOCAL_SPEC = `npm bin`/jasmine-node
+
 all: test
 
 test: unit-test end-to-end-test
 
-build: deploy verify-deploy
+build: deploy verify-deploy run-perf
 
 perf: deploy run-perf
 
@@ -21,17 +24,11 @@ unit-test:
 	jasmine-node spec/engine/
 
 end-to-end-test: 
-	jasmine-node spec/end-to-end/basic_spec.js
-	jasmine-node spec/end-to-end/errors_spec.js
-	jasmine-node spec/end-to-end/configuration_spec.js
-	jasmine-node spec/end-to-end/security_spec.js
+	jasmine-node spec/end-to-end/
 
 verify-deploy:
-	$(GOTO_BUILD_DIR) jasmine-node node_modules/engine.js/spec/engine/
-	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/basic_spec.js
-	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/errors_spec.js
-	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/configuration_spec.js
-	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/security_spec.js
+	$(GOTO_BUILD_DIR) $(GOTO_MODULE_DIR) $(RUN_LOCAL_SPEC) spec/engine
+	$(GOTO_BUILD_DIR) $(GOTO_MODULE_DIR) $(RUN_LOCAL_SPEC) spec/end-to-end
 
 deploy:
 	$(MKDIR) $(BUILD_DIR)
@@ -43,4 +40,5 @@ clean:
 	rm -f *.ipc
 
 run-perf: 
-	$(GOTO_BUILD_DIR) cd node_modules/engine.js/; jasmine-node spec/end-to-end/perf_spec.js
+	$(GOTO_BUILD_DIR) $(GOTO_MODULE_DIR) $(RUN_LOCAL_SPEC) spec/load
+

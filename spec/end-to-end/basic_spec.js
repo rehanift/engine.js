@@ -1,19 +1,27 @@
 var engine = require("../../engine").engine;
-var client, client2, task, intake, exhaust, cylinder, cylinder2, logging_gateway;
-
-intake = engine.intake.create();
-exhaust = engine.exhaust.create();
-cylinder = engine.cylinder.create({
-    threshold: 1000,
-    piston_script: "./script/piston.js"
-});
-client = engine.client.create();
+var factories = require("../spec_helper").component_factories;
+var task;
 
 describe("basic operations", function(){
+    beforeEach(function(){
+	this.identifier = "basic" + Math.floor(Math.random() * 100000);
+
+	this.intake = factories.create_ipc_intake(this.identifier);
+	this.exhaust = factories.create_ipc_exhaust(this.identifier);
+	this.cylinder = (factories.create_ipc_cylinders(1,this.identifier))["1"];
+	this.client = (factories.create_ipc_clients(1,this.identifier))["1"];
+    });
+
+    afterEach(function(){
+	this.intake.close();
+	this.exhaust.close();
+	this.cylinder.close();
+	this.client.close();
+    });
 
     it("evaluates user code", function(){
         var callback = jasmine.createSpy();
-        task = client.createTask();
+        task = this.client.createTask();
         task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task.setLocals({});
         task.setCode("add(1,0)");        
@@ -32,7 +40,7 @@ describe("basic operations", function(){
 
     it("outputs console messages", function(){
         var callback = jasmine.createSpy();
-        task = client.createTask();
+        task = this.client.createTask();
         task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task.setLocals({});
         task.setCode("console.log('foo')");        
@@ -51,7 +59,7 @@ describe("basic operations", function(){
     it("evaluates user-code and outputs console messages", function(){
         var output_callback = jasmine.createSpy();
         var eval_callback = jasmine.createSpy();
-        task = client.createTask();
+        task = this.client.createTask();
         task.setContext("(function(locals){ return { setTimeout: setTimeout, add: function(a,b){ return a+b; } } })");
         task.setLocals({});
         task.setCode("setTimeout(function(){ console.log('foo'); }, 100); 'foo'");        
@@ -74,14 +82,14 @@ describe("basic operations", function(){
         var callback1 = jasmine.createSpy();
         var callback2 = jasmine.createSpy();
         
-        task = client.createTask();
+        task = this.client.createTask();
         task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task.setLocals({});
         task.setCode("add(1,1)");        
         task.run();
         task.on('eval', callback1);
 
-        var task2 = client.createTask();
+        var task2 = this.client.createTask();
         task2.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task2.setLocals({});
         task2.setCode("add(3,4)");        
@@ -100,24 +108,22 @@ describe("basic operations", function(){
     });
 
     it("evaluates two tasks across two cylinders", function(){
-        cylinder2 = engine.cylinder.create({
-	    piston_script: "./script/piston.js"
-	});
+        var cylinder2 = factories.create_ipc_cylinders(1, this.identifier)["1"];
 
         var callback1 = jasmine.createSpy();
         var callback2 = jasmine.createSpy();
         
-        spyOn(cylinder.sending_socket,'send').andCallThrough();
+        spyOn(this.cylinder.sending_socket,'send').andCallThrough();
         spyOn(cylinder2.sending_socket,'send').andCallThrough();
 
-        task = client.createTask();
+        task = this.client.createTask();
         task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task.setLocals({});
         task.setCode("add(1,1)");        
         task.run();
         task.on('eval', callback1);
 
-        var task2 = client.createTask();
+        var task2 = this.client.createTask();
         task2.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task2.setLocals({});
         task2.setCode("add(3,4)");        
@@ -129,35 +135,29 @@ describe("basic operations", function(){
         });
 
         runs(function(){
-            expect(cylinder.sending_socket.send).toHaveBeenCalled();
+            expect(this.cylinder.sending_socket.send).toHaveBeenCalled();
             expect(cylinder2.sending_socket.send).toHaveBeenCalled();
             expect(callback1.mostRecentCall.args[0]).toBe(2);
             expect(callback2.mostRecentCall.args[0]).toBe(7);
             cylinder2.close();
         });
-      
-        // we need to make sure this cylinder closes completely before the next test starts, otherwise
-        //   it will consume a task and never process it
-        waits(100);
-        
+              
     });
 
     it("task tasks, two cylinders, both pushlishing to console", function(){
-        cylinder2 = engine.cylinder.create({
-	    piston_script: "./script/piston.js"
-	});
+        var cylinder2 = factories.create_ipc_cylinders(1, this.identifier)["1"];
 
         var callback1 = jasmine.createSpy();
         var callback2 = jasmine.createSpy();
         
-        task = client.createTask();
+        task = this.client.createTask();
         task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task.setLocals({});
         task.setCode("console.log(add(1,1))");        
         task.run();
         task.on('output', callback1);
 
-        var task2 = client.createTask();
+        var task2 = this.client.createTask();
         task2.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task2.setLocals({});
         task2.setCode("console.log(add(3,4))");        
@@ -173,25 +173,21 @@ describe("basic operations", function(){
             expect(callback2.mostRecentCall.args[0]).toBe('7');
             cylinder2.close();
         });
-      
-        // we need to make sure this cylinder closes completely before the next test starts, otherwise
-        //   it will consume a task and never process it
-        waits(100);
-        
+              
     });
 
     it("evaluates two tasks with one cylinder. First task timeouts.", function(){
         var callback1 = jasmine.createSpy();
         var callback2 = jasmine.createSpy();
         
-        task = client.createTask();
+        task = this.client.createTask();
         task.setContext("(function(locals){ return { sleep: function() { var now = new Date().getTime(); while(new Date().getTime() < now + 100000) { /* sleep */ } } } })");
         task.setLocals({});
         task.setCode("sleep()");        
         task.run();
         task.on('eval', callback1);
 
-        var task2 = client.createTask();
+        var task2 = this.client.createTask();
         task2.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task2.setLocals({});
         task2.setCode("add(4,5)");        
@@ -210,10 +206,10 @@ describe("basic operations", function(){
     });
 
     it("evaluates two tasks from two clients", function(){
-	client2 = engine.client.create();
+	var client2 = factories.create_ipc_clients(1,this.identifier)["1"];
 
 	var callback = jasmine.createSpy();
-        task = client.createTask();
+        task = this.client.createTask();
         task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task.setLocals({});
         task.setCode("add(1,0)");        
@@ -243,18 +239,6 @@ describe("basic operations", function(){
 	    client2.close();
         });
         
-    });
-
-
-
-    // This test must always run last
-    it("closes all components",function(){
-        exhaust.close();
-        cylinder.close();
-        intake.close();
-        client.close();
-
-        waits(100);
     });
 
 });

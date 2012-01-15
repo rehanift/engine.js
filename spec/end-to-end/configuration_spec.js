@@ -1,42 +1,44 @@
 var engine = require("../../engine").engine;
-var client, task, intake, exhaust, cylinder;
+var task;
+var factories = require("../spec_helper").component_factories;
 
 describe("configurations", function(){
 
-    describe("custom zeromq endpoints", function(){
+    describe("custom zeromq tcp endpoints", function(){
 	
 	beforeEach(function(){
-	    client = engine.client.create({
-		sending_endpoint: "tcp://127.0.0.1:5555",
-		listening_endpoint: "tcp://127.0.0.1:5556"
+	    var offset = Math.floor(Math.random() * 1000);
+	    var base_port = 5555;
+
+	    this.client = engine.client.create({
+		sending_endpoint: "tcp://127.0.0.1:" + base_port + offset + 0,
+		listening_endpoint: "tcp://127.0.0.1:" + base_port + offset + 1
 	    });
-	    intake = engine.intake.create({
-		listening_endpoint: "tcp://127.0.0.1:5555",
-		sending_endpoint: "tcp://127.0.0.1:5557"
+	    this.intake = engine.intake.create({
+		listening_endpoint: "tcp://127.0.0.1:" + base_port + offset + 0,
+		sending_endpoint: "tcp://127.0.0.1:" + base_port + offset + 2
 	    });
-	    cylinder = engine.cylinder.create({
-		listening_endpoint: "tcp://127.0.0.1:5557",
-		exhaust_endpoint: "tcp://127.0.0.1:5558",
+	    this.cylinder = engine.cylinder.create({
+		listening_endpoint: "tcp://127.0.0.1:" + base_port + offset + 2,
+		exhaust_endpoint: "tcp://127.0.0.1:" + base_port + offset + 3,
 		piston_script: "./script/piston.js"
 	    });
-	    exhaust = engine.exhaust.create({
-		listening_endpoint: "tcp://127.0.0.1:5558",
-		publishing_endpoint: "tcp://127.0.0.1:5556"
+	    this.exhaust = engine.exhaust.create({
+		listening_endpoint: "tcp://127.0.0.1:" + base_port + offset + 3,
+		publishing_endpoint: "tcp://127.0.0.1:" + base_port + offset + 1
 	    });
 	});
 
 	afterEach(function(){
-            exhaust.close();
-            cylinder.close();
-            intake.close();
-            client.close();        
-
-            waits(100);
+            this.exhaust.close();
+            this.cylinder.close();
+            this.intake.close();
+            this.client.close();
 	});
 	
 	it("evaluates user code", function(){
             var callback = jasmine.createSpy();
-            task = client.createTask();
+            task = this.client.createTask();
             task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
             task.setLocals({});
             task.setCode("add(1,0)");        
@@ -55,7 +57,7 @@ describe("configurations", function(){
 
 	it("outputs console messages", function(){
             var callback = jasmine.createSpy();
-            task = client.createTask();
+            task = this.client.createTask();
             task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
             task.setLocals({});
             task.setCode("console.log('foo')");        

@@ -3,6 +3,7 @@ var util = require("util"),
     engine = require("../engine").engine;
 
 var mock = {};
+var cf = require("./helpers/component_factories").helpers;
 
 mock.TASK_PAYLOAD = JSON.stringify({
     task_id: "1",
@@ -115,3 +116,5 @@ mock_context_validator.prototype.validate = function(){};
 mock.context_validator = mock_context_validator;
 
 exports.mock = mock;
+
+exports.component_factories = cf;
