@@ -70,11 +70,12 @@ You must have both `Express` and `Socket.io` installed
 You can then run: `node examples/dashboard/app.js` and open your browser to `http://localhost:3000`
 
 ### Tests
-`engine.js` has both unit tests (`spec/engine`) and integration tests (`spec/end-to-end`). Both types are written with [Jasmine](https://github.com/pivotal/jasmine/wiki) and run with [jasmine-node](https://github.com/mhevery/jasmine-node).
+Engine.js has both unit tests (spec/engine) and integration tests (spec/end-to-end). Both types are written with [Jasmine](https://github.com/pivotal/jasmine/wiki) and run with [jasmine-node](https://github.com/mhevery/jasmine-node).
+  
   - **First** clone the repository and then run `npm install .` from the project root.
   - To run the unit test suite, run `make unit-test`
   - To run the integration test suite, run `make end-to-end-test`
-  - To run the full test suite, run `make test`.
+  - To run the full test suite, run `make test`
 
 ### Future Plans
   - Support for other sandboxable scripting languages (ie. Lua)
