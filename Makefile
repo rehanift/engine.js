@@ -16,15 +16,11 @@ build: deploy verify-deploy run-perf
 
 perf: deploy run-perf
 
-deps:
-	npm install node-uuid
-	npm install zmq
-
 unit-test:
-	jasmine-node spec/engine/
+	$(RUN_LOCAL_SPEC) spec/engine/
 
 end-to-end-test: 
-	jasmine-node spec/end-to-end/
+	$(RUN_LOCAL_SPEC) spec/end-to-end/
 
 verify-deploy:
 	$(GOTO_BUILD_DIR) $(GOTO_MODULE_DIR) $(RUN_LOCAL_SPEC) spec/engine
