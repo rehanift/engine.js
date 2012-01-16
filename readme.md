@@ -37,7 +37,7 @@ pages for more information.
 ### Quick Start
   - Install the library: `npm install engine.js`
   
-  - Start the server: `node script/server.js`
+  - Start the server: `npm run-script engine.js quickstart-server`
 
   - Write your code    
 
@@ -62,12 +62,10 @@ pages for more information.
 ### Demo
 Included in `examples/dashboard` is a demo [Express](http://expressjs.com/) application.
 
-You must have both `Express` and `Socket.io` installed
+	npm install engine.js
+	npm run-script engine.js dashboard
 
-	npm install express
-	npm install socket.io
-	
-You can then run: `node examples/dashboard/app.js` and open your browser to `http://localhost:3000`
+Then open your browser to `http://localhost:3000`
 
 ### Tests
 Engine.js has both unit tests (spec/engine) and integration tests (spec/end-to-end). Both types are written with [Jasmine](https://github.com/pivotal/jasmine/wiki) and run with [jasmine-node](https://github.com/mhevery/jasmine-node).
