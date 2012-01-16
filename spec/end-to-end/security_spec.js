@@ -20,6 +20,27 @@ describe("Sandbox Security", function(){
 	this.client.close();
     });
 
+    describe("Function#toString attach", function(){
+	it("throws a SecurityError when trying to call '.toString' on a context function", function(){
+            var callback = jasmine.createSpy();
+            task = this.client.createTask();
+            task.setContext("(function(locals){ return { foo: function(){ return 'bar' } } })");
+            task.setLocals({});
+            task.setCode("foo.toString()");
+            task.on('eval', callback);
+            task.run();
+            
+            waitsFor(function(){
+		return callback.callCount > 0;
+            });
+
+            runs(function(){
+		expect(callback.mostRecentCall.args[0]).toContain("SecurityError");
+            });
+
+	});
+    });
+
     describe("Function constructor attack",function(){
 	it("throws a SecurityError when trying to call an explicit context function's constructor", function(){
             var callback = jasmine.createSpy();
@@ -172,16 +193,6 @@ describe("Sandbox Security", function(){
             });
 	});
 
-    });
-
-    // This test must always run last
-    xit("closes all components",function(){
-        exhaust.close();
-        cylinder.close();
-        intake.close();
-        client.close();
-
-        waits(100);
     });
 
 });
