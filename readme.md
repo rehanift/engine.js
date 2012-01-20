@@ -1,6 +1,6 @@
 Engine.js
 =========
-The scriptable task engine
+The scriptable task engine. A framework for executing user server-side javascript in a safe, scalable way.
 
 What is Engine.js?
 ------------------
@@ -8,7 +8,7 @@ What is Engine.js?
 Engine.js is a framework for extending web applications to allow users
 to write their own server-side javascript code to interact with the
 application. Engine.js lets users create their own functionality
-within the application.
+within host applications.
 
 When you integrate Engine.js with your web application you must
 explicitly determine what set of functions users can call from their
@@ -27,16 +27,17 @@ pages for more information.
 
 ### Dependencies
    - Linux or OS X
-   - Node.js (v0.4 ONLY)
+   - Node.js (tested with v0.6.7)
    - NPM
    - ZeroMQ (2.1)
      - OS X: `brew install zeromq`
      - Linux: [See 0mq INSTALL](https://raw.github.com/zeromq/zeromq2-1/master/INSTALL)
+   - [NVM](https://github.com/creationix/nvm) (Only if you want to run the build script)
 
 ### Quick Start
   - Install the library: `npm install engine.js`
   
-  - Start the server: `node script/server.js`
+  - Start the server: `npm run-script engine.js quickstart-server`
 
   - Write your code    
 
@@ -61,12 +62,18 @@ pages for more information.
 ### Demo
 Included in `examples/dashboard` is a demo [Express](http://expressjs.com/) application.
 
-You must have both `Express` and `Socket.io` installed
+	npm install engine.js
+	npm run-script engine.js dashboard
 
-	npm install express
-	npm install socket.io
-	
-You can then run: `node examples/dashboard/app.js` and open your browser to `http://localhost:3000`
+Then open your browser to `http://localhost:3000`
+
+### Tests
+Engine.js has both unit tests (spec/engine) and integration tests (spec/end-to-end). Both types are written with [Jasmine](https://github.com/pivotal/jasmine/wiki) and run with [jasmine-node](https://github.com/mhevery/jasmine-node).
+  
+  - **First** clone the repository and then run `npm install .` from the project root.
+  - To run the unit test suite, run `make unit-test`
+  - To run the integration test suite, run `make end-to-end-test`
+  - To run the full test suite, run `make test`
 
 ### Future Plans
   - Support for other sandboxable scripting languages (ie. Lua)

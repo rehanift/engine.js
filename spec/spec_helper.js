@@ -3,6 +3,7 @@ var util = require("util"),
     engine = require("../engine").engine;
 
 var mock = {};
+var cf = require("./helpers/component_factories").helpers;
 
 mock.TASK_PAYLOAD = JSON.stringify({
     task_id: "1",
@@ -10,6 +11,7 @@ mock.TASK_PAYLOAD = JSON.stringify({
     code: "",
     locals: {}
 });
+
 
 mock.TASK_RESULTS = JSON.stringify({
     task_id: "1",
@@ -109,4 +111,10 @@ var mock_log_writer = function(){};
 mock_log_writer.prototype.write = function(){};
 mock.log_writer = mock_log_writer;
 
+var mock_context_validator = function(){};
+mock_context_validator.prototype.validate = function(){};
+mock.context_validator = mock_context_validator;
+
 exports.mock = mock;
+
+exports.component_factories = cf;

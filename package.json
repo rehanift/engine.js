@@ -2,20 +2,22 @@
   "author": "Rehan Iftikhar <rehan.iftikhar@gmail.com>",
   "name": "engine.js",
   "description": "A scriptable task engine",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/rehanift/engine.js.git"
   },
   "main": "engine",
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "quickstart-server": "node script/server.js",
+    "dashboard": "node examples/dashboard/app.js"
   },
   "engines": {
-    "node": "*"
+    "node": "node >=0.6.0"
   },
   "dependencies": {
-      "zmq" : "1.0.2",
+      "zmq" : "*",
       "node-uuid" : "1.1.0"
   },
   "devDependencies": {
