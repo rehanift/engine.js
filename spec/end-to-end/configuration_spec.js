@@ -11,21 +11,20 @@ describe("configurations", function(){
 	    var base_port = 5555;
 
 	    this.client = engine.client.create({
-		sending_endpoint: "tcp://127.0.0.1:" + base_port + offset + 0,
-		listening_endpoint: "tcp://127.0.0.1:" + base_port + offset + 1
+		sending_endpoint: "tcp://127.0.0.1:" + (base_port + offset + 0),
+		listening_endpoint: "tcp://127.0.0.1:" + (base_port + offset + 1)
 	    });
 	    this.intake = engine.intake.create({
-		listening_endpoint: "tcp://127.0.0.1:" + base_port + offset + 0,
-		sending_endpoint: "tcp://127.0.0.1:" + base_port + offset + 2
+		listening_endpoint: "tcp://127.0.0.1:" + (base_port + offset + 0),
+		sending_endpoint: "tcp://127.0.0.1:" + (base_port + offset + 2)
 	    });
 	    this.cylinder = engine.cylinder.create({
-		listening_endpoint: "tcp://127.0.0.1:" + base_port + offset + 2,
-		exhaust_endpoint: "tcp://127.0.0.1:" + base_port + offset + 3,
-		piston_script: "./script/piston.js"
+		listening_endpoint: "tcp://127.0.0.1:" + (base_port + offset + 2),
+		exhaust_endpoint: "tcp://127.0.0.1:" + (base_port + offset + 3)
 	    });
 	    this.exhaust = engine.exhaust.create({
-		listening_endpoint: "tcp://127.0.0.1:" + base_port + offset + 3,
-		publishing_endpoint: "tcp://127.0.0.1:" + base_port + offset + 1
+		listening_endpoint: "tcp://127.0.0.1:" + (base_port + offset + 3),
+		publishing_endpoint: "tcp://127.0.0.1:" + (base_port + offset + 1)
 	    });
 	});
 
