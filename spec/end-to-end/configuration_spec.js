@@ -20,8 +20,7 @@ describe("configurations", function(){
 	    });
 	    this.cylinder = engine.cylinder.create({
 		listening_endpoint: "tcp://127.0.0.1:" + (base_port + offset + 2),
-		exhaust_endpoint: "tcp://127.0.0.1:" + (base_port + offset + 3),
-		piston_script: "./script/piston.js"
+		exhaust_endpoint: "tcp://127.0.0.1:" + (base_port + offset + 3)
 	    });
 	    this.exhaust = engine.exhaust.create({
 		listening_endpoint: "tcp://127.0.0.1:" + (base_port + offset + 3),

@@ -21,7 +21,7 @@
       "node-uuid" : "1.1.0"
   },
   "devDependencies": {
-      "jasmine-node" : "*",
+      "jasmine-node" : "1.0.19",
       "underscore" : "*"
   }
 }
