@@ -20,10 +20,12 @@ Engine.js currently uses Node.js for script evaluation. It has a
 client library for Node.js (bundled). Ruby and PHP client libraries
 are planned.
 
-See the
-[Overview](https://github.com/rehanift/engine.js/wiki/Overview) and
-[Documentation](https://github.com/rehanift/engine.js/wiki/Documentation)
-pages for more information.
+
+For more information:
+
+   - [Getting Started](http://bit.ly/zEdyVb) - A tutorial on how to get first your Engine.js project up and running
+   - [Overview](http://bit.ly/yvg2Zs) - An overview of how Engine.js works
+   - [Documentation](http://bit.ly/wk4Hoh) - Configuration options
 
 ### Dependencies
    - Linux or OS X
