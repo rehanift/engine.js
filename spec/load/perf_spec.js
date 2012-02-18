@@ -27,8 +27,10 @@ var run_parameterized_system_test = function(scheme, num_clients, tasks_per_clie
     
     waits(1000);
 
-    var tasks = {}, task, callback, int1, int2;
+    var tasks = {}, task, callback, int1, int2, start_time;
     runs(function(){
+	start_time = new Date();
+	
 	_.each(components['clients'], function(client){
 	    for(var i = 1; i <= tasks_per_client; i++){
 		int1 = Math.random(0,100);
@@ -69,10 +71,23 @@ var run_parameterized_system_test = function(scheme, num_clients, tasks_per_clie
 	_.each(components['clients'], function(client){
 	    client.close();
 	});
+	report_results(scheme, num_clients, tasks_per_client, num_cylinders, start_time, new Date());
     });
 };  
 
-describe("Parameterized system test", function(){    
+var report_results = function(transport_scheme, num_clients, tasks_per_client, num_cylinders, start_time, end_time){
+    var total_tasks = num_clients * tasks_per_client;
+    var total_time = (end_time - start_time) / 1000;
+    var tasks_per_second = total_tasks / total_time;
+
+    console.log("\n["+transport_scheme+"] " + total_tasks + " tasks from " + 
+		num_clients + " clients against " + num_cylinders + " cylinders " +
+		"completed in " + total_time + " seconds " + 
+		"(" + Math.floor(tasks_per_second) + " tps)");
+};
+
+describe("Parameterized system test", function(){
+    
     it("runs 1 client, 5 tasks, and 1 cylinder", function(){
 	run_parameterized_system_test('tcp',1,5,1);
 	run_parameterized_system_test('ipc',1,5,1);
@@ -102,4 +117,5 @@ describe("Parameterized system test", function(){
 	run_parameterized_system_test('tcp',50,50,10);
 	run_parameterized_system_test('ipc',50,50,10);
     });
+
 });
