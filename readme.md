@@ -77,11 +77,38 @@ Engine.js has both unit tests (spec/engine) and integration tests (spec/end-to-e
   - To run the integration test suite, run `make end-to-end-test`
   - To run the full test suite, run `make test`
 
+### Benchmarks
+Engine.js has a preliminary benchmark script at `spec/load/perf_spec.js`. The script creates 2500 tasks that add two random numbers together. The script cycles through a variety of transport types (TCP or IPC), number of clients, and number of cylinders. On my personal laptop (Intel Core 2 Duo @ 2.40Ghz w/ 4GB of RAM) I got the following results:
+
+    [tcp] 2500 tasks from 1 clients against 1 cylinders completed in 4.004 seconds (624 tps)
+    [ipc] 2500 tasks from 1 clients against 1 cylinders completed in 3.921 seconds (637 tps)
+    [tcp] 2500 tasks from 1 clients against 25 cylinders completed in 3.365 seconds (742 tps)
+    [ipc] 2500 tasks from 1 clients against 25 cylinders completed in 3.36 seconds (744 tps)
+    [tcp] 2500 tasks from 1 clients against 50 cylinders completed in 3.397 seconds (735 tps)
+    [ipc] 2500 tasks from 1 clients against 50 cylinders completed in 3.371 seconds (741 tps)
+    [tcp] 2500 tasks from 1 clients against 75 cylinders completed in 3.385 seconds (738 tps)
+    [ipc] 2500 tasks from 1 clients against 75 cylinders completed in 3.282 seconds (761 tps)
+    [tcp] 2500 tasks from 1 clients against 100 cylinders completed in 3.614 seconds (691 tps)
+    [ipc] 2500 tasks from 1 clients against 100 cylinders completed in 3.508 seconds (712 tps)
+    
+    [tcp] 2500 tasks from 50 clients against 1 cylinders completed in 5.515 seconds (453 tps)
+    [ipc] 2500 tasks from 50 clients against 1 cylinders completed in 5.094 seconds (490 tps)
+    [tcp] 2500 tasks from 50 clients against 25 cylinders completed in 3.53 seconds (708 tps)
+    [ipc] 2500 tasks from 50 clients against 25 cylinders completed in 3.677 seconds (679 tps)
+    [tcp] 2500 tasks from 50 clients against 50 cylinders completed in 3.403 seconds (734 tps)
+    [ipc] 2500 tasks from 50 clients against 50 cylinders completed in 3.467 seconds (721 tps)
+    [tcp] 2500 tasks from 50 clients against 75 cylinders completed in 3.941 seconds (634 tps)
+    [ipc] 2500 tasks from 50 clients against 75 cylinders completed in 3.855 seconds (648 tps)
+    [tcp] 2500 tasks from 50 clients against 100 cylinders completed in 3.605 seconds (693 tps)
+    [ipc] 2500 tasks from 50 clients against 100 cylinders completed in 10.578 seconds (236 tps)
+
+> tps = tasks per second
+
+
 ### Future Plans
   - Support for other sandboxable scripting languages (ie. Lua)
   - Support other Javascript runtimes (ie. RingoJS)
   - Client's in other languages (Java, Python, etc. Basically any language that has [ZeroMQ bindings](http://www.zeromq.org/bindings:_start))
-  - Benchmarks
   - Demo applications
 
 ### License
