@@ -2,7 +2,7 @@
   "author": "Rehan Iftikhar <rehan.iftikhar@gmail.com>",
   "name": "engine.js",
   "description": "A scriptable task engine",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "repository": {
     "type": "git",
     "url": "git://github.com/rehanift/engine.js.git"
