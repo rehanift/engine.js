@@ -3,7 +3,7 @@ BUILD_ID := build-$(shell date +'%s')
 BUILD_BASEDIR=../engine.js-builds
 BUILD_DIR = $(BUILD_BASEDIR)/$(BUILD_ID)
 MKDIR = mkdir -p
-NODE_VERSION ?= v0.6.11
+NODE_VERSION ?= v0.6.15
 GOTO_BUILD_DIR = cd $(BUILD_DIR); source ~/.nvm/nvm.sh; nvm use $(NODE_VERSION); 
 GOTO_MODULE_DIR = cd node_modules/engine.js;
 RUN_LOCAL_SPEC = `npm bin`/jasmine-node
@@ -13,6 +13,8 @@ all: test
 test: unit-test end-to-end-test
 
 build: deploy verify-deploy run-perf
+
+deploy-and-test: deploy verify-deploy
 
 perf: deploy run-perf
 
@@ -29,7 +31,7 @@ verify-deploy:
 deploy:
 	$(MKDIR) $(BUILD_DIR)
 	$(MKDIR) $(BUILD_DIR)/node_modules
-	$(GOTO_BUILD_DIR) npm install --dev ../../engine.js
+	$(GOTO_BUILD_DIR) npm install ../../engine.js
 
 clean:
 	rm -rf $(BUILD_BASEDIR)
