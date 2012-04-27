@@ -4,12 +4,16 @@ var task;
 
 describe("basic operations", function(){
     beforeEach(function(){
-	this.identifier = "basic" + Math.floor(Math.random() * 100000);
+	waits(500);
 
-	this.intake = factories.create_ipc_intake(this.identifier);
-	this.exhaust = factories.create_ipc_exhaust(this.identifier);
-	this.cylinder = (factories.create_ipc_cylinders(1,this.identifier))["1"];
-	this.client = (factories.create_ipc_clients(1,this.identifier))["1"];
+	runs(function(){
+	    this.identifier = "basic" + Math.floor(Math.random() * 100000);
+
+	    this.intake = factories.create_ipc_intake(this.identifier);
+	    this.exhaust = factories.create_ipc_exhaust(this.identifier);
+	    this.cylinder = (factories.create_ipc_cylinders(1,this.identifier))["1"];
+	    this.client = (factories.create_ipc_clients(1,this.identifier))["1"];
+	});	
     });
 
     afterEach(function(){
@@ -119,14 +123,14 @@ describe("basic operations", function(){
         task = this.client.createTask();
         task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task.setLocals({});
-        task.setCode("add(1,1)");        
+        task.setCode("var start = new Date(); while( (new Date()) - start < 500 ) { /* sleep */ }; add(1,1)");        
         task.run();
         task.on('eval', callback1);
 
         var task2 = this.client.createTask();
         task2.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
         task2.setLocals({});
-        task2.setCode("add(3,4)");        
+        task2.setCode("var start = new Date(); while( (new Date()) - start < 500 ) { /* sleep */ }; add(3,4)");        
         task2.run();
         task2.on('eval', callback2);
         

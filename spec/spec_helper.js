@@ -34,6 +34,8 @@ mockSocket.prototype.unsubscribe = function(){};
 mockSocket.prototype.bind = function(endpoint, callback){
     setTimeout(callback, 500);
 };
+mockSocket.prototype.bindSync = function(endpoint){};
+
 mockSocket.prototype.fakeSend = function(message){
     this.emit("message", message);
 };
