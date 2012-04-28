@@ -69,6 +69,14 @@ describe("Client", function(){
 	    expect(mock_task.emit).toHaveBeenCalledWith("eval","foo bar");
 	});
 
+	it("emits an 'eval' event for the task eval if last_eval is undefined and console is undefined", function(){
+	    var mock_task = new mock.task();	    
+	    spyOn(client,'find_task_by_id').andReturn(mock_task);
+	    spyOn(mock_task,'emit');
+	    client.listening_socket.fakeSend('task-123 {"task_id":"task-123"}');
+	    expect(mock_task.emit).toHaveBeenCalledWith("eval",undefined);
+	});
+
 	// pending until we abstract out the sockets
 	xit("unsubscribes the listening socket when a task has been evaluated", function(){
 	    var mock_task = new mock.task();	    
