@@ -69,6 +69,23 @@ describe("Client", function(){
 	    expect(mock_task.emit).toHaveBeenCalledWith("eval","foo bar");
 	});
 
+  it("emits an 'end' event for the task after the linger_wait", function(){
+    var mock_task = new mock.task();	    
+    spyOn(client,'find_task_by_id').andReturn(mock_task);
+    spyOn(mock_task,'emit');
+    client.listening_socket.fakeSend('task-123 {"task_id":"task-123", "last_eval":"foo bar"}');
+
+    waitsFor(function(){
+      return mock_task.emit.callCount > 1
+    });
+
+    runs(function(){
+      console.dir(mock_task.emit.mostRecentCall);
+
+      expect(mock_task.emit).toHaveBeenCalledWith("end");
+    });
+  });
+
 	// pending until we abstract out the sockets
 	xit("unsubscribes the listening socket when a task has been evaluated", function(){
 	    var mock_task = new mock.task();	    
