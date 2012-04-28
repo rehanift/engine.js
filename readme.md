@@ -56,6 +56,12 @@ For more information:
       console.log('your code was evaluated as:', data); //#=> 3   
     });
 
+
+    // no more events to be emitted on task
+    task.on('end', function(){
+      console.log("Task finished...");
+    });
+
     task.run();
 	```
       
