@@ -4,12 +4,16 @@ var factories = require("../spec_helper").component_factories;
 
 describe("error scenarios", function(){
     beforeEach(function(){
-	this.identifier = "error" + Math.floor(Math.random() * 100000);
+	waits(500);
 
-	this.intake = factories.create_ipc_intake(this.identifier);
-	this.exhaust = factories.create_ipc_exhaust(this.identifier);
-	this.cylinder = (factories.create_ipc_cylinders(1,this.identifier))["1"];
-	this.client = (factories.create_ipc_clients(1,this.identifier))["1"];
+	runs(function(){
+	    this.identifier = "error" + Math.floor(Math.random() * 100000);
+
+	    this.intake = factories.create_ipc_intake(this.identifier);
+	    this.exhaust = factories.create_ipc_exhaust(this.identifier);
+	    this.cylinder = (factories.create_ipc_cylinders(1,this.identifier))["1"];
+	    this.client = (factories.create_ipc_clients(1,this.identifier))["1"];
+	});
     });
 
     afterEach(function(){
