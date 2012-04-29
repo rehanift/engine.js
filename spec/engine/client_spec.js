@@ -80,8 +80,6 @@ describe("Client", function(){
     });
 
     runs(function(){
-      console.dir(mock_task.emit.mostRecentCall);
-
       expect(mock_task.emit).toHaveBeenCalledWith("end");
     });
   });
