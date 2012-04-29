@@ -20,6 +20,8 @@
       "zmq" : "*",
       "node-uuid" : "*",
       "jasmine-node" : "1.0.19",
-      "underscore" : "*"
+      "underscore" : "*",
+      "contextify" : "*",
+      "bindings" : "*"
   }
 }
