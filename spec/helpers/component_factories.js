@@ -69,7 +69,7 @@ helpers.create_tcp_cylinders = function(num, listening_port, exhaust_port){
 	cylinders[num_to_s(i)] = engine.cylinder.create({
 	    listening_endpoint: "tcp://127.0.0.1:"+listening_port,
 	    exhaust_endpoint: "tcp://127.0.0.1:"+exhaust_port,
-	    threshold: 1000,
+	    threshold: 2000,
 	    logging_gateway: logging_gateway
 	});	
     }
@@ -82,7 +82,7 @@ helpers.create_ipc_cylinders = function(num, identifier){
 	cylinders[num_to_s(i)] = engine.cylinder.create({
 	    listening_endpoint: "ipc:///tmp/cylinder-listener-"+identifier+".ipc",
 	    exhaust_endpoint: "ipc:///tmp/exhaust-listener-"+identifier+".ipc",
-	    threshold: 1000,
+	    threshold: 2000,
 	    logging_gateway: logging_gateway
 	});	
     }
