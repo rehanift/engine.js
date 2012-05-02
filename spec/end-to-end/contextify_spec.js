@@ -58,6 +58,22 @@ describe("Evaling with globals", function(){
 
   });
 
+  it("responds to output events", function(){
+    task = this.client.createTask();
+    var callback = setupCountingContext(task, "console.log('hello');");
+    var outputCallback = jasmine.createSpy();
+    task.on('output', outputCallback);
+
+    waitsFor(function(){ return outputCallback.callCount > 0 });
+
+    runs(function(){
+      var args = outputCallback.mostRecentCall.args;
+
+      expect(args[0]).toBe("'hello'");
+    });
+
+  });
+
   xit("returns locals from the context", function(){
     task = this.client.createTask();
     var callback = setupCountingContext(task);
