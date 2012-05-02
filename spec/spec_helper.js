@@ -15,7 +15,7 @@ mock.TASK_PAYLOAD = JSON.stringify({
 
 mock.TASK_RESULTS = JSON.stringify({
     task_id: "1",
-    last_eval: ""
+    response: { evaluation: "" }
 });
 
 

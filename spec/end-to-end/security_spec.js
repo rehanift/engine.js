@@ -25,6 +25,10 @@ describe("Sandbox Security", function(){
 	this.client.close();
     });
 
+    var getLastEval = function(cb) {
+      return cb.mostRecentCall.args[1].getEvaluation();
+    }
+
     describe("Function#toString attach", function(){
 	it("throws a SecurityError when trying to call '.toString' on a context function", function(){
             var callback = jasmine.createSpy();
@@ -40,7 +44,7 @@ describe("Sandbox Security", function(){
             });
 
             runs(function(){
-		expect(callback.mostRecentCall.args[0]).toContain("SecurityError");
+		expect(getLastEval(callback)).toContain("SecurityError");
             });
 
 	});
@@ -61,7 +65,7 @@ describe("Sandbox Security", function(){
             });
 
             runs(function(){
-		expect(callback.mostRecentCall.args[0]).toContain("SecurityError");
+		expect(getLastEval(callback)).toContain("SecurityError");
             });
 
 	});
@@ -80,7 +84,7 @@ describe("Sandbox Security", function(){
             });
 
             runs(function(){
-		expect(callback.mostRecentCall.args[0]).toContain("SecurityError");
+		expect(getLastEval(callback)).toContain("SecurityError");
             });
 
 	});
@@ -101,7 +105,7 @@ describe("Sandbox Security", function(){
             });
 
             runs(function(){
-		expect(callback.mostRecentCall.args[0]).toContain("TypeError");
+		expect(getLastEval(callback)).toContain("TypeError");
             });
 	});
 
@@ -119,7 +123,7 @@ describe("Sandbox Security", function(){
             });
 
             runs(function(){
-		expect(callback.mostRecentCall.args[0]).toContain("TypeError");
+		expect(getLastEval(callback)).toContain("TypeError");
             });
 	});
     });
@@ -139,7 +143,7 @@ describe("Sandbox Security", function(){
             });
 
             runs(function(){
-		expect(callback.mostRecentCall.args[0]).toContain("SecurityError");
+		expect(getLastEval(callback)).toContain("SecurityError");
             });
 	});
 
@@ -157,7 +161,7 @@ describe("Sandbox Security", function(){
             });
 
             runs(function(){
-		expect(JSON.stringify(callback.mostRecentCall.args[0])).toContain("SecurityError");
+		expect(JSON.stringify(callback.mostRecentCall.args[1])).toContain("SecurityError");
             });
 	});
 
