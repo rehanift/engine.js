@@ -22,11 +22,19 @@ describe("Evaling with globals", function(){
     this.client.close();
   });
 
-  var setupCountingContext = function(task) {
-    var countingContext = fs.readFileSync("../helpers/counting_context.js", "utf8");
+  var setupCountingContext = function() {
+    task = arguments[0];
+
+    if(arguments.length > 1) {
+      var code = arguments[1];
+    }else {
+      var code = "incr_global() + incr_local()";
+    }
+
+    var countingContext = fs.readFileSync(process.cwd() + "/spec/helpers/counting_context.js", "utf8");
     task.setContext(countingContext);
     task.setLocals({count:5, foo:"bar"});
-    task.setCode("incr_global() + incr_local();");
+    task.setCode(code);
 
     var callback = jasmine.createSpy();
     task.on('eval', callback);
@@ -34,7 +42,7 @@ describe("Evaling with globals", function(){
     return callback;
   }
 
-  xit("returns globals from the context", function(){
+  it("returns globals from the context", function(){
     task = this.client.createTask();
     var callback = setupCountingContext(task);
 
@@ -42,7 +50,7 @@ describe("Evaling with globals", function(){
 
     runs(function(){
       var args = callback.mostRecentCall.args;
-      var globals = args[1];
+      var globals = args[1].getGlobals();
 
       expect(globals.count).toBe(4);
       expect(globals.hello).toBe("world");
@@ -58,7 +66,7 @@ describe("Evaling with globals", function(){
 
     runs(function(){
       var args = callback.mostRecentCall.args;
-      var locals = args[2];
+      var locals = args[1].getLocals();
 
       expect(locals.count).toBe(6);
       expect(locals.foo).toBe("bar");
@@ -66,7 +74,7 @@ describe("Evaling with globals", function(){
 
   });
 
-  xit("returns the result from the code", function(){
+  it("returns the result from the code", function(){
     task = this.client.createTask();
     var callback = setupCountingContext(task);
 
@@ -74,10 +82,42 @@ describe("Evaling with globals", function(){
 
     runs(function(){
       var args = callback.mostRecentCall.args;
-      var lastEval = args[0];
+      var lastEval = args[1].getEvaluation();
 
       expect(lastEval).toBe(10);
     });
 
   });
+
+  describe("with an exception raised in the code", function(){
+    it("returns the result from the code", function(){
+      task = this.client.createTask();
+      var callback = setupCountingContext(task, "noObject()");
+
+      waitsFor(function(){ return callback.callCount > 0 });
+
+      runs(function(){
+        var args = callback.mostRecentCall.args;
+        var lastEval = args[1].getEvaluation();
+
+        expect(lastEval).toBe("ReferenceError: noObject is not defined");
+      });
+
+    });
+
+    it("sets the TaskResponse isError to true", function(){
+      task = this.client.createTask();
+      var callback = setupCountingContext(task, "noObject()");
+
+      waitsFor(function(){ return callback.callCount > 0 });
+
+      runs(function(){
+        var args = callback.mostRecentCall.args;
+
+        expect(args[1].isError()).toBe(true);
+      });
+
+    });
+  });
+
 });
