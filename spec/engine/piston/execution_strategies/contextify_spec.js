@@ -10,18 +10,18 @@ describe("Code Runners", function(){
 	});
 
 	it("evalutes code against a sandbox", function(){
-            var last_eval = this.strategy.execute("add(1,1)", this.sandbox);            
-            expect(last_eval).toBe(2);
+            var response = this.strategy.execute("add(1,1)", this.sandbox);            
+            expect(response.evaluation).toBe(2);
 	});
 
 	it("throws a SyntaxError when the user-code has bad syntax", function(){
-            var last_eval = this.strategy.execute("add(1,1", this.sandbox);            
-            expect(last_eval).toContain("SyntaxError");
+            var response = this.strategy.execute("add(1,1", this.sandbox);            
+            expect(response.evaluation).toContain("SyntaxError");
 	});
 
 	it("throws a ReferenceError when the user-code calls an unknown sandbox function", function(){
-            var last_eval = this.strategy.execute("subtract(1,1)", this.sandbox);
-            expect(last_eval).toContain("ReferenceError");
+            var response = this.strategy.execute("subtract(1,1)", this.sandbox);
+            expect(response.evaluation).toContain("ReferenceError");
 	});
     });
 

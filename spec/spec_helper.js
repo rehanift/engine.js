@@ -52,6 +52,15 @@ mock_task.prototype.on = function(){};
 mock_task.prototype.emit = function(){};
 mock.task = mock_task;
 
+mock.TaskResponseTranslator = (function(){
+    var translator = function(){};
+    translator.prototype = {
+	translate: function(){}
+    };
+
+    return translator;
+})();
+
 var stdout = function(){};
 util.inherits(stdout, events.EventEmitter);
 var stderr = function(){};
