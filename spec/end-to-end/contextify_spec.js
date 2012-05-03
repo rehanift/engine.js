@@ -105,6 +105,29 @@ describe("Evaling with globals", function(){
 
   });
 
+  describe("with an error in the sandbox code", function(){
+
+    it("returns the error in the first argument to the callback", function(){
+      task = this.client.createTask();
+      task.setContext("{}");
+      task.setLocals();
+      task.setCode("1+1");
+
+      var callback = jasmine.createSpy();
+      task.on('eval', callback);
+      task.run();
+
+      waitsFor(function(){ return callback.callCount > 0 });
+
+      runs(function(){
+        var args = callback.mostRecentCall.args;
+
+        expect(args[0]).toContain("SandboxError");
+        expect(args[1]).toBe(null);
+      });
+    });
+  });
+
   describe("with an exception raised in the code", function(){
     it("returns the result from the code", function(){
       task = this.client.createTask();

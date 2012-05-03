@@ -38,9 +38,8 @@ describe("error scenarios", function(){
     });
 
     runs(function(){
-      var response = callback.mostRecentCall.args[1]
-      expect(response.getEvaluation()).toContain("TimeoutError");
-    expect(response.isError()).toBe(true);
+      var error = callback.mostRecentCall.args[0]
+      expect(error).toContain("TimeoutError");
     });
 
   });
