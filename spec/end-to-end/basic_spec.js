@@ -207,7 +207,7 @@ describe("basic operations", function(){
         },null, 100000);
 
         runs(function(){
-            expect(getLastEval(callback1)).toContain("TimeoutError");
+            expect(callback1.mostRecentCall.args[0]).toContain("TimeoutError");
             expect(getLastEval(callback2)).toBe(9);
         });
         
