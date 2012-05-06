@@ -31,7 +31,7 @@ describe("Evaling with globals", function(){
       var code = "incr_global() + incr_local()";
     }
 
-    var countingContext = fs.readFileSync(process.cwd() + "/spec/helpers/counting_context.js", "utf8");
+    var countingContext = fs.readFileSync(__dirname + "/../helpers/counting_context.js", "utf8");
     task.setContext(countingContext);
     task.setLocals({count:5, foo:"bar"});
     task.setCode(code);
