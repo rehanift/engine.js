@@ -29,7 +29,7 @@ describe("Cylinder", function(){
 	it("validates the recieved task's context", function(){
 	    spyOn(cylinder.context_validator,'validate');
 	    cylinder.listening_socket.fakeSend(JSON.stringify(task_with_bad_context));
-	    expect(cylinder.context_validator.validate).toHaveBeenCalledWith(task_with_bad_context.context);
+	    expect(cylinder.context_validator.validate).toHaveBeenCalledWith(task_with_bad_context.context, task_with_bad_context.locals);
 	});
 
 	it("when the context is valid task execution continues", function(){

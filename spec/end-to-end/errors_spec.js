@@ -145,6 +145,26 @@ describe("error scenarios", function(){
 
     });
 
+    it("catches task contexts that reference non-existant locals", function(){
+      var callback = jasmine.createSpy();
+      task = this.client.createTask();
+      task.setContext("(function(locals){ var foo = locals.foo.bar; return { getFoo:function(){ return foo; } } })");
+      task.setLocals({bar:"hello"});
+      task.setCode("getFoo()");        
+      task.on('eval', callback);
+      task.run();
+
+      waitsFor(function(){
+        return callback.callCount > 0;
+      });
+
+      runs(function(){
+        expect(callback.mostRecentCall.args[0]).toContain("SandboxError");
+      });
+
+    });
+
+
   });
 
 });

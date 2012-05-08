@@ -64,6 +64,25 @@ describe("basic operations", function(){
         });        
     });
 
+    it("can access a context's local variables", function(){
+        var callback = jasmine.createSpy();
+        task = this.client.createTask();
+        task.setContext("(function(locals){ return { getFoo:function(){ return locals.foo; } } })");
+        task.setLocals({foo:"FOO"});
+        task.setCode("getFoo()");        
+        task.on('eval', callback);
+        task.run();
+        
+        waitsFor(function(){
+            return callback.callCount > 0;
+        });
+
+        runs(function(){
+            expect(getLastEval(callback)).toBe("FOO");
+        });        
+    });
+
+
     it("evaluates user-code and outputs console messages", function(){
         var output_callback = jasmine.createSpy();
         var eval_callback = jasmine.createSpy();
