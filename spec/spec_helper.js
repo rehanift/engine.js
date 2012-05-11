@@ -15,7 +15,7 @@ mock.TASK_PAYLOAD = JSON.stringify({
 
 mock.TASK_RESULTS = JSON.stringify({
     task_id: "1",
-    last_eval: ""
+    response: { evaluation: "" }
 });
 
 
@@ -51,6 +51,15 @@ mock_task.prototype.getCode = function(){};
 mock_task.prototype.on = function(){};
 mock_task.prototype.emit = function(){};
 mock.task = mock_task;
+
+mock.TaskResponseTranslator = (function(){
+    var translator = function(){};
+    translator.prototype = {
+	translate: function(){}
+    };
+
+    return translator;
+})();
 
 var stdout = function(){};
 util.inherits(stdout, events.EventEmitter);

@@ -30,10 +30,4 @@ describe("piston", function(){
         piston.close();
         expect(piston.console_socket.close).toHaveBeenCalled();
     });
-
-    it("#close closes the server", function(){
-        spyOn(piston.server,'close');
-        piston.close();
-        expect(piston.server.close).toHaveBeenCalled();
-    });
 });
