@@ -268,4 +268,27 @@ describe("basic operations", function(){
         
     });
 
+    it("captures asynchronously globally set variables", function(){
+        var loadResource = function(file){
+            var fs = require("fs");
+            return fs.readFileSync(__dirname + "/../resources/" + file, "utf-8");
+        };
+        var callback = jasmine.createSpy();
+        task = this.client.createTask();
+        task.setContext(loadResource("contexts/simple-async.js"));
+        task.setLocals({});
+        task.setCode(loadResource("code/simple-async.js"));
+        task.on('eval', callback);
+        task.run();
+
+        waitsFor(function(){
+            return callback.callCount > 0;
+        });
+
+        runs(function(){
+            var globals = callback.mostRecentCall.args[1].getGlobals();          
+            expect(globals.foo).toBe("bar");
+        });
+    });
+
 });
