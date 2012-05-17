@@ -24,11 +24,5 @@
       "contextify" : "*",
       "bindings" : "*"
   },
-  "contributors": [{
-    name: "Rehan Iftikhar",
-    email: "rehan.iftikhar@gmail.com",
-    url: "http://twitter.com/rehanift"
-  },{
-    name: "Eric Allam"
-  }]
+  "contributors": ["Eric Allam"]
 }
