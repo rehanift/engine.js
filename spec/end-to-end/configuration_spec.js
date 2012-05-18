@@ -49,7 +49,7 @@ describe("configurations", function(){
             });
 
             runs(function(){
-		expect(callback.mostRecentCall.args[0]).toBe(1);
+		expect(callback.mostRecentCall.args[1].getEvaluation()).toBe(1);
             });
             
 	});

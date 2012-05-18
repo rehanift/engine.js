@@ -2,7 +2,7 @@
   "author": "Rehan Iftikhar <rehan.iftikhar@gmail.com>",
   "name": "engine.js",
   "description": "A scriptable task engine",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/rehanift/engine.js.git"
@@ -20,6 +20,9 @@
       "zmq" : "*",
       "node-uuid" : "*",
       "jasmine-node" : "1.0.19",
-      "underscore" : "*"
-  }
+      "underscore" : "*",
+      "contextify" : "*",
+      "bindings" : "*"
+  },
+  "contributors": ["Eric Allam"]
 }

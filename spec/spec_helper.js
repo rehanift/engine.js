@@ -15,7 +15,7 @@ mock.TASK_PAYLOAD = JSON.stringify({
 
 mock.TASK_RESULTS = JSON.stringify({
     task_id: "1",
-    last_eval: ""
+    response: { evaluation: "" }
 });
 
 
@@ -52,6 +52,15 @@ mock_task.prototype.on = function(){};
 mock_task.prototype.emit = function(){};
 mock.task = mock_task;
 
+mock.TaskResponseTranslator = (function(){
+    var translator = function(){};
+    translator.prototype = {
+	translate: function(){}
+    };
+
+    return translator;
+})();
+
 var stdout = function(){};
 util.inherits(stdout, events.EventEmitter);
 var stderr = function(){};
@@ -77,6 +86,7 @@ mock_sandbox_generator.prototype.generate = function(){};
 mock.sandbox_generator = mock_sandbox_generator;
 
 var mock_execution_strategy = function(){};
+util.inherits(mock_execution_strategy, events.EventEmitter);
 mock_execution_strategy.prototype.execute = function(){};
 mock.execution_strategy = mock_execution_strategy;
 
@@ -116,6 +126,17 @@ mock.log_writer = mock_log_writer;
 var mock_context_validator = function(){};
 mock_context_validator.prototype.validate = function(){};
 mock.context_validator = mock_context_validator;
+
+mock.async_callback_register = (function(){
+    var klass = function(){};
+    util.inherits(klass, events.EventEmitter);
+
+    klass.prototype.start = function(){};
+    klass.prototype.end = function(){};
+    klass.prototype.finish = function(){};
+
+    return klass;
+})();
 
 exports.mock = mock;
 

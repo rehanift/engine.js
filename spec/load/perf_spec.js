@@ -27,38 +27,44 @@ var run_parameterized_system_test = function(scheme, num_clients, tasks_per_clie
     
     waits(1000);
 
-    var tasks = {}, task, callback, int1, int2, start_time;
+    var tasks = {}, task, callback, int1, int2, start_time, end_time, done = 0, task_id;
     runs(function(){
-	start_time = new Date();
-	
-	_.each(components['clients'], function(client){
+	_.each(components['clients'], function(client, client_id){
 	    for(var i = 1; i <= tasks_per_client; i++){
 		int1 = Math.random(0,100);
 		int2 = Math.random(0,200);
-		task = client.createTask();
-		task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
-		task.setLocals({});	    
-		task.setCode("add("+int1+","+int2+")");
-		callback = jasmine.createSpy();
-		task.on('eval', callback);
-		tasks[task.id] = {};
-		tasks[task.id]['task'] = task;
-		tasks[task.id]['callback'] = callback;
-		tasks[task.id]['expected_result'] = int1+int2;
-		task.run();
+                task_id = client_id + "_" + (new Number(i)).toString();
+		tasks[task_id] = {};
+		tasks[task_id]['task'] = client.createTask();
+		tasks[task_id]['expected_result'] = int1+int2;
+		tasks[task_id]['task'].setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
+		tasks[task_id]['task'].setLocals({});	    
+		tasks[task_id]['task'].setCode("index = '"+task_id+"'; add("+int1+","+int2+")");
+                tasks[task_id]['task'].on('eval', function(err, response){
+                    if (err) throw err;
+                    done++;
+                    var globals = response.getGlobals();
+                    tasks[globals.index]['actual_result'] = response.getEvaluation();
+                    tasks[globals.index]['task'] = null;
+                });
 	    }
 	});
+
+        start_time = new Date();
+
+        _.each(tasks, function(scheduled_task){
+            scheduled_task["task"].run();
+        });
     });
 
     waitsFor(function(){
-	return _.all(tasks, function(data, task_id){
-	    return data['callback'].callCount > 0;
-	});
+	return done == tasks_per_client * num_clients;
     },100000);
 
     runs(function(){
+        end_time = new Date();
 	_.each(tasks, function(data, task_id){
-	    expect(data['callback'].mostRecentCall.args[0]).toBe(data['expected_result']);
+	    expect(data['actual_result']).toBe(data['expected_result']);
 	});
     });    
 
@@ -71,7 +77,7 @@ var run_parameterized_system_test = function(scheme, num_clients, tasks_per_clie
 	_.each(components['clients'], function(client){
 	    client.close();
 	});
-	report_results(scheme, num_clients, tasks_per_client, num_cylinders, start_time, new Date());
+	report_results(scheme, num_clients, tasks_per_client, num_cylinders, start_time, end_time);
     });
 
     waits(5000);
