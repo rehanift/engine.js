@@ -138,6 +138,42 @@ mock.async_callback_register = (function(){
     return klass;
 })();
 
+
+mock.PistonProcessSpawner = (function(){
+  var klass = function(){};
+  
+  klass.prototype.spawn_new_process = function(){};
+
+  return klass;
+})();
+
+mock.PistonProcessWatcher = (function(){
+  var klass = function(){};
+  util.inherits(klass, events.EventEmitter);
+
+  klass.prototype.start_watching = function(){};
+  klass.prototype.stop_watching = function(){};
+
+  return klass;
+})();
+
+mock.LoggingGateway = (function(){
+  var klass = function(){};
+
+  klass.prototype.log = function(){};
+
+  return klass;
+})();
+
+mock.PistonProcess = (function(){
+  var klass = function(){};
+  util.inherits(klass, events.EventEmitter);  
+
+  klass.prototype.terminate = function(){};
+
+  return klass;
+})();
+
 exports.mock = mock;
 
 exports.component_factories = cf;
