@@ -21,8 +21,8 @@ describe("Piston Process Manager", function(){
   describe("process spawning", function(){
     it("starts a new Piston process", function(){
       spyOn(this.process_spawner,'spawn_new_process');
-      this.process_manager.start_new_process("my_script",["foo","bar"]);
-      expect(this.process_spawner.spawn_new_process).toHaveBeenCalledWith("my_script",["foo","bar"]);
+      this.process_manager.start_new_process();
+      expect(this.process_spawner.spawn_new_process).toHaveBeenCalled();
     });
 
     it("sets the new process as the current process", function(){
@@ -68,16 +68,53 @@ describe("Piston Process Manager", function(){
     });
   });
 
+  describe("process killing", function(){
+    it("gets current Piston process", function(){
+      var stub_process = new mock.PistonProcess();
+      spyOn(this.process_manager,'get_current_process').andReturn(stub_process);
+      this.process_manager.kill_current_process();
+      expect(this.process_manager.get_current_process).toHaveBeenCalled();
+    });
+
+    it("terminates the current Piston process", function(){
+      var stub_process = new mock.PistonProcess();
+      spyOn(stub_process,'kill');
+      spyOn(this.process_manager,'get_current_process').andReturn(stub_process);
+      this.process_manager.kill_current_process();
+      expect(stub_process.kill).toHaveBeenCalled();
+    });
+  });
+
   it("logs errors from the Piston process", function(){
     spyOn(this.logging_gateway,'log');
-    this.process_watcher.emit("process error", "foo");
+    this.process_watcher.emit("piston error", "foo");
     expect(this.logging_gateway.log).toHaveBeenCalled();
   });
 
   it("emits a 'piston crash' event", function(){
     spyOn(this.process_manager,'emit');
-    this.process_watcher.emit("process crash", "error_code", "error_signal");
+    this.process_watcher.emit("piston crash", "error_code", "error_signal");
     expect(this.process_manager.emit).toHaveBeenCalledWith("piston crash", "error_code", "error_signal");
+  });
+
+  describe("when a piston is killed", function(){
+    it("stop watching the current Piston process", function(){
+      spyOn(this.process_watcher,'stop_watching');
+      this.process_watcher.emit("piston kill");
+      expect(this.process_watcher.stop_watching).toHaveBeenCalled();
+    });
+
+    it("starts a new Piston process", function(){
+      spyOn(this.process_manager,'start_new_process');
+      this.process_watcher.emit("piston kill");
+      expect(this.process_manager.start_new_process).toHaveBeenCalled();
+    });
+
+    it("emits a 'piston restart' event", function(){
+      spyOn(this.process_manager,'emit');
+      this.process_watcher.emit("piston kill");
+      expect(this.process_manager.emit).toHaveBeenCalledWith("piston restart");
+    });
   });
 
   it("stores a Piston process", function(){

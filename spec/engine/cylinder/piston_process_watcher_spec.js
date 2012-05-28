@@ -24,6 +24,15 @@ describe("PistonProcessWatcher", function(){
     expect(callback).toHaveBeenCalledWith("foo_code","bar_signal");
   });
 
+  it("emits a 'piston kill' event when the watched Piston process is killed", function(){
+    var callback = jasmine.createSpy();
+    var piston_process = new mock.PistonProcess();
+    this.watcher.on("piston kill", callback);
+    this.watcher.start_watching(piston_process);
+    piston_process.emit("process kill");
+    expect(callback).toHaveBeenCalled();
+  });
+
   it("does not emit 'piston error' events after a watcher stops watching", function(){
     var callback = jasmine.createSpy();
     var piston_process = new mock.PistonProcess();
@@ -41,6 +50,16 @@ describe("PistonProcessWatcher", function(){
     this.watcher.start_watching(piston_process);
     this.watcher.stop_watching();
     piston_process.emit("process crash", "foo_code", "bar_signal");
+    expect(callback).not.toHaveBeenCalled();
+  });
+
+  it("does not emit a 'piston kill' event after a watcher stops watching", function(){
+    var callback = jasmine.createSpy();
+    var piston_process = new mock.PistonProcess();
+    this.watcher.on("piston kill", callback);
+    this.watcher.start_watching(piston_process);
+    this.watcher.stop_watching();
+    piston_process.emit("process kill");
     expect(callback).not.toHaveBeenCalled();
   });
 

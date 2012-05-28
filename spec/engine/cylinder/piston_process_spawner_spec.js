@@ -3,8 +3,11 @@ var PistonProcess = require("../../../lib/engine/cylinder/piston_process");
 
 describe("PistonProcessSpawner",function(){
   beforeEach(function(){
-    var spawner = PistonProcessSpawner.create();
-    this.process = spawner.spawn_new_process(__dirname + "/test_child_process.js");
+    var spawner = PistonProcessSpawner.create({
+      piston_script: __dirname + "/test_child_process.js",
+      script_args: []
+    });
+    this.process = spawner.spawn_new_process();
   });
 
   it("spawns a new node process and returns it in a PistonProcess object", function(){
@@ -16,10 +19,13 @@ describe("PistonProcessSpawner",function(){
 describe("PistonProcess", function(){
   it("emits a 'process crash' event when the node process unexpectedly dies", function(){
     var callback = jasmine.createSpy();
-    var spawner = PistonProcessSpawner.create();
+    var spawner = PistonProcessSpawner.create({
+      piston_script: __dirname + "/test_child_process.js",
+      script_args: []
+    });
 
     runs(function(){
-      this.process = spawner.spawn_new_process(__dirname + "/test_child_process.js");
+      this.process = spawner.spawn_new_process();
       this.process.on('process crash', callback);
       this.process.send_signal('SIGINT');
     });    
@@ -36,10 +42,13 @@ describe("PistonProcess", function(){
 
   it("emits a 'process error' event when data is written to the node process's standard error stream", function(){
     var callback = jasmine.createSpy();
-    var spawner = PistonProcessSpawner.create();
+    var spawner = PistonProcessSpawner.create({
+      piston_script: __dirname + "/test_child_process.js",
+      script_args: []
+    });
 
     runs(function(){
-      this.process = spawner.spawn_new_process(__dirname + "/test_child_process.js");
+      this.process = spawner.spawn_new_process();
       this.process.on('process error', callback);
     });    
 
@@ -50,6 +59,29 @@ describe("PistonProcess", function(){
     runs(function(){
       expect(callback).toHaveBeenCalled();
       this.process.kill();
+    });    
+  });
+
+  it("emits a 'process kill' event when the node process is killed", function(){
+    var callback = jasmine.createSpy();
+    var spawner = PistonProcessSpawner.create({
+      piston_script: __dirname + "/test_child_process.js",
+      script_args: []
+    });
+
+    runs(function(){
+      this.process = spawner.spawn_new_process();
+      this.process.on('process kill', callback);
+      this.process.kill();
+    });    
+
+    waitsFor(function(){
+      return callback.callCount > 0;
+    });
+
+    runs(function(){
+      expect(callback).toHaveBeenCalled();
+      //this.process.kill();
     });    
   });
 });

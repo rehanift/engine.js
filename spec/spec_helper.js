@@ -170,6 +170,20 @@ mock.PistonProcess = (function(){
   util.inherits(klass, events.EventEmitter);  
 
   klass.prototype.terminate = function(){};
+  klass.prototype.kill = function(){};
+
+  return klass;
+})();
+
+mock.PistonProcessManager = (function(){
+  var klass = function(){};
+  util.inherits(klass, events.EventEmitter);  
+
+  klass.prototype.start_new_process = function(){};
+  klass.prototype.terminate_current_process = function(){};
+  klass.prototype.kill_current_process = function(){};
+  klass.prototype.get_current_process = function(){};
+  klass.prototype.set_current_process = function(){};
 
   return klass;
 })();

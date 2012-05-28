@@ -5,14 +5,17 @@ describe("Cylinder", function(){
     var cylinder;
 
     beforeEach(function(){
+      this.piston_manager = new mock.PistonProcessManager();
+      this.execution_watcher = new mock.execution_watcher();
+
         cylinder = engine.cylinder.make({
 	    id: "1",
 	    listening_socket: new mock.socket(),
 	    sending_socket: new mock.socket(),
 	    results_socket: new mock.socket(),
             exhaust_socket: new mock.socket(),
-	    execution_watcher: new mock.execution_watcher(),
-            process_spawner: new mock.process_spawner(),
+	    execution_watcher: this.execution_watcher,
+            piston_process_manager: this.piston_manager,
 	    logging_gateway: new mock.logging_gateway(),
 	    context_validator: new mock.context_validator()
         });
@@ -87,29 +90,10 @@ describe("Cylinder", function(){
 
     describe("when a piston has been executing for too long", function(){
         it("kills the piston", function(){
-            var old_piston = cylinder.piston_process;
-            spyOn(old_piston,'kill');
-            cylinder.current_task = mock.TASK_PAYLOAD;
-            cylinder.execution_watcher.emit("kill");
-            old_piston.emit("exit");
-            expect(old_piston.kill).toHaveBeenCalled();
-        });
-
-        it("starts a new piston process", function(){
-            spyOn(cylinder.process_spawner,'spawn');
-            cylinder.current_task = mock.TASK_PAYLOAD;
-            cylinder.execution_watcher.emit("kill");
-            cylinder.piston_process.emit("exit");
-            expect(cylinder.process_spawner.spawn).toHaveBeenCalled();
-        });
-
-        it("replaces the cylinder's piston reference", function(){
-            var old_piston = cylinder.piston_process;
-            cylinder.current_task = mock.TASK_PAYLOAD;
-            cylinder.execution_watcher.emit("kill");
-            old_piston.emit("exit");
-            expect(cylinder.piston_process).toBeTruthy();
-            expect(cylinder.piston_process).not.toBe(old_piston);
+          spyOn(this.piston_manager,'kill_current_process');
+          cylinder.current_task = mock.TASK_PAYLOAD;
+          this.execution_watcher.emit("kill");
+          expect(this.piston_manager.kill_current_process).toHaveBeenCalled();
         });
     });
 
@@ -118,13 +102,13 @@ describe("Cylinder", function(){
         spyOn(cylinder.sending_socket,'close');
         spyOn(cylinder.results_socket,'close');
         spyOn(cylinder.exhaust_socket,'close');
-        spyOn(cylinder.piston_process,'kill');
+        spyOn(this.piston_manager,'terminate_current_process');
         cylinder.close();
         expect(cylinder.listening_socket.close).toHaveBeenCalled();
         expect(cylinder.sending_socket.close).toHaveBeenCalled();
         expect(cylinder.results_socket.close).toHaveBeenCalled();
         expect(cylinder.exhaust_socket.close).toHaveBeenCalled();
-        expect(cylinder.piston_process.kill).toHaveBeenCalled();
+        expect(this.piston_manager.terminate_current_process).toHaveBeenCalled();
     });
 
 });
