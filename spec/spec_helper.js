@@ -75,12 +75,6 @@ util.inherits(child_process, events.EventEmitter);
 child_process.prototype.kill = function(){};
 mock.process = child_process;
 
-var spawner = function(){};
-spawner.prototype.spawn = function(){
-    return new mock.process();
-};
-mock.process_spawner = spawner;
-
 var mock_sandbox_generator = function(){};
 mock_sandbox_generator.prototype.generate = function(){};
 mock.sandbox_generator = mock_sandbox_generator;
