@@ -49,7 +49,6 @@ describe("Cylinder", function(){
     it("when the context is NOT valid task execution is halted", function(){
       var task = JSON.stringify(task_with_bad_context);
       spyOn(cylinder.context_validator,'validate').andReturn(false);
-      spyOn(cylinder.exhaust_socket,'send');
       spyOn(cylinder,'send_next_task_or_queue');
       cylinder.listening_socket.fakeSend(task);
       expect(cylinder.send_next_task_or_queue).not.toHaveBeenCalledWith(task);
@@ -58,10 +57,10 @@ describe("Cylinder", function(){
     it("when the context is NOT valid an error message is returned", function(){
       var task = JSON.stringify(task_with_bad_context);
       spyOn(cylinder.context_validator,'validate').andReturn(false);
-      spyOn(cylinder.exhaust_socket,'send');
-      spyOn(cylinder,'send_next_task_or_queue');
+      spyOn(cylinder.task_response_sender,'send_execution_error');
       cylinder.listening_socket.fakeSend(task);
-      expect(cylinder.exhaust_socket.send).toHaveBeenCalled();
+      expect(cylinder.task_response_sender.send_execution_error)
+        .toHaveBeenCalledWith(task_with_bad_context.task_id,"SandboxError: There was a problem with your task's context");
     });
   });
   
