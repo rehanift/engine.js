@@ -182,6 +182,32 @@ mock.PistonProcessManager = (function(){
   return klass;
 })();
 
+mock.TaskResponseSender = (function(){
+  var klass = function(){};
+
+  klass.prototype.send_execution_error = function(){};
+  klass.prototype.close = function(){};
+
+  return klass;
+})();
+
+mock.TaskResponseSerializer = (function(){
+  var klass = function(){};
+
+  klass.prototype.serialize = function(){};
+
+  return klass;
+})();
+
+mock.OutboundExhaustConnection = (function(){
+  var klass = function(){};
+
+  klass.prototype.send_response = function(){};
+  klass.prototype.close = function(){};
+
+  return klass;
+})();
+
 exports.mock = mock;
 
 exports.component_factories = cf;

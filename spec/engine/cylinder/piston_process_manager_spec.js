@@ -91,10 +91,24 @@ describe("Piston Process Manager", function(){
     expect(this.logging_gateway.log).toHaveBeenCalled();
   });
 
-  it("emits a 'piston crash' event", function(){
-    spyOn(this.process_manager,'emit');
-    this.process_watcher.emit("piston crash", "error_code", "error_signal");
-    expect(this.process_manager.emit).toHaveBeenCalledWith("piston crash", "error_code", "error_signal");
+  describe("when a piston process crashes", function(){
+    it("stop watching the current Piston process", function(){
+      spyOn(this.process_watcher,'stop_watching');
+      this.process_watcher.emit("piston crash");
+      expect(this.process_watcher.stop_watching).toHaveBeenCalled();
+    });
+
+    it("starts a new Piston process", function(){
+      spyOn(this.process_manager,'start_new_process');
+      this.process_watcher.emit("piston crash");
+      expect(this.process_manager.start_new_process).toHaveBeenCalled();
+    });
+
+    it("emits a 'piston crash' event", function(){
+      spyOn(this.process_manager,'emit');
+      this.process_watcher.emit("piston crash", "error_code", "error_signal");
+      expect(this.process_manager.emit).toHaveBeenCalledWith("piston crash", "error_code", "error_signal");
+    });    
   });
 
   describe("when a piston is killed", function(){

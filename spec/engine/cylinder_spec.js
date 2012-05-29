@@ -7,6 +7,8 @@ describe("Cylinder", function(){
     beforeEach(function(){
       this.piston_manager = new mock.PistonProcessManager();
       this.execution_watcher = new mock.execution_watcher();
+      this.logging_gateway = new mock.logging_gateway();
+      this.task_response_sender = new mock.TaskResponseSender();
 
         cylinder = engine.cylinder.make({
 	    id: "1",
@@ -16,8 +18,9 @@ describe("Cylinder", function(){
             exhaust_socket: new mock.socket(),
 	    execution_watcher: this.execution_watcher,
             piston_process_manager: this.piston_manager,
-	    logging_gateway: new mock.logging_gateway(),
-	    context_validator: new mock.context_validator()
+	    logging_gateway: this.logging_gateway,
+	    context_validator: new mock.context_validator(),
+            task_response_sender: this.task_response_sender
         });
     });
 
@@ -96,6 +99,51 @@ describe("Cylinder", function(){
           expect(this.piston_manager.kill_current_process).toHaveBeenCalled();
         });
     });
+
+  describe("when a piston process crashes", function(){
+    beforeEach(function(){
+      this.stub_task = JSON.stringify(mock.TASK_PAYLOAD);
+      spyOn(cylinder,'get_current_task').andReturn(this.stub_task);      
+    });
+
+    it("gets the current task", function(){
+      this.piston_manager.emit("piston crash", "foo_code", "bar_signal");
+      expect(cylinder.get_current_task).toHaveBeenCalled();
+    });
+
+    it("clears the current task's execution watcher", function(){
+      spyOn(this.execution_watcher,'clear');
+      this.piston_manager.emit("piston crash", "foo_code", "bar_signal");
+      expect(this.execution_watcher.clear).toHaveBeenCalled();
+    });
+
+    it("logs the crash", function(){
+      spyOn(this.logging_gateway,'log');
+      this.piston_manager.emit("piston crash", "foo_code", "bar_signal");
+      expect(this.logging_gateway.log).toHaveBeenCalled();
+    });
+
+    it("sends the task response to the exhaust", function(){
+      spyOn(this.task_response_sender,'send_execution_error');
+      this.piston_manager.emit("piston crash", "foo_code", "bar_signal");
+      expect(this.task_response_sender.send_execution_error).
+        toHaveBeenCalledWith(this.stub_task.task_id, "UnexpectedError: An unexpected error occurred while executing your task.");
+    });
+    
+    it("sends the next task to the Piston", function(){
+      spyOn(cylinder,'send_next_task_or_clear');
+      this.piston_manager.emit("piston crash", "foo_code", "bar_signal");
+      expect(cylinder.send_next_task_or_clear).toHaveBeenCalled();
+    });
+    
+  });
+  
+  describe("storing the current task", function(){
+    it("sets and gets the current task", function(){
+      cylinder.set_current_task(mock.TASK_PAYLOAD);
+      expect(cylinder.get_current_task()).toBe(mock.TASK_PAYLOAD);
+    });
+  });
 
     it("#close closes all sockets", function(){
         spyOn(cylinder.listening_socket,'close');
