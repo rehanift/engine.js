@@ -75,12 +75,6 @@ util.inherits(child_process, events.EventEmitter);
 child_process.prototype.kill = function(){};
 mock.process = child_process;
 
-var spawner = function(){};
-spawner.prototype.spawn = function(){
-    return new mock.process();
-};
-mock.process_spawner = spawner;
-
 var mock_sandbox_generator = function(){};
 mock_sandbox_generator.prototype.generate = function(){};
 mock.sandbox_generator = mock_sandbox_generator;
@@ -136,6 +130,82 @@ mock.async_callback_register = (function(){
     klass.prototype.finish = function(){};
 
     return klass;
+})();
+
+
+mock.PistonProcessSpawner = (function(){
+  var klass = function(){};
+  
+  klass.prototype.spawn_new_process = function(){};
+
+  return klass;
+})();
+
+mock.PistonProcessWatcher = (function(){
+  var klass = function(){};
+  util.inherits(klass, events.EventEmitter);
+
+  klass.prototype.start_watching = function(){};
+  klass.prototype.stop_watching = function(){};
+
+  return klass;
+})();
+
+mock.LoggingGateway = (function(){
+  var klass = function(){};
+
+  klass.prototype.log = function(){};
+
+  return klass;
+})();
+
+mock.PistonProcess = (function(){
+  var klass = function(){};
+  util.inherits(klass, events.EventEmitter);  
+
+  klass.prototype.terminate = function(){};
+  klass.prototype.kill = function(){};
+
+  return klass;
+})();
+
+mock.PistonProcessManager = (function(){
+  var klass = function(){};
+  util.inherits(klass, events.EventEmitter);  
+
+  klass.prototype.start_new_process = function(){};
+  klass.prototype.terminate_current_process = function(){};
+  klass.prototype.kill_current_process = function(){};
+  klass.prototype.get_current_process = function(){};
+  klass.prototype.set_current_process = function(){};
+
+  return klass;
+})();
+
+mock.TaskResponseSender = (function(){
+  var klass = function(){};
+
+  klass.prototype.send_execution_error = function(){};
+  klass.prototype.close = function(){};
+
+  return klass;
+})();
+
+mock.TaskResponseSerializer = (function(){
+  var klass = function(){};
+
+  klass.prototype.serialize = function(){};
+
+  return klass;
+})();
+
+mock.OutboundExhaustConnection = (function(){
+  var klass = function(){};
+
+  klass.prototype.send_response = function(){};
+  klass.prototype.close = function(){};
+
+  return klass;
 })();
 
 exports.mock = mock;

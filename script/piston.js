@@ -16,3 +16,8 @@ process.on('SIGTERM', function(){
     console.log("closing piston");
     piston.close();
 });
+
+process.on("uncaughtException", function(err){
+  console.error(err);
+  process.exit(2);
+});

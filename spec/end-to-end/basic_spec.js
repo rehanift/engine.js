@@ -2,6 +2,11 @@ var engine = require("../../engine").engine;
 var factories = require("../spec_helper").component_factories;
 var task;
 
+var loadResource = function(file){
+  var fs = require("fs");
+  return fs.readFileSync(__dirname + "/../resources/" + file, "utf-8");
+};
+
 describe("basic operations", function(){
     beforeEach(function(){
 	waits(500);
@@ -232,6 +237,35 @@ describe("basic operations", function(){
         
     });
 
+    it("evaluates two tasks with one cylinder. First task crashes.", function(){
+        var callback1 = jasmine.createSpy();
+        var callback2 = jasmine.createSpy();
+        
+        task = this.client.createTask();
+        task.setContext(loadResource("contexts/self-segfault.js"));
+        task.setLocals({});
+        task.setCode(loadResource("code/self-segfault.js"));        
+        task.run();
+        task.on('eval', callback1);
+
+        var task2 = this.client.createTask();
+        task2.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
+        task2.setLocals({});
+        task2.setCode("add(5,6)");        
+        task2.run();
+        task2.on('eval', callback2);
+        
+        waitsFor(function(){
+            return callback1.callCount > 0 && callback2.callCount > 0;
+        });
+
+        runs(function(){
+            expect(callback1.mostRecentCall.args[0]).toContain("UnexpectedError");
+            expect(getLastEval(callback2)).toBe(11);
+        });
+        
+    });
+
     it("evaluates two tasks from two clients", function(){
 	var client2 = factories.create_ipc_clients(1,this.identifier)["1"];
 
@@ -269,10 +303,6 @@ describe("basic operations", function(){
     });
 
     it("captures asynchronously globally set variables", function(){
-        var loadResource = function(file){
-            var fs = require("fs");
-            return fs.readFileSync(__dirname + "/../resources/" + file, "utf-8");
-        };
         var callback = jasmine.createSpy();
         task = this.client.createTask();
         task.setContext(loadResource("contexts/simple-async.js"));
