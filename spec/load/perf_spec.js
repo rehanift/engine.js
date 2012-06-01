@@ -143,7 +143,7 @@ describe("Many simple addition tasks", function(){
             run_parameterized_system_test('ipc',50,50,75);
 	});
 
-	it("with 100 cylinders", function(){
+	xit("with 100 cylinders", function(){
             run_parameterized_system_test('tcp',50,50,100);
             run_parameterized_system_test('ipc',50,50,100);
 	});
