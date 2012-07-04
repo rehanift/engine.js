@@ -52,10 +52,23 @@ For more information:
     task.setLocals({});
     task.setCode('add(1,2)');        
       
-    task.on('eval', function(data){
-      console.log('your code was evaluated as:', data); //#=> 3   
-    });
+    task.on('eval', function(err, response){
+      if(err){
+        console.log("An error was encountered while *trying* to execute your task");
+        throw err;
+      }
 
+      if(response.isError()) {
+        console.log("An error was encountered while *executing* your task");
+        throw response.getEvaluation();
+      } 
+  
+      console.log(response.getGlobals()); // The global state of your context after execution
+      
+      console.log('your code was evaluated as:', response.getEvaluation()); //#=> 3 
+      
+      client.close();       
+    });
 
     // no more events to be emitted on task
     task.on('end', function(){
