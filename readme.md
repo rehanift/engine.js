@@ -54,12 +54,12 @@ For more information:
       
     task.on('eval', function(err, response){
       if(err){
-        console.log("An error was encountered while *trying* to execute your task");
+        console.log("An error was encountered *before* executing your task");
         throw err;
       }
 
       if(response.isError()) {
-        console.log("An error was encountered while *executing* your task");
+        console.log("An error was encountered *while* executing your task");
         throw response.getEvaluation();
       } 
   
@@ -80,16 +80,8 @@ For more information:
       
   - Profit!
 
-### Demo
-Included in `examples/dashboard` is a demo [Express](http://expressjs.com/) application.
-
-	npm install engine.js
-	npm run-script engine.js dashboard
-
-Then open your browser to `http://localhost:3000`
-
 ### Tests
-Engine.js has both unit tests (spec/engine) and integration tests (spec/end-to-end). Both types are written with [Jasmine](https://github.com/pivotal/jasmine/wiki) and run with [jasmine-node](https://github.com/mhevery/jasmine-node).
+Engine.js has both unit tests (spec/engine) and end-to-end tests (spec/end-to-end). Both types are written with [Jasmine](https://github.com/pivotal/jasmine/wiki) and run with [jasmine-node](https://github.com/mhevery/jasmine-node).
   
   - **First** clone the repository and then run `npm install .` from the project root.
   - To run the unit test suite, run `make unit-test`
