@@ -17,7 +17,7 @@
     "node": "node >=0.6.0"
   },
   "dependencies": {
-      "zmq" : "*",
+      "zmq" : "2.0.x",
       "node-uuid" : "*",
       "jasmine-node" : "1.0.19",
       "underscore" : "*",
