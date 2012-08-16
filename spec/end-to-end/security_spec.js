@@ -29,6 +29,43 @@ describe("Sandbox Security", function(){
       return cb.mostRecentCall.args[1].getEvaluation();
     }
 
+  describe("getting outside the sandbox", function(){
+    it("cannot manipulate the host context", function(){
+      var context = "(function(){ var host_date = new Date(); return { foo: function(){ return host_date; } } })";
+
+      var callback = jasmine.createSpy();
+      task = this.client.createTask();
+      task.setContext(context);
+      task.setLocals({});
+      task.setCode("foo().__proto__.hacked = function(){ return 'YEP!'};");
+      task.on('eval', callback);
+      task.run();
+      
+      waitsFor(function(){
+	return callback.callCount > 0;
+      });
+
+      var callback2 = jasmine.createSpy();
+      var task2 = this.client.createTask();
+      task.setContext(context);
+      task.setLocals({});
+      task.setCode("foo().hacked()");
+      task.on('eval', callback2);
+      task.run();
+      
+      waitsFor(function(){
+	return callback2.callCount > 0;
+      });
+
+
+      runs(function(){
+	expect(getLastEval(callback2)).not.toContain("YEP!");
+      });
+
+    });
+  });
+
+
     describe("Function#toString attach", function(){
 	it("throws a SecurityError when trying to call '.toString' on a context function", function(){
             var callback = jasmine.createSpy();
