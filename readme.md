@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/rehanift/engine.js.png)](http://travis-ci.org/rehanift/engine.js)
 Engine.js
 =========
 The scriptable task engine. A framework for executing user server-side javascript in a safe, scalable way.
