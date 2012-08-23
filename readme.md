@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/rehanift/engine.js.png)](http://travis-ci.org/rehanift/engine.js)
 Engine.js
 =========
 The scriptable task engine. A framework for executing user server-side javascript in a safe, scalable way.
@@ -52,10 +53,23 @@ For more information:
     task.setLocals({});
     task.setCode('add(1,2)');        
       
-    task.on('eval', function(data){
-      console.log('your code was evaluated as:', data); //#=> 3   
-    });
+    task.on('eval', function(err, response){
+      if(err){
+        console.log("An error was encountered *before* executing your task");
+        throw err;
+      }
 
+      if(response.isError()) {
+        console.log("An error was encountered *while* executing your task");
+        throw response.getEvaluation();
+      } 
+  
+      console.log(response.getGlobals()); // The global state of your context after execution
+      
+      console.log('your code was evaluated as:', response.getEvaluation()); //#=> 3 
+      
+      client.close();       
+    });
 
     // no more events to be emitted on task
     task.on('end', function(){
@@ -67,16 +81,8 @@ For more information:
       
   - Profit!
 
-### Demo
-Included in `examples/dashboard` is a demo [Express](http://expressjs.com/) application.
-
-	npm install engine.js
-	npm run-script engine.js dashboard
-
-Then open your browser to `http://localhost:3000`
-
 ### Tests
-Engine.js has both unit tests (spec/engine) and integration tests (spec/end-to-end). Both types are written with [Jasmine](https://github.com/pivotal/jasmine/wiki) and run with [jasmine-node](https://github.com/mhevery/jasmine-node).
+Engine.js has both unit tests (spec/engine) and end-to-end tests (spec/end-to-end). Both types are written with [Jasmine](https://github.com/pivotal/jasmine/wiki) and run with [jasmine-node](https://github.com/mhevery/jasmine-node).
   
   - **First** clone the repository and then run `npm install .` from the project root.
   - To run the unit test suite, run `make unit-test`
