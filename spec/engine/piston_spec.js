@@ -1,32 +1,38 @@
 var engine = require("../../engine").engine;
 var mock = require("../spec_helper").mock;
 
-describe("piston", function(){    
-  var piston = engine.piston.make({
-    execution_strategy: new mock.execution_strategy(),
-    console_socket: new mock.socket(),
-    sandbox_generator: new mock.sandbox_generator(),
-    server_socket: new mock.socket(),
-    result_socket: new mock.socket()
+describe("Piston", function(){
+  beforeEach(function(){
+    this.task_receiver = new mock.PistonTaskReceiver();
+    this.task_executor = new mock.TaskExecutor();
+    this.task_response_sender = new mock.CylinderTaskResponseSender();
+
+    this.piston = engine.piston.make({
+      task_receiver: this.task_receiver,
+      task_executor: this.task_executor,
+      task_response_sender: this.task_response_sender
+    });
+  }); 
+
+  it("receives tasks and executes them", function(){
+    spyOn(this.task_executor,"execute_task");
+    var fake_task = new Object();
+    this.task_receiver.emit("task received", fake_task);
+    expect(this.task_executor.execute_task).toHaveBeenCalledWith(fake_task);
   });
 
-  describe("#process_request", function(){
-    it("generates a new sandbox", function(){
-      spyOn(piston.sandbox_generator,'generate');
-      piston.process_request("{}");
-      expect(piston.sandbox_generator.generate).toHaveBeenCalled();
-    });
-    
-    it("evaluates code against an execution strategy", function(){
-      spyOn(piston.execution_strategy,'execute');
-      piston.process_request("{}");
-      expect(piston.execution_strategy.execute).toHaveBeenCalled();
-    });
+  it("sends task results back to the client", function(){
+    spyOn(this.task_response_sender,"send_task_response");
+    var fake_task_response = new Object();
+    this.task_executor.emit("task executed", fake_task_response);
+    expect(this.task_response_sender.send_task_response).toHaveBeenCalledWith(fake_task_response);
   });
 
-  it("#close closes all sockets", function(){
-    spyOn(piston.console_socket,'close');
-    piston.close();
-    expect(piston.console_socket.close).toHaveBeenCalled();
+  it("closes down the task receiver and task sender", function(){
+    spyOn(this.task_receiver,"close");
+    spyOn(this.task_response_sender,"close");
+    this.piston.close();
+    expect(this.task_receiver.close).toHaveBeenCalled();
+    expect(this.task_response_sender.close).toHaveBeenCalled();
   });
 });

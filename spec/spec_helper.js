@@ -208,6 +208,27 @@ mock.OutboundExhaustConnection = (function(){
   return klass;
 })();
 
+mock.PistonTaskReceiver = (function(){
+  var klass = function(){};
+  util.inherits(klass, events.EventEmitter);
+  klass.prototype.close = function(){};
+  return klass;
+})();
+
+mock.TaskExecutor = (function(){
+  var klass = function(){};
+  util.inherits(klass, events.EventEmitter);
+  klass.prototype.execute_task = function(){};
+  return klass;
+})();
+
+mock.CylinderTaskResponseSender = (function(){
+  var klass = function(){};
+  klass.prototype.send_task_response = function(){};
+  klass.prototype.close = function(){};
+  return klass;
+})();
+
 exports.mock = mock;
 
 exports.component_factories = cf;
