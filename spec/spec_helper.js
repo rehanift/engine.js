@@ -229,6 +229,19 @@ mock.CylinderTaskResponseSender = (function(){
   return klass;
 })();
 
+mock.InboundCylinderConnection = (function(){
+  var klass = function(){};
+  util.inherits(klass, events.EventEmitter);
+  klass.prototype.close = function(){};
+  return klass;
+})();
+
+mock.TaskRequestTranslator = (function(){
+  var klass = function(){};
+  klass.prototype.translate = function(){};
+  return klass;
+})();
+
 exports.mock = mock;
 
 exports.component_factories = cf;
