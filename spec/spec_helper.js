@@ -182,7 +182,7 @@ mock.PistonProcessManager = (function(){
   return klass;
 })();
 
-mock.TaskResponseSender = (function(){
+mock.ExhaustTaskResponseSender = (function(){
   var klass = function(){};
 
   klass.prototype.send_execution_error = function(){};

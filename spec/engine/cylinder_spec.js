@@ -8,7 +8,7 @@ describe("Cylinder", function(){
     this.piston_manager = new mock.PistonProcessManager();
     this.execution_watcher = new mock.execution_watcher();
     this.logging_gateway = new mock.logging_gateway();
-    this.task_response_sender = new mock.TaskResponseSender();
+    this.task_response_sender = new mock.ExhaustTaskResponseSender();
 
     cylinder = engine.cylinder.make({
       id: "1",
