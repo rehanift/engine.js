@@ -21,8 +21,9 @@
       "node-uuid" : "*",
       "jasmine-node" : "1.0.19",
       "underscore" : "*",
-      "contextify" : "*",
-      "bindings" : "*"
+      "contextify" : "git://github.com/Benvie/contextify.git",
+      "bindings" : "*",
+      "object-grafter" : "git://github.com/rehanift/object-grafter.git"
   },
   "contributors": ["Eric Allam"]
 }
