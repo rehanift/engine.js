@@ -5,7 +5,7 @@ var TaskResponse = require("../../../lib/engine/client/task/response").TaskRespo
 describe("ContextifyTaskExecutor", function(){
   beforeEach(function(){
     this.executor = ContextifyTaskExecutor.create();
-    this.assert_task_response = function(task_request, task_response){
+    this.assert_task_response = function(task_request, cb){
       var spy = jasmine.createSpy();
     
       this.executor.on("task executed", spy);
@@ -19,7 +19,8 @@ describe("ContextifyTaskExecutor", function(){
       });
 
       runs(function(){
-        expect(spy).toHaveBeenCalledWith(task_response);
+        var response = spy.mostRecentCall.args[0];        
+        cb(response);
       });
     };
 
@@ -32,9 +33,10 @@ describe("ContextifyTaskExecutor", function(){
       code: "add(2,2)",
       locals: {}
     });
-    var simple_task_response = new TaskResponse({response:{evaluation:4}});
 
-    this.assert_task_response(simple_task, simple_task_response);
+    this.assert_task_response(simple_task, function(response){
+      expect(response.getEvaluation()).toBe(4);
+    });
   });
 
   it("executes a TaskRequest with locals", function(){
@@ -44,9 +46,10 @@ describe("ContextifyTaskExecutor", function(){
       code: "hello()",
       locals: { world:"world" }
     });
-    var simple_task_response = new TaskResponse({response:{evaluation: "hello world"}});
     
-    this.assert_task_response(simple_task, simple_task_response);
+    this.assert_task_response(simple_task, function(response){
+      expect(response.getEvaluation()).toBe("hello world");
+    });
   });
 
   it("executes a TaskRequest that contains syntax errors", function(){
@@ -56,9 +59,10 @@ describe("ContextifyTaskExecutor", function(){
       code: "hello(",
       locals: { }
     });
-    var simple_task_response = new TaskResponse({response:{error: "SyntaxError: Unexpected end of input"}});
     
-    this.assert_task_response(simple_task, simple_task_response);
+    this.assert_task_response(simple_task, function(response){
+      expect(response.params.response.error).toContain("SyntaxError");
+    });
   });
 
   it("executes a TaskRequest that contains reference errors", function(){
@@ -68,10 +72,38 @@ describe("ContextifyTaskExecutor", function(){
       code: "foo()",
       locals: { }
     });
-    var simple_task_response = new TaskResponse({response:{error: "ReferenceError: foo is not defined"}});
     
-    this.assert_task_response(simple_task, simple_task_response);
+    this.assert_task_response(simple_task, function(response){
+      expect(response.params.response.error).toContain("ReferenceError");
+    });
+
   });
 
-  xit("executes a TaskRequest with asynchronous code");  
+  it("executes a TaskRequest with asynchronous code", function(){
+    var fs = require("fs");
+    var async_context = fs.readFileSync(__dirname + "/resources/async_task_context.js", "utf-8");
+    var simple_task = new TaskRequest({
+      task_id: "2",
+      context: async_context,
+      code: "foo = 'bar'; my_async_function(function(){ foo = 'qux'; });",
+      locals: { }
+    });
+    
+    this.assert_task_response(simple_task, function(response){
+      expect((response.getGlobals()).foo).toBe("qux");
+    });    
+  });
+
+  it("returns global variables after the TaskRequest has executed", function(){
+    var simple_task = new TaskRequest({
+      task_id: "2",
+      context: "(function(locals){ return { } })",
+      code: "foo = 'bar';",
+      locals: { }
+    });
+    
+    this.assert_task_response(simple_task, function(response){
+      expect((response.getGlobals()).foo).toBe("bar");
+    });
+  });
 });
