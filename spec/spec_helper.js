@@ -208,6 +208,15 @@ mock.OutboundExhaustConnection = (function(){
   return klass;
 })();
 
+mock.OutboundCylinderConnection = (function(){
+  var klass = function(){};
+
+  klass.prototype.send_response = function(){};
+  klass.prototype.close = function(){};
+
+  return klass;
+})();
+
 mock.PistonTaskReceiver = (function(){
   var klass = function(){};
   util.inherits(klass, events.EventEmitter);
