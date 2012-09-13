@@ -1,4 +1,4 @@
-var ZmqInboundCylinderConnection = require("../../../lib/engine/cylinder/zmq_inbound_cylinder_connection");
+var ZmqInboundCylinderConnection = require("../../../lib/engine/piston/zmq_inbound_cylinder_connection");
 
 describe("ZmqInboundCylinderConnection", function(){
   beforeEach(function(){
