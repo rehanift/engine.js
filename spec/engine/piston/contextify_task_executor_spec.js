@@ -36,6 +36,7 @@ describe("ContextifyTaskExecutor", function(){
 
     this.assert_task_response(simple_task, function(response){
       expect(response.getEvaluation()).toBe(4);
+      expect(response.getTaskId()).toBe("2");
     });
   });
 
@@ -49,6 +50,7 @@ describe("ContextifyTaskExecutor", function(){
     
     this.assert_task_response(simple_task, function(response){
       expect(response.getEvaluation()).toBe("hello world");
+      expect(response.getTaskId()).toBe("2");
     });
   });
 
@@ -62,6 +64,7 @@ describe("ContextifyTaskExecutor", function(){
     
     this.assert_task_response(simple_task, function(response){
       expect(response.params.response.error).toContain("SyntaxError");
+      expect(response.getTaskId()).toBe("2");
     });
   });
 
@@ -75,6 +78,7 @@ describe("ContextifyTaskExecutor", function(){
     
     this.assert_task_response(simple_task, function(response){
       expect(response.params.response.error).toContain("ReferenceError");
+      expect(response.getTaskId()).toBe("2");
     });
 
   });
@@ -104,6 +108,7 @@ describe("ContextifyTaskExecutor", function(){
     
     this.assert_task_response(simple_task, function(response){
       expect((response.getGlobals()).foo).toBe("bar");
+      expect(response.getTaskId()).toBe("2");
     });
   });
 });
