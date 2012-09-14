@@ -22,10 +22,10 @@ describe("Piston", function(){
   });
 
   it("sends task results back to the client", function(){
-    spyOn(this.task_response_sender,"send_task_response");
+    spyOn(this.task_response_sender,"send_response");
     var fake_task_response = new Object();
     this.task_executor.emit("task executed", fake_task_response);
-    expect(this.task_response_sender.send_task_response).toHaveBeenCalledWith(fake_task_response);
+    expect(this.task_response_sender.send_response).toHaveBeenCalledWith(fake_task_response);
   });
 
   it("closes down the task receiver and task sender", function(){

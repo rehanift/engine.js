@@ -233,7 +233,7 @@ mock.TaskExecutor = (function(){
 
 mock.CylinderTaskResponseSender = (function(){
   var klass = function(){};
-  klass.prototype.send_task_response = function(){};
+  klass.prototype.send_response = function(){};
   klass.prototype.close = function(){};
   return klass;
 })();
