@@ -54,7 +54,7 @@ describe("configurations", function(){
       
     });
 
-    it("outputs console messages", function(){
+    xit("outputs console messages", function(){
       var callback = jasmine.createSpy();
       task = this.client.createTask();
       task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");

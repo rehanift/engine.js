@@ -51,7 +51,7 @@ describe("basic operations", function(){
     
   });
 
-  it("outputs console messages", function(){
+  xit("outputs console messages", function(){
     var callback = jasmine.createSpy();
     task = this.client.createTask();
     task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
@@ -88,7 +88,7 @@ describe("basic operations", function(){
   });
 
 
-  it("evaluates user-code and outputs console messages", function(){
+  xit("evaluates user-code and outputs console messages", function(){
     var output_callback = jasmine.createSpy();
     var eval_callback = jasmine.createSpy();
     task = this.client.createTask();
@@ -176,7 +176,7 @@ describe("basic operations", function(){
     
   });
 
-  it("task tasks, two cylinders, both pushlishing to console", function(){
+  xit("task tasks, two cylinders, both pushlishing to console", function(){
     var cylinder2 = factories.create_ipc_cylinders(1, this.identifier)["1"];
 
     var callback1 = jasmine.createSpy();
