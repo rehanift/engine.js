@@ -77,7 +77,7 @@ describe("Sandbox Security", function(){
   });
 
 
-    describe("Function#toString attach", function(){
+    describe("Function#toString attack", function(){
 	it("throws a SecurityError when trying to call '.toString' on a context function", function(){
             var callback = jasmine.createSpy();
             task = this.client.createTask();
