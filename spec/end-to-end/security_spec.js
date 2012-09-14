@@ -29,7 +29,7 @@ describe("Sandbox Security", function(){
     return cb.mostRecentCall.args[1].getEvaluation();
   };
 
-  xdescribe("getting outside the sandbox", function(){
+  describe("getting outside the sandbox", function(){
     it("cannot manipulate the host context", function(){
       var context = "(function(){ var host_date = new Date(); return { foo: function(){ return host_date; } } })";
       var callback = jasmine.createSpy();
@@ -41,9 +41,6 @@ describe("Sandbox Security", function(){
         task.setLocals({});
         task.setCode("foo().__proto__.hacked = function(){ return 'YEP!'}; foo().hacked();");
         task.on('eval', callback);
-        task.on('eval', function(err, response){
-          console.log(response);
-        });
         task.run();
       });      
       
@@ -56,10 +53,7 @@ describe("Sandbox Security", function(){
         task2.setContext("(function(){ return {} })");
         task2.setLocals({});
         task2.setCode("(new Date()).hacked()");
-        //task2.on('eval', callback2);
-        task2.on('eval', function(){
-          console.log(arguments[1]);
-        });
+        task2.on('eval', callback2);
         task2.run();
       });      
       
@@ -69,8 +63,8 @@ describe("Sandbox Security", function(){
 
 
       runs(function(){
-        //console.log(callback2);
-	//expect(getLastEval(callback2)).not.toContain("YEP!");
+	expect(getLastEval(callback2)).not.toContain("YEP!");
+	expect(getLastEval(callback2)).toContain("TypeError");
       });
 
     });
