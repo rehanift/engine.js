@@ -63,7 +63,8 @@ describe("ContextifyTaskExecutor", function(){
     });
     
     this.assert_task_response(simple_task, function(response){
-      expect(response.params.response.error).toContain("SyntaxError");
+      expect(response.getEvaluation()).toContain("SyntaxError");
+      expect(response.isError()).toBeTruthy();
       expect(response.getTaskId()).toBe("2");
     });
   });
@@ -77,7 +78,8 @@ describe("ContextifyTaskExecutor", function(){
     });
     
     this.assert_task_response(simple_task, function(response){
-      expect(response.params.response.error).toContain("ReferenceError");
+      expect(response.getEvaluation()).toContain("ReferenceError");
+      expect(response.isError()).toBeTruthy();
       expect(response.getTaskId()).toBe("2");
     });
 
