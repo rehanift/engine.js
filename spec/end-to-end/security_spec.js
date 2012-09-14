@@ -138,13 +138,13 @@ describe("Sandbox Security", function(){
 	});
     });
 
-    xdescribe("Function caller attack", function(){
+    describe("Function caller attack", function(){
 	it("throws a TypeError when trying to walk the 'caller chain' from a locally defined & invoked function out of the sandbox", function(){
 	    var callback = jasmine.createSpy();
             task = this.client.createTask();
             task.setContext("(function(locals){ return {  } })");
             task.setLocals({});
-            task.setCode("(function foo() { console.log( foo.caller.caller.toString());})()");
+            task.setCode("(function foo() { foo.caller.caller.toString(); })()");
             task.on('eval', callback);
             task.run();
             
@@ -162,10 +162,11 @@ describe("Sandbox Security", function(){
             task = this.client.createTask();
             task.setContext("(function(locals){ return {  } })");
             task.setLocals({});
-            task.setCode("(function foo() {return [].slice.call(foo.caller.arguments);})()");
+            task.setCode("(function foo() {return [].slice.call(foo.caller.caller.arguments);})()");
             task.on('eval', callback);
             task.run();
             
+          
             waitsFor(function(){
 		return callback.callCount > 0;
             });
