@@ -177,7 +177,7 @@ describe("Sandbox Security", function(){
 	});
     });
 
-    xdescribe("user-defined hook attacks", function(){
+    describe("user-defined hook attacks", function(){
 	it("'toJSON' methods cannot walk outside the sandbox", function(){
 	    var callback = jasmine.createSpy();
             task = this.client.createTask();
@@ -192,6 +192,7 @@ describe("Sandbox Security", function(){
             });
 
             runs(function(){
+		expect(getLastEval(callback)).not.toContain("stringify");
 		expect(getLastEval(callback)).toContain("SecurityError");
             });
 	});
@@ -215,7 +216,7 @@ describe("Sandbox Security", function(){
 	});
 
 
-	it("'inspect' method cannot walk outside the sandbox", function(){
+	xit("'inspect' method cannot walk outside the sandbox", function(){
 	    var callback = jasmine.createSpy();
             task = this.client.createTask();
             task.setContext("(function(locals){ return {  } })");
@@ -233,7 +234,7 @@ describe("Sandbox Security", function(){
             });
 	});
 
-	it("'inspect' method cannot walk outside the sandbox (nested)", function(){
+	xit("'inspect' method cannot walk outside the sandbox (nested)", function(){
 	    var callback = jasmine.createSpy();
             task = this.client.createTask();
             task.setContext("(function(locals){ return {  } })");
