@@ -21,7 +21,7 @@
       "node-uuid" : "*",
       "jasmine-node" : "1.0.19",
       "underscore" : "*",
-      "contextify" : "git://github.com/Benvie/contextify.git",
+      "contextify" : "git://github.com/rehanift/contextify.git#vm-module",
       "bindings" : "*",
       "object-grafter" : "git://github.com/rehanift/object-grafter.git"
   },
