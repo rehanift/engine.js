@@ -70,11 +70,6 @@ For more information:
       client.close();       
     });
 
-    // no more events to be emitted on task
-    task.on('end', function(){
-      console.log("Task finished...");
-    });
-
     task.run();
 	```
       
