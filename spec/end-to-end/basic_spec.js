@@ -51,13 +51,13 @@ describe("basic operations", function(){
     
   });
 
-  xit("outputs console messages", function(){
+  it("outputs console messages", function(){
     var callback = jasmine.createSpy();
     task = this.client.createTask();
     task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
     task.setLocals({});
     task.setCode("console.log('foo')");        
-    task.on('output', callback);
+    task.on('eval', callback);
     task.run();
     
     waitsFor(function(){
@@ -65,7 +65,7 @@ describe("basic operations", function(){
     });
 
     runs(function(){
-      expect(callback.mostRecentCall.args[0]).toBe("'foo'");
+      expect(callback.mostRecentCall.args[1].getDebug()[0]).toBe("'foo'");
     });        
   });
 
@@ -88,23 +88,21 @@ describe("basic operations", function(){
   });
 
 
-  xit("evaluates user-code and outputs console messages", function(){
-    var output_callback = jasmine.createSpy();
+  it("evaluates user-code and outputs console messages", function(){
     var eval_callback = jasmine.createSpy();
     task = this.client.createTask();
     task.setContext("(function(locals){ return { setTimeout: setTimeout, add: function(a,b){ return a+b; } } })");
     task.setLocals({});
-    task.setCode("setTimeout(function(){ console.log('foo'); }, 100); 'foo'");        
-    task.on('output', output_callback);
+    task.setCode("console.log('foo'); 'foo';");        
     task.on('eval', eval_callback);
     task.run();
     
     waitsFor(function(){
-      return eval_callback.callCount > 0 && output_callback.callCount > 0;
+      return eval_callback.callCount > 0;
     });
 
     runs(function(){
-      expect(output_callback.mostRecentCall.args[0]).toBe("'foo'");
+      expect(eval_callback.mostRecentCall.args[1].getDebug()[0]).toBe("'foo'");
       expect(getLastEval(eval_callback)).toBe("foo");
     });
 
@@ -176,7 +174,7 @@ describe("basic operations", function(){
     
   });
 
-  xit("task tasks, two cylinders, both pushlishing to console", function(){
+  it("task tasks, two cylinders, both pushlishing to console", function(){
     var cylinder2 = factories.create_ipc_cylinders(1, this.identifier)["1"];
 
     var callback1 = jasmine.createSpy();
@@ -187,22 +185,22 @@ describe("basic operations", function(){
     task.setLocals({});
     task.setCode("console.log(add(1,1))");        
     task.run();
-    task.on('output', callback1);
+    task.on('eval', callback1);
 
     var task2 = this.client.createTask();
     task2.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
     task2.setLocals({});
     task2.setCode("console.log(add(3,4))");        
     task2.run();
-    task2.on('output', callback2);
+    task2.on('eval', callback2);
     
     waitsFor(function(){
       return callback1.callCount > 0 && callback2.callCount > 0;
     });
 
     runs(function(){
-      expect(callback1.mostRecentCall.args[0]).toBe('2');
-      expect(callback2.mostRecentCall.args[0]).toBe('7');
+      expect(callback1.mostRecentCall.args[1].getDebug()[0]).toBe('2');
+      expect(callback2.mostRecentCall.args[1].getDebug()[0]).toBe('7');
       cylinder2.close();
     });
     

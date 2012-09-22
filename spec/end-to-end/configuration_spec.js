@@ -54,13 +54,13 @@ describe("configurations", function(){
       
     });
 
-    xit("outputs console messages", function(){
+    it("outputs console messages", function(){
       var callback = jasmine.createSpy();
       task = this.client.createTask();
       task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
       task.setLocals({});
       task.setCode("console.log('foo')");        
-      task.on('output', callback);
+      task.on('eval', callback);
       task.run();
       
       waitsFor(function(){
@@ -68,7 +68,7 @@ describe("configurations", function(){
       });
 
       runs(function(){
-        expect(callback.mostRecentCall.args[0]).toBe("'foo'");
+        expect(callback.mostRecentCall.args[1].getDebug()[0]).toBe("'foo'");
       });        
     });
 

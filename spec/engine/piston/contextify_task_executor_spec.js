@@ -118,13 +118,12 @@ describe("ContextifyTaskExecutor", function(){
     var task = new TaskRequest({
       task_id:"2",
       context: "(function(locals){ return { } })",
-      code: "console.log('foo');",
+      code: "console.log('foo')",
       locals: { }
     });
     
     this.assert_task_response(task, function(response){
-      console.log(response.getDebug());
-      expect(response.getDebug()).toContain("foo");
+      expect((response.getDebug())[0]).toContain("foo");
     });
   });
 });

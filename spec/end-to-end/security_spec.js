@@ -112,7 +112,7 @@ describe("Sandbox Security", function(){
 
     });
 
-    xit("throws a SecurityError when trying to call an implicit context function's constructor", function(){
+    it("throws a SecurityError when trying to call an implicit context function's constructor", function(){
       var callback = jasmine.createSpy();
       task = this.client.createTask();
       task.setContext("(function(locals){ return {  } })");
@@ -126,7 +126,7 @@ describe("Sandbox Security", function(){
       });
 
       runs(function(){
-	expect(getLastEval(callback)).toContain("SecurityError");
+	expect(getLastEval(callback)).toContain("ReferenceError");
       });
 
     });
@@ -210,13 +210,13 @@ describe("Sandbox Security", function(){
     });
 
 
-    xit("'inspect' method cannot walk outside the sandbox", function(){
+    it("'inspect' method cannot walk outside the sandbox", function(){
       var callback = jasmine.createSpy();
       task = this.client.createTask();
       task.setContext("(function(locals){ return {  } })");
       task.setLocals({});
       task.setCode("console.log({inspect: function x(){ return x.caller.caller.name } })");
-      task.on('output', callback);
+      task.on('eval', callback);
       task.run();
       
       waitsFor(function(){
@@ -224,17 +224,17 @@ describe("Sandbox Security", function(){
       });
 
       runs(function(){
-	expect(callback.mostRecentCall.args[0]).toContain("SecurityError");
+	expect(callback.mostRecentCall.args[1].getDebug()[0]).toContain("SecurityError");
       });
     });
 
-    xit("'inspect' method cannot walk outside the sandbox (nested)", function(){
+    it("'inspect' method cannot walk outside the sandbox (nested)", function(){
       var callback = jasmine.createSpy();
       task = this.client.createTask();
       task.setContext("(function(locals){ return {  } })");
       task.setLocals({});
       task.setCode("console.log({foo: 'bar', test: {inspect: function x(){ return x.caller.caller.name } }})");
-      task.on('output', callback);
+      task.on('eval', callback);
       task.run();
       
       waitsFor(function(){
@@ -242,7 +242,7 @@ describe("Sandbox Security", function(){
       });
 
       runs(function(){
-	expect(callback.mostRecentCall.args[0]).toContain("SecurityError");
+	expect(callback.mostRecentCall.args[1].getDebug()[0]).toContain("SecurityError");
       });
     });
 
