@@ -49,24 +49,6 @@ describe("Client", function(){
         });
     });
 
-
-    describe("when output results arrive for a task", function(){
-	it("emits an 'output' event for the task", function(){
-	    this.response = 'task-123 {"task_id":"task-123", "console":"hello world"}';
-            this.mock_task_response = new TaskResponse({
-                task_id:"task-123",
-                console:"hello world"
-            });
-	    spyOn(this.response_translator,'translate').andReturn(this.mock_task_response);
-	    this.mock_task = new mock.task();
-	    spyOn(client,'find_task_by_id').andReturn(this.mock_task);
-            
-	    spyOn(this.mock_task,'emit');
-	    client.listening_socket.fakeSend(this.response);
-	    expect(this.mock_task.emit).toHaveBeenCalledWith("output","hello world");
-	});        
-    });
-
     describe("where there is not output and no evaluation", function(){
         it("emits an 'eval' event for the task", function(){
 	    this.response = 'task-123 {"task_id":"task-123", "evaluation":undefined}';
@@ -110,19 +92,6 @@ describe("Client", function(){
 	    client.listening_socket.fakeSend(this.response);
 	    expect(this.mock_task.emit).toHaveBeenCalledWith("eval", null, this.mock_task_response);
 	});
-
-        it("emits an 'end' event for the task after the linger_wait", function(){
-            spyOn(this.mock_task,'emit');
-            client.listening_socket.fakeSend(this.response);
-
-            waitsFor(function(){
-                return this.mock_task.emit.callCount > 1;
-            });
-
-            runs(function(){
-                expect(this.mock_task.emit).toHaveBeenCalledWith("end");
-            });
-        });
 
 	// pending until we abstract out the sockets
 	xit("unsubscribes the listening socket when a task has been evaluated", function(){
