@@ -113,4 +113,18 @@ describe("ContextifyTaskExecutor", function(){
       expect(response.getTaskId()).toBe("2");
     });
   });
+
+  it("logs debugging statements", function(){
+    var task = new TaskRequest({
+      task_id:"2",
+      context: "(function(locals){ return { } })",
+      code: "console.log('foo');",
+      locals: { }
+    });
+    
+    this.assert_task_response(task, function(response){
+      console.log(response.getDebug());
+      expect(response.getDebug()).toContain("foo");
+    });
+  });
 });
