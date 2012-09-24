@@ -1,13 +1,13 @@
-var TaskResponseSender = require("../../../lib/engine/cylinder/task_response_sender"),
+var ExhaustTaskResponseSender = require("../../../lib/engine/cylinder/exhaust_task_response_sender"),
     TaskResponse = require("../../../lib/engine/client/task/response").TaskResponse,
     mock = require("../../spec_helper").mock;
 
-describe("TaskResponseSender", function(){
+describe("ExhaustTaskResponseSender", function(){
   beforeEach(function(){
     this.task_response_serializer = new mock.TaskResponseSerializer();
     this.outbound_exhaust_connection = new mock.OutboundExhaustConnection();
     
-    this.response_sender = TaskResponseSender.make({
+    this.response_sender = ExhaustTaskResponseSender.make({
       task_response_serializer: this.task_response_serializer,
       outbound_exhaust_connection: this.outbound_exhaust_connection
     });
