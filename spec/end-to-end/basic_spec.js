@@ -143,8 +143,8 @@ describe("basic operations", function(){
     var callback1 = jasmine.createSpy();
     var callback2 = jasmine.createSpy();
     
-    spyOn(this.cylinder.sending_socket,'send').andCallThrough();
-    spyOn(cylinder2.sending_socket,'send').andCallThrough();
+    spyOn(this.cylinder.piston_process_manager,'send_task_to_piston').andCallThrough();
+    spyOn(cylinder2.piston_process_manager,'send_task_to_piston').andCallThrough();
 
     task = this.client.createTask();
     task.setContext("(function(locals){ return { add: function(a,b){ return a+b; } } })");
@@ -165,8 +165,8 @@ describe("basic operations", function(){
     });
 
     runs(function(){
-      expect(this.cylinder.sending_socket.send).toHaveBeenCalled();
-      expect(cylinder2.sending_socket.send).toHaveBeenCalled();
+      expect(this.cylinder.piston_process_manager.send_task_to_piston).toHaveBeenCalled();
+      expect(cylinder2.piston_process_manager.send_task_to_piston).toHaveBeenCalled();
       expect(getLastEval(callback1)).toBe(2);
       expect(getLastEval(callback2)).toBe(7);
       cylinder2.close();

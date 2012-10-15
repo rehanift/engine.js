@@ -20,7 +20,8 @@ describe("Piston Process Manager", function(){
 
   describe("process spawning", function(){
     it("starts a new Piston process", function(){
-      spyOn(this.process_spawner,'spawn_new_process');
+      var stub_process = new mock.PistonProcess();
+      spyOn(this.process_spawner,'spawn_new_process').andReturn(stub_process);
       this.process_manager.start_new_process();
       expect(this.process_spawner.spawn_new_process).toHaveBeenCalled();
     });
@@ -92,6 +93,10 @@ describe("Piston Process Manager", function(){
   });
 
   describe("when a piston process crashes", function(){
+    beforeEach(function(){
+      var stub_process = new mock.PistonProcess();
+      spyOn(this.process_spawner,'spawn_new_process').andReturn(stub_process);
+    });
     it("stop watching the current Piston process", function(){
       spyOn(this.process_watcher,'stop_watching');
       this.process_watcher.emit("piston crash");
@@ -112,6 +117,10 @@ describe("Piston Process Manager", function(){
   });
 
   describe("when a piston is killed", function(){
+    beforeEach(function(){
+      var stub_process = new mock.PistonProcess();
+      spyOn(this.process_spawner,'spawn_new_process').andReturn(stub_process);
+    });
     it("stop watching the current Piston process", function(){
       spyOn(this.process_watcher,'stop_watching');
       this.process_watcher.emit("piston kill");
@@ -135,5 +144,25 @@ describe("Piston Process Manager", function(){
     var stub_process = new mock.PistonProcess();
     this.process_manager.set_current_process(stub_process);
     expect(this.process_manager.get_current_process()).toEqual(stub_process);
+  });
+
+  describe("sending and receiving tasks", function(){
+    it("sends tasks to the piston process", function(){
+      var stub_process = new mock.PistonProcess();
+      spyOn(stub_process,"send");
+      var stub_task = new Object();
+      this.process_manager.set_current_process(stub_process);
+      this.process_manager.send_task_to_piston(stub_task);
+      expect(stub_process.send).toHaveBeenCalledWith(stub_task);
+    });
+
+    it("receives task results from the piston process", function(){
+      spyOn(this.process_manager,"emit");
+      var stub_process = new mock.PistonProcess();
+      this.process_manager.set_current_process(stub_process);
+      var stub_response = new Object();
+      stub_process.emit("message", stub_response);
+      expect(this.process_manager.emit).toHaveBeenCalledWith("task response", stub_response);
+    });
   });
 });

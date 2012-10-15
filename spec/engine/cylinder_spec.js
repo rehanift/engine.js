@@ -65,9 +65,9 @@ describe("Cylinder", function(){
   });
   
   it("when a cylinder receives a task it sends it to the piston", function(){
-    spyOn(cylinder.sending_socket,'send');
+    spyOn(cylinder.piston_process_manager,'send_task_to_piston');
     cylinder.listening_socket.fakeSend(mock.TASK_PAYLOAD);
-    expect(cylinder.sending_socket.send).toHaveBeenCalled();
+    expect(cylinder.piston_process_manager.send_task_to_piston).toHaveBeenCalled();
   });
 
   describe("when a piston receives a task", function(){
@@ -80,13 +80,13 @@ describe("Cylinder", function(){
 
   it("when a piston finishes executing a task the cylinder clears the watcher", function(){
     spyOn(cylinder.execution_watcher,'clear');
-    cylinder.results_socket.fakeSend(mock.TASK_RESULTS);
+    cylinder.piston_process_manager.emit("task response", mock.TASK_RESULTS);
     expect(cylinder.execution_watcher.clear).toHaveBeenCalled();
   });
 
   it("when a piston finishes executing a task the cylinder sends the results to the exhaust publisher", function(){
     spyOn(cylinder.exhaust_socket,'send');
-    cylinder.results_socket.fakeSend(mock.TASK_RESULTS);
+    cylinder.piston_process_manager.emit("task response", mock.TASK_RESULTS);
     expect(cylinder.exhaust_socket.send).toHaveBeenCalled();        
   });
 
@@ -146,14 +146,10 @@ describe("Cylinder", function(){
 
   it("#close closes all sockets", function(){
     spyOn(cylinder.listening_socket,'close');
-    spyOn(cylinder.sending_socket,'close');
-    spyOn(cylinder.results_socket,'close');
     spyOn(cylinder.exhaust_socket,'close');
     spyOn(this.piston_manager,'terminate_current_process');
     cylinder.close();
     expect(cylinder.listening_socket.close).toHaveBeenCalled();
-    expect(cylinder.sending_socket.close).toHaveBeenCalled();
-    expect(cylinder.results_socket.close).toHaveBeenCalled();
     expect(cylinder.exhaust_socket.close).toHaveBeenCalled();
     expect(this.piston_manager.terminate_current_process).toHaveBeenCalled();
   });

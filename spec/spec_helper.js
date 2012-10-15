@@ -165,6 +165,7 @@ mock.PistonProcess = (function(){
 
   klass.prototype.terminate = function(){};
   klass.prototype.kill = function(){};
+  klass.prototype.send = function(){};
 
   return klass;
 })();
@@ -178,6 +179,7 @@ mock.PistonProcessManager = (function(){
   klass.prototype.kill_current_process = function(){};
   klass.prototype.get_current_process = function(){};
   klass.prototype.set_current_process = function(){};
+  klass.prototype.send_task_to_piston = function(){};
 
   return klass;
 })();
