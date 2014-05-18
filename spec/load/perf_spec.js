@@ -101,24 +101,24 @@ describe("Many simple addition tasks", function(){
             run_parameterized_system_test('ipc',1,1000,1);
 	});
 
-	it("with 25 cylinders", function(){
-            run_parameterized_system_test('tcp',1,1000,25);
-            run_parameterized_system_test('ipc',1,1000,25);
+	it("with 2 cylinders", function(){
+            run_parameterized_system_test('tcp',1,1000,2);
+            run_parameterized_system_test('ipc',1,1000,2);
 	});
 
-	it("with 50 cylinders", function(){
-            run_parameterized_system_test('tcp',1,1000,50);
-            run_parameterized_system_test('ipc',1,1000,50);
+	it("with 4 cylinders", function(){
+            run_parameterized_system_test('tcp',1,1000,4);
+            run_parameterized_system_test('ipc',1,1000,4);
 	});
 
-	it("with 75 cylinders", function(){
-            run_parameterized_system_test('tcp',1,1000,75);
-            run_parameterized_system_test('ipc',1,1000,75);
+	it("with 8 cylinders", function(){
+            run_parameterized_system_test('tcp',1,1000,8);
+            run_parameterized_system_test('ipc',1,1000,8);
 	});
 
-	it("with 100 cylinders", function(){
-            run_parameterized_system_test('tcp',1,1000,100);
-            run_parameterized_system_test('ipc',1,1000,100);
+	it("with 16 cylinders", function(){
+            run_parameterized_system_test('tcp',1,1000,16);
+            run_parameterized_system_test('ipc',1,1000,16);
 	});
     });
 
@@ -128,24 +128,24 @@ describe("Many simple addition tasks", function(){
             run_parameterized_system_test('ipc',31,31,1);
 	});
 
-	it("with 25 cylinders", function(){
-            run_parameterized_system_test('tcp',31,31,25);
-            run_parameterized_system_test('ipc',31,31,25);
+	it("with 2 cylinders", function(){
+            run_parameterized_system_test('tcp',31,31,2);
+            run_parameterized_system_test('ipc',31,31,2);
 	});
 
-	it("with 50 cylinders", function(){
-            run_parameterized_system_test('tcp',31,31,50);
-            run_parameterized_system_test('ipc',31,31,50);
+	it("with 4 cylinders", function(){
+            run_parameterized_system_test('tcp',31,31,4);
+            run_parameterized_system_test('ipc',31,31,4);
 	});
 
-	it("with 75 cylinders", function(){
-            run_parameterized_system_test('tcp',31,31,75);
-            run_parameterized_system_test('ipc',31,31,75);
+	it("with 8 cylinders", function(){
+            run_parameterized_system_test('tcp',31,31,8);
+            run_parameterized_system_test('ipc',31,31,8);
 	});
 
-	xit("with 100 cylinders", function(){
-            run_parameterized_system_test('tcp',31,31,100);
-            run_parameterized_system_test('ipc',31,31,100);
+	xit("with 16 cylinders", function(){
+            run_parameterized_system_test('tcp',31,31,16);
+            run_parameterized_system_test('ipc',31,31,16);
 	});
     });
 
