@@ -6,7 +6,7 @@ MKDIR = mkdir -p
 NODE_VERSION ?= v0.6.15
 GOTO_BUILD_DIR = cd $(BUILD_DIR); source ~/.nvm/nvm.sh; nvm use $(NODE_VERSION); 
 GOTO_MODULE_DIR = cd node_modules/engine.js;
-RUN_LOCAL_SPEC = `npm bin`/jasmine-node --forceexit --captureExceptions
+RUN_LOCAL_SPEC = `npm bin`/jasmine-node
 
 all: test
 
