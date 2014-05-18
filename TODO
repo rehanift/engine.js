@@ -1,0 +1,38 @@
+* Questions
+  - Does vm.runInNewContext wait for event listeners before exiting?
+    #+begin_src javascript
+      var foo = new Foo();
+      foo.on('myevent', function(){ /* ... */ }
+      foo.run(); // this will emit a 'myevent'
+    #+end_src
+    - Yes.
+  - Does vm.runInNewContext wait for timeouts before exiting?
+    - Yes
+  - Does vm.runInNewContext wait for Sequelize to call its callbacks before exiting?
+    - Yes
+
+    
+* abstraction branch
+** Client
+  - create from_exhaust_response_receiver
+    - create from_exhaust_connection
+    - create task_response_translator
+      - create response value object
+** Cylinder
+  - create from_intake_task_receiver
+    - create from_intake_connection
+      - use task_translator
+  - create to_piston_task_sender
+    - create to_piston_connection
+    - use task_translator
+  - create from_piston_response_receiver
+    - create from_piston_connection
+  - create to_exhaust_response_sender
+    - create to_exhaust_connection
+** Piston
+  - create from_cylinder_task_receiver
+    - create from_cylinder_connection
+    - use task_translator
+  - create to_cylinder_response_sender
+    - create to_cylinder_connection
+    - create response_serializer

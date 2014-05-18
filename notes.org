@@ -1,0 +1,3 @@
+#+BEGIN_SRC sh
+  sudo docker run -i -v /home/rehanift/src/engine.js:/home/src/engine.js:ro -t 89dce8bb83d9 /bin/bash
+#+END_SRC
