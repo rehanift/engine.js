@@ -13,7 +13,7 @@
     "quickstart-server": "node script/server.js"
   },
   "engines": {
-    "node": "node >=0.6.0"
+    "node": "node >=0.8.0"
   },
   "dependencies": {
       "zmq" : ">=2.7",
