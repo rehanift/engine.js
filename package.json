@@ -10,8 +10,7 @@
   "main": "engine",
   "scripts": {
     "test": "make test",
-    "quickstart-server": "node script/server.js",
-    "dashboard": "node examples/dashboard/app.js"
+    "quickstart-server": "node script/server.js"
   },
   "engines": {
     "node": "node >=0.6.0"
