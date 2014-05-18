@@ -5,6 +5,8 @@ describe("Log Message", function(){
     var log_message,
 	data;
 
+    process.env.TZ = 'America/Los_Angeles';
+
     beforeEach(function(){
 	data = {
 	    hello: "world",
