@@ -165,6 +165,7 @@ mock.PistonProcess = (function(){
 
   klass.prototype.terminate = function(){};
   klass.prototype.kill = function(){};
+  klass.prototype.send = function(){};
 
   return klass;
 })();
@@ -178,11 +179,12 @@ mock.PistonProcessManager = (function(){
   klass.prototype.kill_current_process = function(){};
   klass.prototype.get_current_process = function(){};
   klass.prototype.set_current_process = function(){};
+  klass.prototype.send_task_to_piston = function(){};
 
   return klass;
 })();
 
-mock.TaskResponseSender = (function(){
+mock.ExhaustTaskResponseSender = (function(){
   var klass = function(){};
 
   klass.prototype.send_execution_error = function(){};
@@ -205,6 +207,49 @@ mock.OutboundExhaustConnection = (function(){
   klass.prototype.send_response = function(){};
   klass.prototype.close = function(){};
 
+  return klass;
+})();
+
+mock.OutboundCylinderConnection = (function(){
+  var klass = function(){};
+
+  klass.prototype.send_response = function(){};
+  klass.prototype.close = function(){};
+
+  return klass;
+})();
+
+mock.PistonTaskReceiver = (function(){
+  var klass = function(){};
+  util.inherits(klass, events.EventEmitter);
+  klass.prototype.close = function(){};
+  return klass;
+})();
+
+mock.TaskExecutor = (function(){
+  var klass = function(){};
+  util.inherits(klass, events.EventEmitter);
+  klass.prototype.execute_task = function(){};
+  return klass;
+})();
+
+mock.CylinderTaskResponseSender = (function(){
+  var klass = function(){};
+  klass.prototype.send_response = function(){};
+  klass.prototype.close = function(){};
+  return klass;
+})();
+
+mock.InboundCylinderConnection = (function(){
+  var klass = function(){};
+  util.inherits(klass, events.EventEmitter);
+  klass.prototype.close = function(){};
+  return klass;
+})();
+
+mock.TaskRequestTranslator = (function(){
+  var klass = function(){};
+  klass.prototype.translate = function(){};
   return klass;
 })();
 
