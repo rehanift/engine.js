@@ -15,18 +15,16 @@ task.setCode(code);
 
 task.on('eval', function(err, response){
   if(err){
-    console.log("An error was encountered while *trying* to execute your task");
-    throw err;
+    console.error("An error was encountered while *trying* to execute your task -",err);
+    client.close();
+    return false;
   }
 
   if(response.isError()) {
-    console.log("An error was encountered while *executing* your task");
-    console.log(response.getEvaluation());
-    
-    return;
+    console.error("An error was encountered while *executing* your task -", response.getEvaluation());
   } 
   
-  console.log(response.getGlobals());
+  console.log("Task response global variables -", response.getGlobals());
 
   client.close();
 });

@@ -1,14 +1,15 @@
 (function(locals){
 
   return {
-    get_tweets_for: function(handle, cb){
+    get_repos_for: function(handle, cb){
       async.start(); // tell engine.js that this function expects an asynchronous callback
-      var http = require("http");
+      var http = require("https");
       var results = "";
 
       var req = http.request({
-        host:"api.twitter.com",
-        path:"/1/statuses/user_timeline.json?screen_name=" + handle
+        host:"api.github.com",
+        path:"/users/" + handle + "/repos",
+        headers:{"User-Agent":"Engine.JS"}
       }, function(res){
         res.on('data', function(chunk){
           results += chunk;
