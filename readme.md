@@ -29,11 +29,11 @@ For more information:
 
 ### Dependencies
    - Linux or OS X
-   - Node.js (tested with v0.6.7)
+   - Node.js (tested with v0.10.0)
    - NPM
-   - ZeroMQ (2.1)
+   - ZeroMQ (3.2)
      - OS X: `brew install zeromq`
-     - Linux: [See 0mq INSTALL](https://raw.github.com/zeromq/zeromq2-1/master/INSTALL)
+     - Linux: [See 0mq INSTALL](https://raw.githubusercontent.com/zeromq/zeromq3-x/master/INSTALL)
    - [NVM](https://github.com/creationix/nvm) (Only if you want to run the build script)
 
 ### Quick Start
@@ -84,29 +84,28 @@ Engine.js has both unit tests (spec/engine) and end-to-end tests (spec/end-to-en
   - To run the full test suite, run `make test`
 
 ### Benchmarks
-Engine.js has a preliminary benchmark script at `spec/load/perf_spec.js`. The script creates 2500 tasks that add two random numbers together. The script cycles through a variety of transport types (TCP or IPC), number of clients, and number of cylinders. On my personal laptop (Intel Core 2 Duo @ 2.40Ghz w/ 4GB of RAM) I got the following results:
+Engine.js has a preliminary benchmark script at `spec/load/perf_spec.js`. The script creates ~ 1000 tasks that add two random numbers together. The script cycles through a variety of transport types (TCP or IPC), number of clients, and number of cylinders. I got the following results on an EC2 c3.xlarge:
 
-    [tcp] 2500 tasks from 1 clients against 1 cylinders completed in 4.004 seconds (624 tps)
-    [ipc] 2500 tasks from 1 clients against 1 cylinders completed in 3.921 seconds (637 tps)
-    [tcp] 2500 tasks from 1 clients against 25 cylinders completed in 3.365 seconds (742 tps)
-    [ipc] 2500 tasks from 1 clients against 25 cylinders completed in 3.36 seconds (744 tps)
-    [tcp] 2500 tasks from 1 clients against 50 cylinders completed in 3.397 seconds (735 tps)
-    [ipc] 2500 tasks from 1 clients against 50 cylinders completed in 3.371 seconds (741 tps)
-    [tcp] 2500 tasks from 1 clients against 75 cylinders completed in 3.385 seconds (738 tps)
-    [ipc] 2500 tasks from 1 clients against 75 cylinders completed in 3.282 seconds (761 tps)
-    [tcp] 2500 tasks from 1 clients against 100 cylinders completed in 3.614 seconds (691 tps)
-    [ipc] 2500 tasks from 1 clients against 100 cylinders completed in 3.508 seconds (712 tps)
-    
-    [tcp] 2500 tasks from 50 clients against 1 cylinders completed in 5.515 seconds (453 tps)
-    [ipc] 2500 tasks from 50 clients against 1 cylinders completed in 5.094 seconds (490 tps)
-    [tcp] 2500 tasks from 50 clients against 25 cylinders completed in 3.53 seconds (708 tps)
-    [ipc] 2500 tasks from 50 clients against 25 cylinders completed in 3.677 seconds (679 tps)
-    [tcp] 2500 tasks from 50 clients against 50 cylinders completed in 3.403 seconds (734 tps)
-    [ipc] 2500 tasks from 50 clients against 50 cylinders completed in 3.467 seconds (721 tps)
-    [tcp] 2500 tasks from 50 clients against 75 cylinders completed in 3.941 seconds (634 tps)
-    [ipc] 2500 tasks from 50 clients against 75 cylinders completed in 3.855 seconds (648 tps)
-    [tcp] 2500 tasks from 50 clients against 100 cylinders completed in 3.605 seconds (693 tps)
-    [ipc] 2500 tasks from 50 clients against 100 cylinders completed in 10.578 seconds (236 tps)
+    [tcp] 1000 tasks from 1 clients against 1 cylinders completed in 16.45 seconds (60 tps)
+    [ipc] 1000 tasks from 1 clients against 1 cylinders completed in 15.837 seconds (63 tps)
+    [tcp] 1000 tasks from 1 clients against 2 cylinders completed in 10.132 seconds (98 tps)
+    [ipc] 1000 tasks from 1 clients against 2 cylinders completed in 9.001 seconds (111 tps)
+    [tcp] 1000 tasks from 1 clients against 4 cylinders completed in 6.875 seconds (145 tps)
+    [ipc] 1000 tasks from 1 clients against 4 cylinders completed in 6.879 seconds (145 tps)
+    [tcp] 1000 tasks from 1 clients against 8 cylinders completed in 6.856 seconds (145 tps)
+    [ipc] 1000 tasks from 1 clients against 8 cylinders completed in 6.822 seconds (146 tps)
+    [tcp] 1000 tasks from 1 clients against 16 cylinders completed in 7.033 seconds (142 tps)
+    [ipc] 1000 tasks from 1 clients against 16 cylinders completed in 7.047 seconds (141 tps)
+    [tcp] 961 tasks from 31 clients against 1 cylinders completed in 15.821 seconds (60 tps)
+    [ipc] 961 tasks from 31 clients against 1 cylinders completed in 16.166 seconds (59 tps)
+    [tcp] 961 tasks from 31 clients against 2 cylinders completed in 9.901 seconds (97 tps)
+    [ipc] 961 tasks from 31 clients against 2 cylinders completed in 9.327 seconds (103 tps)
+    [tcp] 961 tasks from 31 clients against 4 cylinders completed in 6.606 seconds (145 tps)
+    [ipc] 961 tasks from 31 clients against 4 cylinders completed in 6.626 seconds (145 tps)
+    [tcp] 961 tasks from 31 clients against 8 cylinders completed in 6.571 seconds (146 tps)
+    [ipc] 961 tasks from 31 clients against 8 cylinders completed in 6.61 seconds (145 tps)
+    [tcp] 961 tasks from 31 clients against 16 cylinders completed in 6.71 seconds (143 tps)
+    [ipc] 961 tasks from 31 clients against 16 cylinders completed in 6.727 seconds (142 tps)
 
 > tps = tasks per second
 
