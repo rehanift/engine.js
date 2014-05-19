@@ -1,4 +1,4 @@
-This example demonstrates how to provide asynchronous functions in a task's context.
+This example demonstrates how to provide asynchronous functions in a task's context. We provide a function `get_repos_for(user, cb)` in the context which arbitrary user-code can call. The `get_repos_for()` function calls the Github REST API and calls `cb` with an array of the specified user's Github repos. 
 
 Running the example
 -------------------
