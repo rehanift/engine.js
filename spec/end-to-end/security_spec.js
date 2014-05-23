@@ -112,7 +112,7 @@ describe("Sandbox Security", function(){
   });
 
   describe("Function constructor attack",function(){
-    it("throws a SecurityError when trying to call an explicit context function's constructor", function(){
+    it("cannot evaluate code outside of the sandbox's context using a context's function constructor", function(){
       var callback = jasmine.createSpy();
       task = this.client.createTask();
       task.setContext("(function(locals){ return { foo: function(){ } } })");
@@ -131,7 +131,7 @@ describe("Sandbox Security", function(){
 
     });
 
-    it("throws a SecurityError when trying to call an implicit context function's constructor", function(){
+    it("cannot evaluate code outside of the sandbox's context using the context's implicit console.log() function constructor", function(){
       var callback = jasmine.createSpy();
       task = this.client.createTask();
       task.setContext("(function(locals){ return {  } })");
