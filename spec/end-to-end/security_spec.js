@@ -72,10 +72,10 @@ describe("Sandbox Security", function(){
 
 
   describe("Function#toString attack", function(){
-    it("throws a SecurityError when trying to call '.toString' on a context function", function(){
+    it("cannot get access to the source of a function defined in the context", function(){
       var callback = jasmine.createSpy();
       task = this.client.createTask();
-      task.setContext("(function(locals){ return { foo: function(){ return 'bar' } } })");
+      task.setContext("(function(locals){ return { foo: function(){ var secret = 'hello'; return 'bar' } } })");
       task.setLocals({});
       task.setCode("foo.toString()");
       task.on('eval', callback);
@@ -86,7 +86,26 @@ describe("Sandbox Security", function(){
       });
 
       runs(function(){
-	expect(getLastEval(callback)).toContain("SecurityError");
+	expect(getLastEval(callback)).not.toContain("secret");
+      });
+
+    });
+
+    it("cannot get access to the source of a function returned by a function defined in the context", function(){
+      var callback = jasmine.createSpy();
+      task = this.client.createTask();
+      task.setContext("(function(locals){ return { foo: function(){ return function(){ var secret = 'hello'; return 'bar'; } } } })");
+      task.setLocals({});
+      task.setCode("foo().toString()");
+      task.on('eval', callback);
+      task.run();
+      
+      waitsFor(function(){
+	return callback.callCount > 0;
+      });
+
+      runs(function(){
+	expect(getLastEval(callback)).not.toContain("secret");
       });
 
     });
