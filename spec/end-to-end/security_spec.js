@@ -28,6 +28,66 @@ describe("Sandbox Security", function(){
   var getLastEval = function(cb) {
     return cb.mostRecentCall.args[1].getEvaluation();
   };
+  
+  describe("Error stacktrace exploits", function(){
+    it("cannot change prepareStackTrace", function(){
+      var fs = require("fs");
+      var callback = jasmine.createSpy();
+      task = this.client.createTask();
+      task.setContext("(function(locals){ return {} })");
+      task.setLocals({});
+      task.setCode(fs.readFileSync(__dirname + "/../resources/code/manipulate-stacktrace.js", "utf-8"));
+      task.on('eval', callback);
+      task.run();
+      
+      waitsFor(function(){
+	return callback.callCount > 0;
+      });
+
+      runs(function(){
+	expect(getLastEval(callback)).not.toContain("EXPLOIT!");
+      });
+    });
+
+    it("cannot change the number of frames in stacktraces", function(){
+      var fs = require("fs");
+      var callback = jasmine.createSpy();
+      task = this.client.createTask();
+      task.setContext("(function(locals){ return {} })");
+      task.setLocals({});
+      task.setCode(fs.readFileSync(__dirname + "/../resources/code/manipulate-stacktrace.js", "utf-8"));
+      task.on('eval', callback);
+      task.run();
+      
+      waitsFor(function(){
+	return callback.callCount > 0;
+      });
+
+      runs(function(){
+	expect(getLastEval(callback)).toBe("Error\n    at foo (<anonymous>:8:11)");
+      });
+    });
+
+    it("do not reveal interal stacktraces", function(){
+      var fs = require("fs");
+      var callback = jasmine.createSpy();
+      task = this.client.createTask();
+      task.setContext("(function(locals){ return {} })");
+      task.setLocals({});
+      task.setCode(fs.readFileSync(__dirname + "/../resources/code/manipulate-stacktrace.js", "utf-8"));
+      task.on('eval', callback);
+      task.run();
+      
+      waitsFor(function(){
+	return callback.callCount > 0;
+      });
+
+      runs(function(){
+	expect(getLastEval(callback)).not.toContain("Contextify");
+	expect(getLastEval(callback)).not.toContain("runInContext");
+      });
+    });
+  });
 
   describe("getting outside the sandbox", function(){
     it("cannot manipulate the host context", function(){
