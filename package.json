@@ -23,7 +23,8 @@
       "contextify" : "git://github.com/rehanift/contextify.git#vm-module",
       "bindings" : "*",
       "object-grafter" : "git://github.com/rehanift/object-grafter.git",
-      "es6-collections" : "*"
+      "es6-collections" : "*",
+      "uid-number" : "*"
   },
   "contributors": ["Eric Allam"]
 }
