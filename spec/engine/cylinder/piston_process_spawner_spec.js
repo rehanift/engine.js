@@ -63,6 +63,37 @@ describe("PistonProcessSpawner",function(){
 
   });
 
+  it("spawns a new node process running as the specified user and group", function(){
+    var env;
+    var callback = jasmine.createSpy();
+    var spawner;
+    
+    runs(function(){
+      spawner = PistonProcessSpawner.create({
+        piston_script: __dirname + "/test_child_process_dump_env.js",
+        script_args: [],
+        env: {"foo":"bar"}
+      });
+
+      this.process = spawner.spawn_new_process();
+      this.process.on('process error', callback);
+    });    
+
+    waitsFor(function(){
+      return callback.callCount > 0;
+    });
+
+    runs(function(){
+      var output_raw = callback.mostRecentCall.args[0];
+      var output_json = JSON.parse(output_raw);
+
+      expect(output_json.env).toEqual({"foo":"bar"});
+
+      this.process.kill();
+    });    
+
+  });
+
   it("spawns a new node process running as the specified user and group");
 });
 
